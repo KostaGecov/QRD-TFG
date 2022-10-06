@@ -4,17 +4,16 @@
 
 int main(){
 
-	//typedef ap_fixed<16, 7, AP_RND> data_t; // 16 bits fixed point data, 7 for integer value and 3 for decimals
 	Matrix A = {{3, 2, -1, 4},
 			    {2, 1, 5, 7},
 			    {0, 5, 2, -6},
 			    {-1, 2, 1, 0}};
-
+/*
 	Matrix R = {{1, 0, 0, 0},
 			    {0, 1, 0, 0},
 			    {0, 0, 1, 0},
 			    {0, 0, 0, 1}};
-
+*/
 	Matrix res(TAM, std::vector<data_t>(TAM, 0)); // Upper-Triangular Matrix R
 
 	for(int i = 0; i < TAM; i++){
@@ -24,17 +23,42 @@ int main(){
 	}
 
 
-    bool sign = (A[TAM-1][0] >= 0);
+    bool sign; //= false; //(A[TAM-1][0] >= 0);
+    static int n_iter = 15;
 
-    rot_givens(/*A, R, */res, sign);
+    rot_givens(/*A, R, */A/*, sign*/);
 
+
+/*
+    //std:: cout << std::endl;
+
+    // Primera columna
+
+    rot_givens_succ(A, A[2][0], A[3][0], sign, n_iter, 2, 3, 0);
+
+    rot_givens_succ(A, A[0][0], A[1][0], sign, n_iter, 0, 1, 0);
+
+    rot_givens_succ(A, A[0][0], A[2][0], sign, n_iter, 0, 2, 0);
+
+    // Segunda columna
+
+    rot_givens_succ(A, A[2][1], A[3][1], sign, n_iter, 2, 3, 1);
+
+    rot_givens_succ(A, A[1][1], A[2][1], sign, n_iter, 1, 2, 1);
+
+    // Tercera columna
+
+    rot_givens_succ(A, A[2][2], A[3][2], sign, n_iter, 2, 3, 2);
+
+*/
 
     // Print result matrix
     for(int i = 0; i < TAM; i++){
 		for(int j = 0; j < TAM; j++){
-			std::cout << res[i][j] << " ";
+			std::cout << A[i][j] << " ";
 		}
 		std:: cout << std::endl;
 	}
+
     return 0;
 }
