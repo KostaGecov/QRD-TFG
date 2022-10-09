@@ -5,6 +5,7 @@
 int main(){
 
 
+
 	Matrix A = {{3, 2, -1, 4, 1},
 			    {2, 1, 5, 7, 3},
 			    {0, 5, 2, -6, 5},
@@ -12,12 +13,20 @@ int main(){
 				{-9, 16, 8, -1, 4}};
 
 /*
+	Matrix A = {{3, 2, -1, 4},
+			    {2, 1, 5, 7},
+			    {0, 5, 2, -6},
+			    {-1, 2, 1, 0}};
+
 	Matrix R = {{1, 0, 0, 0},
 			    {0, 1, 0, 0},
 			    {0, 0, 1, 0},
 			    {0, 0, 0, 1}};
 */
+
 /*
+
+
 	Matrix res(TAM, std::vector<data_t>(TAM, 0)); // Upper-Triangular Matrix R
 
 	for(int i = 0; i < TAM; i++){
@@ -31,6 +40,7 @@ int main(){
     static int n_iter = 15;
 
     rot_givens(A);
+
 
 
 /*
@@ -61,6 +71,5 @@ int main(){
 		}
 		std:: cout << std::endl;
 	}
-
     return 0;
 }

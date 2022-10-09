@@ -1,6 +1,7 @@
 #include <iostream>
 #include "qrd.h"
 
+
 void rot_givens(Matrix &A){
 	data_t coord_X, coord_Y;
 	data_t coord_X_shif, coord_Y_shif;
@@ -9,10 +10,9 @@ void rot_givens(Matrix &A){
 	bool sign;
 
     // Accesing coordinates X and Y
-
      for(int j = 0; j < TAM-1; j++){ // Columns
 	    for(int i = TAM-1; i >= 0; i--){ // Rows
-            if(i > j /*&& (A[i][j] != 0)*/){
+            if(i > j && (A[i][j] != 0)){
 
                 coord_X = A[i-1][j];
                 coord_Y = A[i][j];
@@ -38,6 +38,7 @@ void rot_givens(Matrix &A){
                 A[i-1][j] = coord_X;
                 A[i][j] = coord_Y;
 
+
                 coord_X = 0;
                 coord_Y = 0;
                 coord_X_shif = 0;
@@ -54,6 +55,7 @@ void rot_givens_succ(Matrix &A, data_t X, data_t Y, bool &sign, int n_iter, int 
 
 	coord_X = X;
     coord_Y = Y;
+
 
 
     // Vectorization (Coordinate Y = 0)
@@ -77,4 +79,6 @@ void rot_givens_succ(Matrix &A, data_t X, data_t Y, bool &sign, int n_iter, int 
 
     A[row_X][col] = coord_X;
     A[row_Y][col] = coord_Y;
+
+
 }
