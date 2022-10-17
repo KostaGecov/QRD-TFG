@@ -4,6 +4,7 @@
 
 int main(){
 
+<<<<<<< HEAD
 
 
 	Matrix A = {{3, 2, -1, 4, 1},
@@ -13,6 +14,9 @@ int main(){
 				{-9, 16, 8, -1, 4}};
 
 /*
+=======
+	//typedef ap_fixed<16, 7, AP_RND> data_t; // 16 bits fixed point data, 7 for integer value and 3 for decimals
+>>>>>>> f28c6b479ae2575b504ce2e2ebd85abf00dc5715
 	Matrix A = {{3, 2, -1, 4},
 			    {2, 1, 5, 7},
 			    {0, 5, 2, -6},
@@ -22,10 +26,13 @@ int main(){
 			    {0, 1, 0, 0},
 			    {0, 0, 1, 0},
 			    {0, 0, 0, 1}};
+<<<<<<< HEAD
 */
 
 /*
 
+=======
+>>>>>>> f28c6b479ae2575b504ce2e2ebd85abf00dc5715
 
 	Matrix res(TAM, std::vector<data_t>(TAM, 0)); // Upper-Triangular Matrix R
 
@@ -34,6 +41,7 @@ int main(){
 			res[i][j] = A[i][j];
 		}
 	}
+<<<<<<< HEAD
 */
 
     bool sign; //= false; //(A[TAM-1][0] >= 0);
@@ -63,11 +71,23 @@ int main(){
     rot_givens_succ(A, A[2][2], A[3][2], sign, n_iter, 2, 3, 2);
 
 */
+=======
+
+
+    bool sign = (A[TAM-1][0] >= 0);
+
+    rot_givens(/*A, R, */res, sign);
+
+>>>>>>> f28c6b479ae2575b504ce2e2ebd85abf00dc5715
 
     // Print result matrix
     for(int i = 0; i < TAM; i++){
 		for(int j = 0; j < TAM; j++){
+<<<<<<< HEAD
 			std::cout << A[i][j] << "	|	";
+=======
+			std::cout << res[i][j] << " ";
+>>>>>>> f28c6b479ae2575b504ce2e2ebd85abf00dc5715
 		}
 		std:: cout << std::endl;
 	}
