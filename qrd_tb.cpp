@@ -1,47 +1,29 @@
 #include <iostream>
 #include "qrd.h"
 
-
 int main(){
 
-
-
-	Matrix A = {{3, 2, -1, 4, 1},
-			    {2, 1, 5, 7, 3},
-			    {0, 5, 2, -6, 5},
-			    {-1, 2, 1, 0, 7},
-				{-9, 16, 8, -1, 4}};
-
-/*
-	Matrix A = {{3, 2, -1, 4},
-			    {2, 1, 5, 7},
-			    {0, 5, 2, -6},
-			    {-1, 2, 1, 0}};
-
-	Matrix R = {{1, 0, 0, 0},
-			    {0, 1, 0, 0},
-			    {0, 0, 1, 0},
-			    {0, 0, 0, 1}};
-*/
+	data_t A[TAM][TAM] = {
+							{3, 2, -1, 4, 1},
+							{2, 1, 5, 7, 3},
+							{0, 5, 2, -6, 5},
+							{-1, 2, 1, 0, 7},
+							{-9, 16, 8, -1, 4}
+						 };
 
 /*
+	data_t A[TAM][TAM] = {
+							{3, 2, -1, 4},
+							{2, 1, 5, 7},
+							{0, 5, 2, -6},
+							{-1, 2, 1, 0}
+						 };
 
-
-	Matrix res(TAM, std::vector<data_t>(TAM, 0)); // Upper-Triangular Matrix R
-
-	for(int i = 0; i < TAM; i++){
-		for(int j = 0; j < TAM; j++){
-			res[i][j] = A[i][j];
-		}
-	}
-*/
-
-    bool sign; //= false; //(A[TAM-1][0] >= 0);
+    bool sign;
     static int n_iter = 15;
+*/
 
     rot_givens(A);
-
-
 
 /*
     // Primera columna
@@ -67,9 +49,11 @@ int main(){
     // Print result matrix
     for(int i = 0; i < TAM; i++){
 		for(int j = 0; j < TAM; j++){
-			std::cout << A[i][j] << "	|	";
+
+			std::cout << A[i][j] << "  |  ";
 		}
 		std:: cout << std::endl;
 	}
+
     return 0;
 }
