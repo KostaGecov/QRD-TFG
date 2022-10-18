@@ -1,7 +1,6 @@
 #include <iostream>
 #include "qrd.h"
 
-<<<<<<< HEAD
 
 void rot_givens(data_t A[TAM][TAM]) {
     data_t coord_X, coord_Y;
@@ -81,38 +80,3 @@ void rot_givens_succ(Matrix & A, data_t X, data_t Y, bool & sign, int n_iter, in
     A[row_Y][col] = coord_Y;
 
 }
-=======
-void rot_givens(/*const Matrix &A, const Matrix &R, */Matrix &res, bool sign){
-	data_t coord_X, coord_Y;
-	data_t coord_X_shif, coord_Y_shif;
-
-	int n_iter = 1;
-	
-    // Accesing coordinates X and Y
-
-	// The access to elements X and Y is incorrect, got to fix it
-     for(int j = 0; j < TAM-1; j++){ // Columns
-	    for(int i = TAM-1; i >= 0; i--){ // Rows
-            if(i > j){
-
-                coord_X = res[i-1][j];
-                coord_Y = res[i][j];
-
-                coord_X_shif = coord_X >> n_iter;
-                coord_Y_shif = coord_Y >> n_iter;
-
-                if(sign){
-                	res[i-1][j] = coord_X + coord_Y_shif;
-                	res[i][j] = coord_Y - coord_X_shif;
-                }else{
-                	res[i-1][j] = coord_X - coord_Y_shif;
-                    res[i][j] = coord_Y + coord_X_shif;
-                }
-
-                sign = !sign;
-                n_iter++;
-            }
-	    }
-    }
-}
->>>>>>> f28c6b479ae2575b504ce2e2ebd85abf00dc5715
