@@ -1,9 +1,10 @@
 #ifndef _QRD_
 #define _QRD_
 
-#define TAM 5
+#define TAM 4
 
 #include <ap_fixed.h>
+#include <hls_stream.h>
 //#include <vector>
 
 
@@ -13,8 +14,14 @@ typedef ap_fixed<24, 10, AP_RND> data_t; // 24 bits fixed point data, 10 for int
 
 //typedef std::vector<std::vector<data_t>> Matrix;
 
-void rot_givens(data_t A[TAM][TAM]);
+void read_input(data_t M[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, int i);
 
+//void rot_givens(data_t A[TAM][TAM]);
+void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
+
+void rotation_giv(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
+
+void krnl_givens_rotation(data_t M[TAM][TAM], int i);
 //void rot_givens_succ(Matrix &A, data_t X, data_t Y, bool &sign, int n_iter, int row_X, int row_Y, int col);*/
 
 #endif

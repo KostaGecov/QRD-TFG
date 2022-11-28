@@ -1,81 +1,105 @@
 #include <iostream>
 #include "qrd.h"
+/*
+class Rotator{
+	public:
+		hls::stream<data_t> row_x_in, row_y_in;
+		hls::stream<data_t> row_x_out, row_y_out;
 
-void rot_givens(data_t A[TAM][TAM]) {
-    data_t coord_X, coord_Y;
-    int n_iter = 30;
-    bool sign;
+		Rotator(){
+			// Empty constructor
+		}
 
-    // Accessing coordinates X and Y
-    rot_columns_for:
-    for (int j = 0; j < TAM-1; j++) { // Columns
-    	rot_rows_for:
-		for (int i = TAM - 1; i > j; i--) { // Rows
-			coord_X = A[i - 1][j];
-			coord_Y = A[i][j];
-            if (coord_Y != 0) {
-        	// Vectorization (Coordinate Y = 0)
-				for (int k = 0; k < n_iter; k++) {
-					if (coord_Y < 0){
-						sign = true;
-					}else{
-						sign = false;
-					}
+		/*
+		 * Member functions
+		 *
+		 */
+		/*void rotation_giv(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out){
+			Rotator rotator[7];
+			data_t x[TAM], y[TAM];
+			data_t x_sh[TAM], y_sh[TAM];
+			int n_iter = 15;
 
-					if (sign) {
-						coord_X = coord_X - (coord_Y >> k);
-						coord_Y = coord_Y + (coord_X >> k);
+
+			rotation:
+			for(int n = 0; n < n_iter; n++){
+				for(int m = 0; m < TAM; m++){
+					x_sh[m] = x[m] >> n;
+					y_sh[m] = y[m] >> n;
+
+					if (y[0] < 0) {
+						x[m] = x[m] + y_sh[m];
+						y[m] = y[m] - x_sh[m];
 					} else {
-						coord_X = coord_X + (coord_Y >> k);
-						coord_Y = coord_Y - (coord_X >> k);
-					}
-					// Rotate the resting elements of the rows
-					for(int r = j+1; r < TAM; r++){
-						if (sign) {
-							A[i-1][r] = A[i-1][r] + (A[i][r] >> k);
-							A[i][r] = A[i][r] - (A[i-1][r] >> k);
-						} else {
-							A[i-1][r] = A[i-1][r] - (A[i][r] >> k);
-							A[i][r] = A[i][r] + (A[i-1][r] >> k);
-						}
+						x[m] = x[m] - y_sh[m];
+						y[m] = y[m] + x_sh[m];
 					}
 				}
-            }
-            A[i - 1][j] = coord_X;
-            A[i][j] = coord_Y;
-
-        }
-    }
-}
-/*
-void rot_givens_succ(Matrix & A, data_t X, data_t Y, bool & sign, int n_iter, int row_X, int row_Y, int col) {
-    data_t coord_X, coord_Y;
-    data_t coord_X_shif, coord_Y_shif;
-
-    coord_X = X;
-    coord_Y = Y;
-
-    // Vectorization (Coordinate Y = 0)
-    for (int i = 0; i < n_iter; i++) {
-        if (coord_Y < 0)
-            sign = false;
-        else
-            sign = true;
-
-        coord_X_shif = coord_X >> i;
-        coord_Y_shif = coord_Y >> i;
-
-        if (sign) {
-            coord_X = coord_X - coord_Y_shif;
-            coord_Y = coord_Y + coord_X_shif;
-        } else {
-            coord_X = coord_X + coord_Y_shif;
-            coord_Y = coord_Y - coord_X_shif;
-        }
-    }
-
-    A[row_X][col] = coord_X;
-    A[row_Y][col] = coord_Y;
-
-}
+			}
+		}
+};
 */
+void read_input(data_t M[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, int i){
+	for(int j = 0; j < TAM; j++){
+		row_x_in << M[i-1][j];
+		row_y_in << M[i][j];
+	}
+}
+
+
+// after data is read from an hls::stream<>, it cannot be read again
+
+// Stream es una FIFO, tenerlo en cuenta para los índices de lectura/escritura
+
+void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out) {
+	int n_iter = 15;
+	bool sign;
+	data_t x[TAM], y[TAM], x_sh[TAM], y_sh[TAM];
+
+	for(int i = 0; i < TAM; i++){
+		row_x_in >> x[i];
+		row_y_in >> y[i];
+	}
+
+	if(y[0] < 0){
+		sign = true;
+	}else{
+		sign = false;
+	}
+
+	for(int k = 0; k < n_iter; k++){
+		for(int i = 0; i < TAM; i++){
+			if(sign){
+				x[i] = x[i] - (y[i] >> k);
+				y[i] = y[i] + (x[i] >> k);
+			}else{
+				x[i] = x[i] + (y[i] >> k);
+				y[i] = y[i] - (x[i] >> k);
+			}
+		}
+	}
+
+	for(int i = 0; i < TAM; i++){
+		row_x_out << x[i];
+		row_y_out << y[i];
+	}
+}
+
+void write_output(data_t M[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i){
+	for(int j = 0; j < TAM; j++){
+		row_x_out >> M[i-1][j];
+		row_y_out >> M[i][j];
+	}
+}
+
+void krnl_givens_rotation(data_t M[TAM][TAM], int i){
+	hls::stream<data_t> row_x_in;
+	hls::stream<data_t> row_y_in;
+	hls::stream<data_t> row_x_out;
+	hls::stream<data_t> row_y_out;
+
+	read_input(M, row_x_in, row_y_in, i);
+	rot_givens(row_x_in, row_y_in, row_x_out, row_y_out);
+	write_output(M, row_x_out, row_y_out, i);
+
+}

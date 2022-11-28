@@ -3,7 +3,8 @@
 
 int main(){
 
-	data_t A[TAM][TAM] = {
+	static int i = TAM-1;
+/*	data_t A[TAM][TAM] = {
 							{3, 2, -1, 4, 1},
 							{2, 1, 5, 7, 3},
 							{8, 5, 2, -6, 5},
@@ -11,16 +12,20 @@ int main(){
 							{-9, 16, 3, 1, 4}
 						 };
 
-/*
+*/
 	data_t A[TAM][TAM] = {
 							{3, 2, -1, 4},
 							{2, 1, 5, 7},
 							{0, 5, 2, -6},
 							{-1, 2, 1, 0}
 						 };
-*/
-    rot_givens(A);
 
+	for(i; i > 0; i++){
+		krnl_givens_rotation(A, i);
+	}
+
+
+	/*
     // Print result matrix
     for(int i = 0; i < TAM; i++){
 		for(int j = 0; j < TAM; j++){
@@ -29,6 +34,7 @@ int main(){
 		}
 		std:: cout << std::endl;
 	}
+    */
 
     return 0;
 }
