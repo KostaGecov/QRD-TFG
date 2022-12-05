@@ -3,7 +3,8 @@
 
 int main(){
 
-	static int i = TAM-1;
+	static int i = TAM -1;
+
 /*	data_t A[TAM][TAM] = {
 							{3, 2, -1, 4, 1},
 							{2, 1, 5, 7, 3},
@@ -20,21 +21,24 @@ int main(){
 							{-1, 2, 1, 0}
 						 };
 
-	for(i; i > 0; i++){
-		krnl_givens_rotation(A, i);
-	}
-
+	data_t A_rot[TAM][TAM];
 
 	/*
+	 * ToDo: Pasar i como puntero para que dentro del dataflow pueda ser modificada y así ir iterando las filas de la matriz
+	 *	krnl_givens_rotation(A, A_rot, i);
+	 */
+
+	for(i; i > 0; i--){
+		krnl_givens_rotation(A, A_rot, i);
+	}
+
     // Print result matrix
-    for(int i = 0; i < TAM; i++){
+    for(int f = 0; f < TAM; f++){
 		for(int j = 0; j < TAM; j++){
 
-			std::cout << A[i][j] << "  |  ";
+			std::cout << A_rot[f][j] << "  |  ";
 		}
 		std:: cout << std::endl;
 	}
-    */
-
     return 0;
 }

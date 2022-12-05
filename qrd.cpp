@@ -10,11 +10,7 @@ class Rotator{
 			// Empty constructor
 		}
 
-		/*
-		 * Member functions
-		 *
-		 */
-		/*void rotation_giv(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out){
+		void rotation_giv(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out){
 			Rotator rotator[7];
 			data_t x[TAM], y[TAM];
 			data_t x_sh[TAM], y_sh[TAM];
@@ -39,11 +35,14 @@ class Rotator{
 		}
 };
 */
-void read_input(data_t M[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, int i){
+
+void read_input(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, int i){
+	rows_to_stream:
 	for(int j = 0; j < TAM; j++){
-		row_x_in << M[i-1][j];
-		row_y_in << M[i][j];
+		row_x_in << A[i-1][j];
+		row_y_in << A[i][j];
 	}
+	// los datos se guardan en otro sentido [3, 2, 1, 0]
 }
 
 
@@ -56,50 +55,61 @@ void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hl
 	bool sign;
 	data_t x[TAM], y[TAM], x_sh[TAM], y_sh[TAM];
 
-	for(int i = 0; i < TAM; i++){
-		row_x_in >> x[i];
-		row_y_in >> y[i];
+	read_input_data:
+	for(int j = 0; j < TAM; j++){
+		row_x_in >> x[j];
+		row_y_in >> y[j];
 	}
 
-	if(y[0] < 0){
-		sign = true;
-	}else{
-		sign = false;
-	}
-
+	rotation_for:
 	for(int k = 0; k < n_iter; k++){
-		for(int i = 0; i < TAM; i++){
-			if(sign){
-				x[i] = x[i] - (y[i] >> k);
-				y[i] = y[i] + (x[i] >> k);
+
+
+		column_rotation_for:
+		for(int j = 0; j < TAM; j++){
+
+			x_sh[j] = x[j] >> k;
+			y_sh[j] = y[j] >> k;
+
+			if(y[0] < 0){
+				sign = true;
 			}else{
-				x[i] = x[i] + (y[i] >> k);
-				y[i] = y[i] - (x[i] >> k);
+				sign = false;
+			}
+			if(sign){
+				x[j] = x[j] - y_sh[j];//(y[j] >> k);
+				y[j] = y[j] + x_sh[j];//(x[j] >> k);
+			}else{
+				x[j] = x[j] + y_sh[j];//(y[j] >> k);
+				y[j] = y[j] - x_sh[j];//(x[j] >> k);
 			}
 		}
 	}
 
-	for(int i = 0; i < TAM; i++){
-		row_x_out << x[i];
-		row_y_out << y[i];
-	}
-}
-
-void write_output(data_t M[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i){
+	write_output_data:
 	for(int j = 0; j < TAM; j++){
-		row_x_out >> M[i-1][j];
-		row_y_out >> M[i][j];
+		row_x_out << x[j];
+		row_y_out << y[j];
 	}
 }
 
-void krnl_givens_rotation(data_t M[TAM][TAM], int i){
+void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i){
+
+	stream_to_rows:
+	for(int j = 0; j < TAM; j++){
+		row_x_out >> A_rot[i-1][j];
+		row_y_out >> A_rot[i][j];
+	}
+	i--;
+}
+
+void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM], int i){
 	hls::stream<data_t> row_x_in;
 	hls::stream<data_t> row_y_in;
 	hls::stream<data_t> row_x_out;
 	hls::stream<data_t> row_y_out;
 
-	read_input(M, row_x_in, row_y_in, i);
+	read_input(A, row_x_in, row_y_in, i);
 	rot_givens(row_x_in, row_y_in, row_x_out, row_y_out);
-	write_output(M, row_x_out, row_y_out, i);
-
+	write_output(A_rot, row_x_out, row_y_out, i);
 }
