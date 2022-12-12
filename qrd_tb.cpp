@@ -2,9 +2,6 @@
 #include "qrd.h"
 
 int main(){
-
-	static int i = TAM -1;
-
 /*	data_t A[TAM][TAM] = {
 							{3, 2, -1, 4, 1},
 							{2, 1, 5, 7, 3},
@@ -23,14 +20,7 @@ int main(){
 
 	data_t A_rot[TAM][TAM];
 
-	/*
-	 * ToDo: Pasar i como puntero para que dentro del dataflow pueda ser modificada y así ir iterando las filas de la matriz
-	 *	krnl_givens_rotation(A, A_rot, i);
-	 */
-
-	for(i; i > 0; i--){
-		krnl_givens_rotation(A, A_rot, i);
-	}
+	krnl_givens_rotation(A, A_rot);
 
     // Print result matrix
     for(int f = 0; f < TAM; f++){
