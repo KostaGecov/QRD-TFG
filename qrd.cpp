@@ -53,7 +53,7 @@ void read_input(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<d
 // Stream es una FIFO, tenerlo en cuenta para los índices de lectura/escritura
 
 void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i) {
-	int n_iter = 15;
+	int n_iter = 30;
 	bool sign;
 	data_t x[TAM], y[TAM], x_sh[TAM], y_sh[TAM];
 	data_t aux;
@@ -62,8 +62,6 @@ void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hl
 	for(int j = 0; j < TAM; j++){
 		row_x_in >> x[j];
 		row_y_in >> y[j];
-//		std::cout << "COORD X leida: " << x[j] << std::endl;
-//		std::cout << "COORD Y leida: " << y[j] << std::endl;
 	}
 
 
@@ -87,18 +85,9 @@ void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hl
 //		}
 	}
 
-// solamente roto a 0 primer elemento de cada fila, tengo que seleccionar de alguna forma el par de coordenadas para hacer la Y = 0
-
-
-
-		// con este for pretendo cambiar las coordenadas X/Y que quiero hacer 0, de las dos filas que me entran como argumentos
+	// con este for pretendo cambiar las coordenadas X/Y que quiero hacer 0, de las dos filas que me entran como argumentos
 	change_pivot_for:
 	for(int t = 0; t < i; t++){
-//		if(y[t] < 0){
-//			sign = true;
-//		}else{
-//			sign = false;
-//		}
 		rotation_for:
 		for(int k = 0; k < n_iter; k++){
 			column_rotation_for:
@@ -132,20 +121,21 @@ void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hl
 void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i){
 	stream_to_rows:
 	for(int j = 0; j < TAM; j++){
-//			row_x_out >> A_rot[i-1][j];
-//			row_y_out >> A_rot[i][j];
-		A_rot[i-1][j] = row_x_out.read();
-		A_rot[i][j] = row_y_out.read();
+		row_x_out >> A_rot[i-1][j];
+		row_y_out >> A_rot[i][j];
+//		A_rot[i-1][j] = row_x_out.read();
+//		A_rot[i][j] = row_y_out.read();
 	}
 }
 
 void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]){
-	hls::stream<data_t> row_x_in;
-	hls::stream<data_t> row_y_in;
-	hls::stream<data_t> row_x_out;
-	hls::stream<data_t> row_y_out;
-
+	krnl_for:
 	for(int i = TAM - 1; i > 0; --i){
+		hls::stream<data_t> row_x_in;
+		hls::stream<data_t> row_y_in;
+		hls::stream<data_t> row_x_out;
+		hls::stream<data_t> row_y_out;
+
 		read_input(A, row_x_in, row_y_in, i);
 		rot_givens(row_x_in, row_y_in, row_x_out, row_y_out, i);
 		write_output(A_rot, row_x_out, row_y_out, i);
