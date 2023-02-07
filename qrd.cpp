@@ -1,40 +1,19 @@
 #include <iostream>
 #include "qrd.h"
-/*
-class Rotator{
-	public:
-		hls::stream<data_t> row_x_in, row_y_in;
-		hls::stream<data_t> row_x_out, row_y_out;
 
-		Rotator(){
-			// Empty constructor
-		}
+Rotator::Rotator(int x, int y, int c){
+	Rotator::row_x = x;
+	Rotator::row_y = y;
+	Rotator::col = c;
+}
 
-		void rotation_giv(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out){
-			Rotator rotator[7];
-			data_t x[TAM], y[TAM];
-			data_t x_sh[TAM], y_sh[TAM];
-			int n_iter = 15;
-
-
-			rotation:
-			for(int n = 0; n < n_iter; n++){
-				for(int m = 0; m < TAM; m++){
-					x_sh[m] = x[m] >> n;
-					y_sh[m] = y[m] >> n;
-
-					if (y[0] < 0) {
-						x[m] = x[m] + y_sh[m];
-						y[m] = y[m] - x_sh[m];
-					} else {
-						x[m] = x[m] - y_sh[m];
-						y[m] = y[m] + x_sh[m];
-					}
-				}
-			}
-		}
-};
-*/
+void Rotator::read_input_rows(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in){
+	row_to_stream:
+	for(int j = col; j < TAM; j++){
+		row_x_in << A[Rotator::row_x][j];
+		row_y_in << A[Rotator::row_y][j];
+	}
+}
 
 void read_input(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, int i){
 	rows_to_stream:

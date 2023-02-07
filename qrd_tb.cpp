@@ -19,6 +19,7 @@ int main(){
 						 };
 
 	data_t A_rot[TAM][TAM];
+	Rotator rot(0, 0, 0);
 
 	krnl_givens_rotation(A, A_rot);
 
