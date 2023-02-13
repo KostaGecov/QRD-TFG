@@ -12,7 +12,9 @@
 typedef ap_fixed<24, 10, AP_RND> data_t; // 24 bits fixed point data, 10 for integer value and 14 for decimals
 
 class Rotator{
-	protected:
+	public:
+		// after data is read from an hls::stream<>, it cannot be read again
+		// Stream es una FIFO, tenerlo en cuenta para los índices de lectura/escritura
 		hls::stream<data_t> row_x_in, row_y_in;
 		hls::stream<data_t> row_x_out, row_y_out;
 		int row_x, row_y, col; // posiciones de las filas a rotar. En teoría las columnas son las mismas en ambas filas
@@ -21,6 +23,9 @@ class Rotator{
 		Rotator();
 		Rotator(int x, int y, int c);
 		void read_input_rows(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in);
+		void givens_rotation(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
+		void write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
+		void krnl_gr(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]);
 
 };
 
