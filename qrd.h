@@ -25,7 +25,7 @@ class Rotator{
 		void read_input_rows(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in);
 		void givens_rotation(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
 		void write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
-		void krnl_gr(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]);
+//		void krnl_gr(data_t A[TAM][TAM]);
 
 };
 
@@ -41,7 +41,9 @@ void rotation_giv(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, 
 
 void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i);
 
-void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]);
+void krnl_gr(data_t A[TAM][TAM]);
+
+void krnl_givens_rotation(data_t A[TAM][TAM]);
 //void rot_givens_succ(Matrix &A, data_t X, data_t Y, bool &sign, int n_iter, int row_X, int row_Y, int col);*/
 
 #endif
