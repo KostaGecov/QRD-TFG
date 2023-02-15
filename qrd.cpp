@@ -12,6 +12,10 @@ Rotator::Rotator(int x, int y, int c){
 	Rotator::col = c;
 }
 
+//void Rotator::rows_to_stream(data_t A){
+//
+//}
+
 void Rotator::read_input_rows(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in){
 	row_to_stream:
 	for(int j = 0; j < TAM; j++){
@@ -85,48 +89,14 @@ void Rotator::write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t> &row
 	}
 }
 
-/*
-void krnl_gr(data_t A[TAM][TAM]){
-//	hls::stream<data_t> row_x_in;
-//	hls::stream<data_t> row_y_in;
-//	hls::stream<data_t> row_x_out;
-//	hls::stream<data_t> row_y_out;
-
-	Rotator rot1(0, 1, 0);
-	Rotator rot2(2, 3, 0);
-	Rotator rot3(0, 2, 0);
-	Rotator rot4(1, 3, 1);
-	Rotator rot5(1, 2, 1);
-	Rotator rot6(2, 3, 2);
-
-	rot1.read_input_rows(A, rot1.row_x_in, rot1.row_y_in);
-	rot2.read_input_rows(A, rot2.row_x_in, rot2.row_y_in);
-	rot1.givens_rotation(rot1.row_x_in, rot1.row_y_in, rot1.row_x_out, rot1.row_y_out);
-	rot2.givens_rotation(rot2.row_x_in, rot2.row_y_in, rot2.row_x_out, rot2.row_y_out);
-	rot1.write_output_rows(A, rot1.row_x_out, rot1.row_y_out);
-	rot2.write_output_rows(A, rot2.row_x_out, rot2.row_y_out);
-
-
-//	Rotator rot3(0, 2, 0);
-//	Rotator rot4(1, 3, 1);
-	rot3.read_input_rows(A, rot3.row_x_in, rot3.row_y_in);
-	rot4.read_input_rows(A, rot4.row_x_in, rot4.row_y_in);
-	rot3.givens_rotation(rot3.row_x_in, rot3.row_y_in, rot3.row_x_out, rot3.row_y_out);
-	rot4.givens_rotation(rot4.row_x_in, rot4.row_y_in, rot4.row_x_out, rot4.row_y_out);
-	rot3.write_output_rows(A, rot3.row_x_out, rot3.row_y_out);
-	rot4.write_output_rows(A, rot4.row_x_out, rot4.row_y_out);
-
-//	Rotator rot5(1, 2, 1);
-	rot5.read_input_rows(A, rot5.row_x_in, rot5.row_y_in);
-	rot5.givens_rotation(rot5.row_x_in, rot5.row_y_in, rot5.row_x_out, rot5.row_y_out);
-	rot5.write_output_rows(A, rot5.row_x_out, rot5.row_y_out);
-
-//	Rotator rot6(2, 3, 2);
-	rot6.read_input_rows(A, rot6.row_x_in, rot6.row_y_in);
-	rot6.givens_rotation(rot6.row_x_in, rot6.row_y_in, rot6.row_x_out, rot6.row_y_out);
-	rot6.write_output_rows(A, rot6.row_x_out, rot6.row_y_out);
+void write_streams_to_matrix(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out_1, hls::stream<data_t> &row_y_out_2, hls::stream<data_t> &row_x_out_3, hls::stream<data_t> &row_y_out_4){
+	for(int j = 0; j < TAM; j++){
+		row_x_out_1 >> A_rot[0][j];
+		row_y_out_2 >> A_rot[1][j];
+		row_x_out_3 >> A_rot[2][j];
+		row_y_out_4 >> A_rot[3][j];
+	}
 }
-*/
 
 /*
  * Bloque funciones Dataflow Antiguo
@@ -231,35 +201,42 @@ void krnl_givens_rotation(data_t A[TAM][TAM]){
 	Rotator rot5(1, 2, 1);
 	Rotator rot6(2, 3, 2);
 
-//	data_t B[TAM][TAM] = A;
-//	data_t C[TAM][TAM] = A;
-//	data_t D[TAM][TAM] = A;
-//	data_t E[TAM][TAM] = A;
+	data_t A_rot[TAM][TAM];
 
+//	Rotator rot1(0, 1, 0);
+//	Rotator rot2(2, 3, 0);
 	rot1.read_input_rows(A, rot1.row_x_in, rot1.row_y_in);
 	rot2.read_input_rows(A, rot2.row_x_in, rot2.row_y_in);
 	rot1.givens_rotation(rot1.row_x_in, rot1.row_y_in, rot1.row_x_out, rot1.row_y_out);
 	rot2.givens_rotation(rot2.row_x_in, rot2.row_y_in, rot2.row_x_out, rot2.row_y_out);
-	rot1.write_output_rows(A, rot1.row_x_out, rot1.row_y_out);
-	rot2.write_output_rows(A, rot2.row_x_out, rot2.row_y_out);
+//	rot1.write_output_rows(A, rot1.row_x_out, rot1.row_y_out);
+//	rot2.write_output_rows(A, rot2.row_x_out, rot2.row_y_out);
+//	write_streams_to_matrix(B, rot1.row_x_out, rot1.row_y_out, rot2.row_x_out, rot2.row_y_out);
 
 
-//	Rotator rot3(0, 2, 0);
-//	Rotator rot4(1, 3, 1);
-	rot3.read_input_rows(A, rot3.row_x_in, rot3.row_y_in);
-	rot4.read_input_rows(A, rot4.row_x_in, rot4.row_y_in);
-	rot3.givens_rotation(rot3.row_x_in, rot3.row_y_in, rot3.row_x_out, rot3.row_y_out);
-	rot4.givens_rotation(rot4.row_x_in, rot4.row_y_in, rot4.row_x_out, rot4.row_y_out);
-	rot3.write_output_rows(A, rot3.row_x_out, rot3.row_y_out);
-	rot4.write_output_rows(A, rot4.row_x_out, rot4.row_y_out);
+////	Rotator rot3(0, 2, 0);
+////	Rotator rot4(1, 3, 1);
+//	rot3.read_input_rows(A, rot3.row_x_in, rot3.row_y_in);
+//	rot4.read_input_rows(A, rot4.row_x_in, rot4.row_y_in);
+	rot3.givens_rotation(rot1.row_x_out, rot2.row_x_out, rot3.row_x_out, rot3.row_y_out);
+	rot4.givens_rotation(rot1.row_y_out, rot2.row_y_out, rot4.row_x_out, rot4.row_y_out);
+//	rot3.givens_rotation(rot3.row_x_in, rot3.row_y_in, rot3.row_x_out, rot3.row_y_out);
+//	rot4.givens_rotation(rot4.row_x_in, rot4.row_y_in, rot4.row_x_out, rot4.row_y_out);
+//	rot3.write_output_rows(A, rot3.row_x_out, rot3.row_y_out);
+//	rot4.write_output_rows(A, rot4.row_x_out, rot4.row_y_out);
 
-//	Rotator rot5(1, 2, 1);
-	rot5.read_input_rows(A, rot5.row_x_in, rot5.row_y_in);
-	rot5.givens_rotation(rot5.row_x_in, rot5.row_y_in, rot5.row_x_out, rot5.row_y_out);
-	rot5.write_output_rows(A, rot5.row_x_out, rot5.row_y_out);
+////	Rotator rot5(1, 2, 1);
+//	rot5.read_input_rows(A, rot5.row_x_in, rot5.row_y_in);
+	rot5.givens_rotation(rot4.row_x_out, rot3.row_y_out, rot5.row_x_out, rot5.row_y_out);
+//	rot5.givens_rotation(rot5.row_x_in, rot5.row_y_in, rot5.row_x_out, rot5.row_y_out);
+//	rot5.write_output_rows(A, rot5.row_x_out, rot5.row_y_out);
 
-//	Rotator rot6(2, 3, 2);
-	rot6.read_input_rows(A, rot6.row_x_in, rot6.row_y_in);
-	rot6.givens_rotation(rot6.row_x_in, rot6.row_y_in, rot6.row_x_out, rot6.row_y_out);
-	rot6.write_output_rows(A, rot6.row_x_out, rot6.row_y_out);
+////	Rotator rot6(2, 3, 2);
+//	rot6.read_input_rows(A, rot6.row_x_in, rot6.row_y_in);
+	rot6.givens_rotation(rot5.row_y_out, rot4.row_y_out, rot6.row_x_out, rot6.row_y_out);
+//	rot6.givens_rotation(rot6.row_x_in, rot6.row_y_in, rot6.row_x_out, rot6.row_y_out);
+//	rot6.write_output_rows(A, rot6.row_x_out, rot6.row_y_out);
+
+	write_streams_to_matrix(A_rot, rot3.row_x_out, rot5.row_x_out, rot6.row_x_out, rot6.row_y_out);
+
 }
