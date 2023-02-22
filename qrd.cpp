@@ -12,11 +12,9 @@ Rotator::Rotator(int x, int y, int c){
 	Rotator::col = c;
 }
 
-//void Rotator::rows_to_stream(data_t A){
-//
-//}
+void Rotator::read_input_rows(data_t A[TAM][TAM], hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in){
+	// while(!row_x_in.full() || !row_y_in.full()){}
 
-void Rotator::read_input_rows(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in){
 	row_to_stream:
 	for(int j = 0; j < TAM; j++){
 		row_x_in << A[Rotator::row_x][j];
@@ -24,22 +22,23 @@ void Rotator::read_input_rows(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in,
 	}
 }
 
-void Rotator::givens_rotation(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out){
-	int n_iter = 15;
+void Rotator::givens_rotation(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in, hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out){
+	int n_iter = 30;
 	bool sign;
 	data_t x[TAM], y[TAM], x_sh[TAM], y_sh[TAM];
 	data_t aux;
 
+//	while(!row_x_in.full() || !row_y_in.full()){}
 	read_input_data:
-	for(int j = 0; j < TAM; j++){
+	for(int j = TAM - 1; j >= 0; j--){
 		row_x_in >> x[j];
 		row_y_in >> y[j];
 	}
 
 	// Bucle para seleccionar el signo adecuado, teniendo en cuenta los cuadrantes de las coordenadas
 	check_sign:
-	for(int s = 0; s < TAM; s++){
-		if(x[0] < 0){
+	for(int s = Rotator::col; s < TAM; s++){
+		if(x[Rotator::col] < 0){
 			if(y[s] >= 0){
 				aux = x[s];
 				x[s] = y[s];
@@ -52,12 +51,13 @@ void Rotator::givens_rotation(hls::stream<data_t> &row_x_in, hls::stream<data_t>
 		}
 	}
 
+	int y_sign = y[Rotator::col];
+
 	rotation_for:
 	for(int k = 0; k < n_iter; k++){
 		column_rotation_for:
 		for(int j = Rotator::col; j < TAM; j++){
-			// if(j < TAM){
-			if(y[Rotator::col] < 0){
+			if(y_sign < 0){
 				sign = true;
 			}else{
 				sign = false;
@@ -70,7 +70,6 @@ void Rotator::givens_rotation(hls::stream<data_t> &row_x_in, hls::stream<data_t>
 				x[j] = x[j] + (y[j] >> k);
 				y[j] = y[j] - (x[j] >> k);
 			}
-			// }
 		}
 	}
 
@@ -81,7 +80,7 @@ void Rotator::givens_rotation(hls::stream<data_t> &row_x_in, hls::stream<data_t>
 	}
 }
 
-void Rotator::write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out){
+void Rotator::write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out){
 	stream_to_rows:
 	for(int j = 0; j < TAM; j++){
 		row_x_out >> A_rot[Rotator::row_x][j];
@@ -89,12 +88,16 @@ void Rotator::write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t> &row
 	}
 }
 
-void write_streams_to_matrix(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out_1, hls::stream<data_t> &row_y_out_2, hls::stream<data_t> &row_x_out_3, hls::stream<data_t> &row_y_out_4){
+void write_streams_to_matrix(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out_1, hls::stream<data_t, 4> &row_y_out_2, hls::stream<data_t, 4> &row_x_out_3, hls::stream<data_t, 4> &row_y_out_4){
 	for(int j = 0; j < TAM; j++){
-		row_x_out_1 >> A_rot[0][j];
-		row_y_out_2 >> A_rot[1][j];
-		row_x_out_3 >> A_rot[2][j];
-		row_y_out_4 >> A_rot[3][j];
+//		row_x_out_1 >> A_rot[0][j];
+//		row_y_out_2 >> A_rot[1][j];
+//		row_x_out_3 >> A_rot[2][j];
+//		row_y_out_4 >> A_rot[3][j];
+		A_rot[0][j] = row_x_out_1.read();
+		A_rot[1][j] = row_y_out_2.read();
+		A_rot[2][j] = row_x_out_3.read();
+		A_rot[3][j] = row_y_out_4.read();
 	}
 }
 
@@ -103,7 +106,7 @@ void write_streams_to_matrix(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_
  *
  */
 
-void read_input(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, int i){
+void read_input(data_t A[TAM][TAM], hls::stream<data_t, 4> &row_x_in, hls::stream<data_t> &row_y_in, int i){
 	rows_to_stream:
 	for(int j = 0; j < TAM; j++){
 		row_x_in << A[i-1][j];
@@ -114,7 +117,7 @@ void read_input(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<d
 	// los datos se guardan en otro sentido [3, 2, 1, 0]
 }
 
-void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i) {
+void rot_givens(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in, hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out, int i) {
 	int n_iter = 30;
 	bool sign;
 	data_t x[TAM], y[TAM], x_sh[TAM], y_sh[TAM];
@@ -179,7 +182,7 @@ void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hl
 	}
 }
 
-void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i){
+void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out, int i){
 	stream_to_rows:
 	for(int j = 0; j < TAM; j++){
 		row_x_out >> A_rot[i-1][j];
@@ -192,7 +195,7 @@ void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::s
  *
  */
 
-void krnl_givens_rotation(data_t A[TAM][TAM]){
+void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]){
 	// Dataflow region
 	Rotator rot1(0, 1, 0);
 	Rotator rot2(2, 3, 0);
@@ -200,8 +203,6 @@ void krnl_givens_rotation(data_t A[TAM][TAM]){
 	Rotator rot4(1, 3, 1);
 	Rotator rot5(1, 2, 1);
 	Rotator rot6(2, 3, 2);
-
-	data_t A_rot[TAM][TAM];
 
 //	Rotator rot1(0, 1, 0);
 //	Rotator rot2(2, 3, 0);

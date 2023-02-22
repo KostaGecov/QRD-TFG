@@ -15,16 +15,16 @@ class Rotator{
 	public:
 		// after data is read from an hls::stream<>, it cannot be read again
 		// Stream es una FIFO, tenerlo en cuenta para los índices de lectura/escritura
-		hls::stream<data_t> row_x_in, row_y_in;
-		hls::stream<data_t> row_x_out, row_y_out;
+		hls::stream<data_t, 4> row_x_in, row_y_in;
+		hls::stream<data_t, 4> row_x_out, row_y_out;
 		int row_x, row_y, col; // posiciones de las filas a rotar. En teoría las columnas son las mismas en ambas filas
 
 	public:
 		Rotator();
 		Rotator(int x, int y, int c);
-		void read_input_rows(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in);
-		void givens_rotation(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
-		void write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
+		void read_input_rows(data_t A[TAM][TAM], hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in);
+		void givens_rotation(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in, hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out);
+		void write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out);
 //		void krnl_gr(data_t A[TAM][TAM]);
 
 };
@@ -32,18 +32,18 @@ class Rotator{
 
 void read_matrix(data_t A[TAM][TAM], int i);
 
-void read_input(data_t A[TAM][TAM], hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, int i);
+void read_input(data_t A[TAM][TAM], hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in, int i);
 
 //void rot_givens(data_t A[TAM][TAM]);
 //void rot_givens(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out);
 
-void rotation_giv(hls::stream<data_t> &row_x_in, hls::stream<data_t> &row_y_in, hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i);
+void rotation_giv(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in, hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out, int i);
 
-void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t> &row_x_out, hls::stream<data_t> &row_y_out, int i);
+void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out, int i);
 
 void krnl_gr(data_t A[TAM][TAM]);
 
-void krnl_givens_rotation(data_t A[TAM][TAM]);
+void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]);
 //void rot_givens_succ(Matrix &A, data_t X, data_t Y, bool &sign, int n_iter, int row_X, int row_Y, int col);*/
 
 #endif
