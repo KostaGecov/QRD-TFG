@@ -2,14 +2,18 @@
 #define _QRD_
 
 #define TAM 4
+#define N_ITER 15
 
 #include <ap_fixed.h>
+#include <ap_int.h>
 #include <hls_stream.h>
 
 
 // The more bits it has, more shifts can be performed later, so the approximation to 0 will be more precise
 // For bigger matrices, we need bigger data formats to be able to calculate the right result
 typedef ap_fixed<24, 10, AP_RND> data_t; // 24 bits fixed point data, 10 for integer value and 14 for decimals
+// data type used for indexes variables in for loops
+typedef ap_uint<4> index_t; // Max value inside code is 15 (n_iter)
 
 class Rotator{
 	public:

@@ -11,34 +11,51 @@ Rotator::Rotator(int x, int y, int c){
 	Rotator::row_y = y;
 	Rotator::col = c;
 }
-
+/*
 void Rotator::read_input_rows(data_t A[TAM][TAM], hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in){
 	// while(!row_x_in.full() || !row_y_in.full()){}
 
 	row_to_stream:
-	for(int j = 0; j < TAM; j++){
+	for(index_t j = 0; j < TAM; j++){
 		row_x_in << A[Rotator::row_x][j];
 		row_y_in << A[Rotator::row_y][j];
 	}
 }
+*/
+
+// Blocking streams Chat GPT code
+void Rotator::read_input_rows(data_t A[TAM][TAM], hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in) {
+    // Wait for the input streams to be ready
+//    while (!row_x_in.full() || !row_y_in.full());
+
+    // Read the rows from the input array and write them to the streams
+    for (index_t j = 0; j < TAM; j++) {
+        row_x_in.write_nb(A[Rotator::row_x][j]);
+        row_y_in.write_nb(A[Rotator::row_y][j]);
+    }
+
+//    for(index_t j = 0; j < TAM; j++){
+//    		row_x_in << A[Rotator::row_x][j];
+//    		row_y_in << A[Rotator::row_y][j];
+//	}
+}
+
 
 void Rotator::givens_rotation(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_in, hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out){
-	int n_iter = 30;
 	bool sign;
-	data_t x[TAM], y[TAM], x_sh[TAM], y_sh[TAM];
+	data_t x[TAM], y[TAM];
 	data_t aux;
 
-//	while(!row_x_in.full() || !row_y_in.full()){}
 	read_input_data:
-	for(int j = TAM - 1; j >= 0; j--){
-		row_x_in >> x[j];
-		row_y_in >> y[j];
+	for(index_t j = 0; j < TAM; j++){
+		#pragma HLS pipeline
+		x[j] = row_x_in.read();
+		y[j] = row_y_in.read();
 	}
 
-	// Bucle para seleccionar el signo adecuado, teniendo en cuenta los cuadrantes de las coordenadas
-	check_sign:
-	for(int s = Rotator::col; s < TAM; s++){
-		if(x[Rotator::col] < 0){
+	// Choose the right sign for the rotation, taking into account the quadrants of the coordinates
+	if (x[Rotator::col] < 0) {
+		for (index_t s = Rotator::col; s < TAM; s++) {
 			if(y[s] >= 0){
 				aux = x[s];
 				x[s] = y[s];
@@ -51,17 +68,17 @@ void Rotator::givens_rotation(hls::stream<data_t, 4> &row_x_in, hls::stream<data
 		}
 	}
 
-	int y_sign = y[Rotator::col];
-
-	rotation_for:
-	for(int k = 0; k < n_iter; k++){
+	iterations_for:
+	for(index_t k = 0; k < N_ITER; k++){
 		column_rotation_for:
-		for(int j = Rotator::col; j < TAM; j++){
-			if(y_sign < 0){
+		for(index_t j = Rotator::col; j < TAM; j++){
+			if(y[Rotator::col] < 0){
 				sign = true;
 			}else{
 				sign = false;
 			}
+			// Si la  Y es negativa, hay que sumarle para que se vaya acercando a cero
+			// y la X es al contrario
 			if(sign){
 				x[j] = x[j] - (y[j] >> k);
 				y[j] = y[j] + (x[j] >> k);
@@ -74,22 +91,86 @@ void Rotator::givens_rotation(hls::stream<data_t, 4> &row_x_in, hls::stream<data
 	}
 
 	write_output_data:
-	for(int j = 0; j < TAM; j++){
-		row_x_out << x[j];
-		row_y_out << y[j];
+	for(index_t j = 0; j < TAM; j++){
+		#pragma HLS pipeline
+		row_x_out.write(x[j]);
+		row_y_out.write(y[j]);
 	}
 }
 
+// Refactor Chat GPT code
+/*
+void Rotator::givens_rotation(hls::stream<data_t, 4>& row_x_in, hls::stream<data_t, 4>& row_y_in, hls::stream<data_t, 4>& row_x_out, hls::stream<data_t, 4>& row_y_out)
+{
+    const int n_iter = 15;
+    data_t x[TAM], y[TAM];
+    int y_sign;
+
+    // Read input data
+    for (index_t j = 0; j < TAM; j++) {
+        row_x_in >> x[j];
+        row_y_in >> y[j];
+    }
+
+    // Choose the right sign for the rotation, taking into account the quadrants of the coordinates
+    if (x[Rotator::col] < 0) {
+        for (index_t s = Rotator::col; s < TAM; s++) {
+            if (y[s] >= 0) {
+                std::swap(x[s], y[s]);
+                y[s] = -y[s];
+            } else {
+                x[s] = -x[s];
+                std::swap(x[s], y[s]);
+            }
+        }
+    }
+    y_sign = y[Rotator::col];
+
+    // Perform the rotation
+    for (index_t k = 0; k < n_iter; k++) {
+        const bool sign = (y_sign < 0);
+        for (index_t j = 0; j < TAM; j++) {
+            const data_t y_j_k = (y[j] >> k);
+            if (!sign) {
+                x[j] += y_j_k;
+                y[j] -= (x[j] >> k);
+            } else {
+                x[j] -= y_j_k;
+                y[j] += (x[j] >> k);
+            }
+        }
+    }
+
+    // Write output data
+    for (index_t j = 0; j < TAM; j++) {
+        row_x_out << x[j];
+        row_y_out << y[j];
+    }
+}
+*/
+
+/*
 void Rotator::write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out){
 	stream_to_rows:
-	for(int j = 0; j < TAM; j++){
+	for(index_t j = 0; j < TAM; j++){
 		row_x_out >> A_rot[Rotator::row_x][j];
 		row_y_out >> A_rot[Rotator::row_y][j];
 	}
 }
+*/
+
+// Blocking streams Chat GPT code
+void Rotator::write_output_rows(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out) {
+    // Read data from the input streams and write to the output matrix
+    stream_to_rows:
+    for (index_t j = 0; j < TAM; j++) {
+        row_x_out.read(A_rot[Rotator::row_x][j]);
+        row_y_out.read(A_rot[Rotator::row_y][j]);
+    }
+}
 
 void write_streams_to_matrix(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out_1, hls::stream<data_t, 4> &row_y_out_2, hls::stream<data_t, 4> &row_x_out_3, hls::stream<data_t, 4> &row_y_out_4){
-	for(int j = 0; j < TAM; j++){
+	for(index_t j = 0; j < TAM; j++){
 //		row_x_out_1 >> A_rot[0][j];
 //		row_y_out_2 >> A_rot[1][j];
 //		row_x_out_3 >> A_rot[2][j];
@@ -108,7 +189,7 @@ void write_streams_to_matrix(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row
 
 void read_input(data_t A[TAM][TAM], hls::stream<data_t, 4> &row_x_in, hls::stream<data_t> &row_y_in, int i){
 	rows_to_stream:
-	for(int j = 0; j < TAM; j++){
+	for(index_t j = 0; j < TAM; j++){
 		row_x_in << A[i-1][j];
 		row_y_in << A[i][j];
 //		row_x_in.write(A[i-1][j]);
@@ -124,13 +205,13 @@ void rot_givens(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_
 	data_t aux;
 
 	read_input_data:
-	for(int j = 0; j < TAM; j++){
+	for(index_t j = 0; j < TAM; j++){
 		row_x_in >> x[j];
 		row_y_in >> y[j];
 	}
 
 	check_sign:
-	for(int s = 0; s < TAM; s++){
+	for(index_t s = 0; s < TAM; s++){
 		if(x[0] < 0){
 			if(y[s] >= 0){
 				aux = x[s];
@@ -151,11 +232,11 @@ void rot_givens(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_
 
 	// con este for pretendo cambiar las coordenadas X/Y que quiero hacer 0, de las dos filas que me entran como argumentos
 	change_pivot_for:
-	for(int t = 0; t < i; t++){
+	for(index_t t = 0; t < i; t++){
 		rotation_for:
-		for(int k = 0; k < n_iter; k++){
+		for(index_t k = 0; k < n_iter; k++){
 			column_rotation_for:
-			for(int j = 0; j < TAM; j++){
+			for(index_t j = 0; j < TAM; j++){
 				if((t+j) < TAM){
 					if(y[t] < 0){
 						sign = true;
@@ -176,7 +257,7 @@ void rot_givens(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_
 	}
 
 	write_output_data:
-	for(int j = 0; j < TAM; j++){
+	for(index_t j = 0; j < TAM; j++){
 		row_x_out << x[j];
 		row_y_out << y[j];
 	}
@@ -184,7 +265,7 @@ void rot_givens(hls::stream<data_t, 4> &row_x_in, hls::stream<data_t, 4> &row_y_
 
 void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls::stream<data_t, 4> &row_y_out, int i){
 	stream_to_rows:
-	for(int j = 0; j < TAM; j++){
+	for(index_t j = 0; j < TAM; j++){
 		row_x_out >> A_rot[i-1][j];
 		row_y_out >> A_rot[i][j];
 	}
@@ -195,6 +276,7 @@ void write_output(data_t A_rot[TAM][TAM], hls::stream<data_t, 4> &row_x_out, hls
  *
  */
 
+/*
 void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]){
 	// Dataflow region
 	Rotator rot1(0, 1, 0);
@@ -204,40 +286,59 @@ void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]){
 	Rotator rot5(1, 2, 1);
 	Rotator rot6(2, 3, 2);
 
-//	Rotator rot1(0, 1, 0);
-//	Rotator rot2(2, 3, 0);
 	rot1.read_input_rows(A, rot1.row_x_in, rot1.row_y_in);
 	rot2.read_input_rows(A, rot2.row_x_in, rot2.row_y_in);
 	rot1.givens_rotation(rot1.row_x_in, rot1.row_y_in, rot1.row_x_out, rot1.row_y_out);
 	rot2.givens_rotation(rot2.row_x_in, rot2.row_y_in, rot2.row_x_out, rot2.row_y_out);
-//	rot1.write_output_rows(A, rot1.row_x_out, rot1.row_y_out);
-//	rot2.write_output_rows(A, rot2.row_x_out, rot2.row_y_out);
-//	write_streams_to_matrix(B, rot1.row_x_out, rot1.row_y_out, rot2.row_x_out, rot2.row_y_out);
 
-
-////	Rotator rot3(0, 2, 0);
-////	Rotator rot4(1, 3, 1);
-//	rot3.read_input_rows(A, rot3.row_x_in, rot3.row_y_in);
-//	rot4.read_input_rows(A, rot4.row_x_in, rot4.row_y_in);
 	rot3.givens_rotation(rot1.row_x_out, rot2.row_x_out, rot3.row_x_out, rot3.row_y_out);
 	rot4.givens_rotation(rot1.row_y_out, rot2.row_y_out, rot4.row_x_out, rot4.row_y_out);
-//	rot3.givens_rotation(rot3.row_x_in, rot3.row_y_in, rot3.row_x_out, rot3.row_y_out);
-//	rot4.givens_rotation(rot4.row_x_in, rot4.row_y_in, rot4.row_x_out, rot4.row_y_out);
-//	rot3.write_output_rows(A, rot3.row_x_out, rot3.row_y_out);
-//	rot4.write_output_rows(A, rot4.row_x_out, rot4.row_y_out);
 
-////	Rotator rot5(1, 2, 1);
-//	rot5.read_input_rows(A, rot5.row_x_in, rot5.row_y_in);
 	rot5.givens_rotation(rot4.row_x_out, rot3.row_y_out, rot5.row_x_out, rot5.row_y_out);
-//	rot5.givens_rotation(rot5.row_x_in, rot5.row_y_in, rot5.row_x_out, rot5.row_y_out);
-//	rot5.write_output_rows(A, rot5.row_x_out, rot5.row_y_out);
 
-////	Rotator rot6(2, 3, 2);
-//	rot6.read_input_rows(A, rot6.row_x_in, rot6.row_y_in);
 	rot6.givens_rotation(rot5.row_y_out, rot4.row_y_out, rot6.row_x_out, rot6.row_y_out);
-//	rot6.givens_rotation(rot6.row_x_in, rot6.row_y_in, rot6.row_x_out, rot6.row_y_out);
-//	rot6.write_output_rows(A, rot6.row_x_out, rot6.row_y_out);
 
 	write_streams_to_matrix(A_rot, rot3.row_x_out, rot5.row_x_out, rot6.row_x_out, rot6.row_y_out);
-
 }
+*/
+
+// Chat GPT refactored dataflow
+void krnl_givens_rotation(data_t A[TAM][TAM], data_t A_rot[TAM][TAM]) {
+    // Dataflow region
+	Rotator rot1(0, 1, 0);
+	Rotator rot2(2, 3, 0);
+	Rotator rot3(0, 2, 0);
+	Rotator rot4(1, 3, 1);
+	Rotator rot5(1, 2, 1);
+	Rotator rot6(2, 3, 2);
+
+    // Read input rows and perform Givens rotations
+	rot1.read_input_rows(A, rot1.row_x_in, rot1.row_y_in);
+//	for(index_t j = 0; j < TAM; j++)
+//		std::cout << rot1.row_x_in.read() << "; ";
+
+	rot1.givens_rotation(rot1.row_x_in, rot1.row_y_in, rot1.row_x_out, rot1.row_y_out);
+//	for(index_t j = 0; j < TAM; j++)
+//		std::cout << rot1.row_x_out.read() << "; ";
+//	for(index_t j = 0; j < TAM; j++)
+//		std::cout << rot1.row_y_out.read() << "; ";
+
+	rot2.read_input_rows(A, rot2.row_x_in, rot2.row_y_in);
+	rot2.givens_rotation(rot2.row_x_in, rot2.row_y_in, rot2.row_x_out, rot2.row_y_out);
+
+    rot3.givens_rotation(rot1.row_x_out, rot2.row_x_out, rot3.row_x_out, rot3.row_y_out);
+    rot4.givens_rotation(rot1.row_y_out, rot2.row_y_out, rot4.row_x_out, rot4.row_y_out);
+    rot5.givens_rotation(rot4.row_x_out, rot3.row_y_out, rot5.row_x_out, rot5.row_y_out);
+    rot6.givens_rotation(rot5.row_y_out, rot4.row_y_out, rot6.row_x_out, rot6.row_y_out);
+
+    // Write output streams to matrix A_rot
+    for (int j = 0; j < TAM; j++) {
+        for (int i = 0; i < 4; i++) {
+            if (i == 0) A_rot[i][j] = rot3.row_x_out.read();
+            else if (i == 1) A_rot[i][j] = rot5.row_x_out.read();
+            else if (i == 2) A_rot[i][j] = rot6.row_x_out.read();
+            else A_rot[i][j] = rot6.row_y_out.read();
+        }
+    }
+}
+
