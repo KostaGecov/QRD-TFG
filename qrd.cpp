@@ -96,7 +96,7 @@ write_output_data:
 // Dataflow function
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                           data_t A_tiled_2[TAM_TILED][TAM], index_t type_op,
-                          index_t col_offset) {
+                          index_t col_offset, index_t n_iter) {
     if (type_op == GEQRT) {
     GEQRT_OPERATION:
         // Rotators for GEQRT operation
