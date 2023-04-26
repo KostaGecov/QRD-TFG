@@ -157,7 +157,7 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         rot15.givens_rotation(rot14.row_y_out, rot13.row_y_out, rot15.row_x_out,
                               rot15.row_y_out, rot15.col + col_offset);
 
-        // Write output streams to matrix A_tiled_1
+    // Write output streams to matrix A_tiled_1
     write_output_streams_col_for:
         for (index_t c = 0; c < TAM; c++) {
         write_output_streams_row_for:
