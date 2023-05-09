@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+const data_t SCALE_FACTOR = 0.6072529;
+
 Rotator::Rotator(int x, int y, int c) {
     Rotator::row_x = x;  // Realmente no hace falta
     Rotator::row_y = y;  // Realmente no hace falta
@@ -9,7 +11,7 @@ Rotator::Rotator(int x, int y, int c) {
 }
 
 // Read input rows using blocking write to streams
-void read_input_rows(data_t A[TAM_TILED][TAM],
+void read_input_rows(data_t Matrix[TAM_TILED][TAM],
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
                      hls::stream<data_t, TAM>& row_in_3,
@@ -19,12 +21,12 @@ void read_input_rows(data_t A[TAM_TILED][TAM],
 // Read the rows from the input array and write them to the streams
 read_input_rows_for:
     for (index_t j = 0; j < TAM; j++) {
-        row_in_1.write(A[0][j]);
-        row_in_2.write(A[1][j]);
-        row_in_3.write(A[2][j]);
-        row_in_4.write(A[3][j]);
-        row_in_5.write(A[4][j]);
-        row_in_6.write(A[5][j]);
+        row_in_1.write(Matrix[0][j]);
+        row_in_2.write(Matrix[1][j]);
+        row_in_3.write(Matrix[2][j]);
+        row_in_4.write(Matrix[3][j]);
+        row_in_5.write(Matrix[4][j]);
+        row_in_6.write(Matrix[5][j]);
     }
 }
 
@@ -85,7 +87,11 @@ iterations_for:
             // do: operaciones opuestas? No
         }
     }
-
+scale_factor_for:
+    for (index_t j = col_rotator; j < TAM; j++) {
+        x[j] = x[j] * SCALE_FACTOR;
+        y[j] = y[j] * SCALE_FACTOR;
+    }
 write_output_data:
     for (index_t j = 0; j < TAM; j++) {
         row_x_out.write(x[j]);
@@ -95,8 +101,8 @@ write_output_data:
 
 // Dataflow function
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
-                          data_t A_tiled_2[TAM_TILED][TAM], index_t type_op,
-                          index_t col_offset, index_t n_iter) {
+                          data_t A_tiled_2[TAM_TILED][TAM],
+                          index_t type_op, index_t col_offset, index_t n_iter) {
     if (type_op == GEQRT) {
     GEQRT_OPERATION:
         // Rotators for GEQRT operation

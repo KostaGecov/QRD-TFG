@@ -21,9 +21,8 @@
 // The more bits it has, more shifts can be performed later, so the
 // approximation to 0 will be more precise For bigger matrices, we need bigger
 // data formats to be able to calculate the right result
-typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND>
-    data_t;  // 24 bits fixed point data, 10 for integer value and 14 for
-             // decimals
+typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;  // 24 bits fixed point data, 10 for integer value and 14 for
+                                                             // decimals
 
 // data type used for indexes variables in for loops
 typedef ap_uint<TAM_INDEX> index_t;  // Max value inside code is 15 (n_iter)
