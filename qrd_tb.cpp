@@ -97,22 +97,22 @@ num_operations_for:
         if (i % 2 == 0) {
             switch (n_iter_GEQRT) {
                 case 4:
-                    krnl_givens_rotation(A_1, A_rot, GEQRT, col_offset, n_iter_GEQRT);
-                    krnl_givens_rotation(A_2, A_rot, GEQRT, col_offset, n_iter_GEQRT);
-                    krnl_givens_rotation(A_3, A_rot, GEQRT, col_offset, n_iter_GEQRT);
-                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset, n_iter_GEQRT);
+                    krnl_givens_rotation(A_1, A_rot, GEQRT, col_offset);
+                    krnl_givens_rotation(A_2, A_rot, GEQRT, col_offset);
+                    krnl_givens_rotation(A_3, A_rot, GEQRT, col_offset);
+                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset);
                     break;
                 case 3:
-                    krnl_givens_rotation(A_2, A_rot, GEQRT, col_offset, n_iter_GEQRT);
-                    krnl_givens_rotation(A_3, A_rot, GEQRT, col_offset, n_iter_GEQRT);
-                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset, n_iter_GEQRT);
+                    krnl_givens_rotation(A_2, A_rot, GEQRT, col_offset);
+                    krnl_givens_rotation(A_3, A_rot, GEQRT, col_offset);
+                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset);
                     break;
                 case 2:
-                    krnl_givens_rotation(A_3, A_rot, GEQRT, col_offset, n_iter_GEQRT);
-                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset, n_iter_GEQRT);
+                    krnl_givens_rotation(A_3, A_rot, GEQRT, col_offset);
+                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset);
                     break;
                 case 1:
-                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset, n_iter_GEQRT);
+                    krnl_givens_rotation(A_4, A_rot, GEQRT, col_offset);
                     break;
                 default:
                     break;
@@ -131,18 +131,18 @@ num_operations_for:
         } else {
             switch (n_iter_TTQRT) {
                 case 3:
-                    krnl_givens_rotation(A_1, A_2, TTQRT, 0, n_iter_TTQRT);
-                    krnl_givens_rotation(A_3, A_4, TTQRT, 0, n_iter_TTQRT);
+                    krnl_givens_rotation(A_1, A_2, TTQRT, 0);
+                    krnl_givens_rotation(A_3, A_4, TTQRT, 0);
 
-                    krnl_givens_rotation(A_1, A_3, TTQRT, 0, n_iter_TTQRT);
+                    krnl_givens_rotation(A_1, A_3, TTQRT, 0);
                     break;
                 case 2:
-                    krnl_givens_rotation(A_2, A_3, TTQRT, 0, n_iter_TTQRT);
+                    krnl_givens_rotation(A_2, A_3, TTQRT, 0);
 
-                    krnl_givens_rotation(A_2, A_4, TTQRT, 0, n_iter_TTQRT);
+                    krnl_givens_rotation(A_2, A_4, TTQRT, 0);
                     break;
                 case 1:
-                    krnl_givens_rotation(A_3, A_4, TTQRT, 0, n_iter_TTQRT);
+                    krnl_givens_rotation(A_3, A_4, TTQRT, 0);
                     break;
 
                 default:
