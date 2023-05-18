@@ -1,7 +1,7 @@
 import pprint
 import numpy
-import scipy
-import scipy.linalg   # SciPy Linear Algebra Library
+
+numpy.set_printoptions(precision=4, linewidth=300)
 
 M = [
     [3, 2, -1, 4, -7, 8, 3, 2, -1, 4, -7, 8,3, 2, -1, 4, -7, 8, 3, 2, -1, 4, -7, 8],
@@ -30,23 +30,18 @@ M = [
     [4, -2, 3, 7, 2, 2, 4, -2, 3, 7, 2, 2,4, -2, 3, 7, 2, 2, 4, -2, 3, 7, 2, 2]
 ]
 
+R_Vitis = numpy.loadtxt("R_matrix.txt", dtype=float)
+print('\nR_Vitis:\n',R_Vitis)
 
-# A = scipy.array([[12, -51, 4], [6, 167, -68], [-4, 24, -41]])  # From the Wikipedia Article on QR Decomposition
-A = numpy.array(M)  # From the Wikipedia Article on QR Decomposition
+A = numpy.array(numpy.around(M, decimals=10))  
 Q, R = numpy.linalg.qr(A)
-Q = numpy.array(Q)
-R = numpy.array(R)
-""" print ("A:")
-pprint.pformat(A)
-pprint.pprint(A)
 
-print ("Q:")
-pprint.pprint(Q)
-
-print ("R:")
-pprint.pprint(R) """
-
+Q = numpy.array(numpy.around(Q, decimals=10))
+R = numpy.array(numpy.around(R, decimals=10))
 
 print('\nA:\n', A)
 print('\nQ:\n', Q)
 print('\nR:\n', R)
+
+A_Vitis = numpy.around((numpy.dot(Q, R_Vitis)), decimals = 10)
+print('\nA_Vitis:\n', A_Vitis)
