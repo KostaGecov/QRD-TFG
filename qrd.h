@@ -2,13 +2,13 @@
 #define _QRD_
 
 #define TAM_INDEX 6
-#define FIXED_POINT 24
+#define FIXED_POINT 28
 #define FX_POINT_INT 10
 
 #define TAM_TILED 6
 #define TAM 24
 #define NUM_GEQRT_OP 4  // (TAM / TAM_TILED)
-#define N_ITER 30
+#define N_ITER 40
 #define NUM_OPERACIONES 9  //(7 + 2)
 
 #define GEQRT 0
