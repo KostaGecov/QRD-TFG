@@ -1,5 +1,4 @@
 #include "qrd.h"
-
 #include <iostream>
 
 const data_t SCALE_FACTOR = 0.6072529;

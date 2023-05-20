@@ -53,7 +53,7 @@ void read_input_rows(data_t A[TAM][TAM],
                      hls::stream<data_t, TAM> &row_in_4,
                      hls::stream<data_t, TAM> &row_in_5,
                      hls::stream<data_t, TAM> &row_in_6);
-extern "C"{
+extern "C" {
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM], data_t A_tiled_2[TAM_TILED][TAM],
                           index_t type_op, index_t col_offset);
 }
