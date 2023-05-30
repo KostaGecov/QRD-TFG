@@ -46,5 +46,14 @@ print('\nA:\n', A)
 print('\nQ:\n', Q)
 print('\nR:\n', R)
 
+with open('data_in.txt', 'w') as dataIn:
+    for row in A:
+        dataIn.write(' '.join([str(a) for a in row]) + '\n')
+        
+    
+with open('data_out.txt', 'w') as dataOut:
+    for row in R:
+        dataOut.write(' '.join([str(a) for a in row]) + '\n')
+
 A_Reconstructed = numpy.around((numpy.dot(Q, R_Vitis)), decimals = 15)
 print('\nA_Reconstructed:\n', A_Reconstructed)

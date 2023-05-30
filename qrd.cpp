@@ -1,4 +1,5 @@
 #include "qrd.h"
+
 #include <iostream>
 
 const data_t SCALE_FACTOR = 0.6072529;
@@ -98,6 +99,7 @@ write_output_data:
     }
 }
 
+extern "C" {
 // Dataflow function
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                           data_t A_tiled_2[TAM_TILED][TAM],
@@ -327,4 +329,5 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
             }
         }
     }
+}
 }
