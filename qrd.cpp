@@ -18,9 +18,12 @@ void read_input_rows(data_t Matrix[TAM_TILED][TAM],
                      hls::stream<data_t, TAM>& row_in_4,
                      hls::stream<data_t, TAM>& row_in_5,
                      hls::stream<data_t, TAM>& row_in_6) {
+#pragma HLS INLINE off
+
 // Read the rows from the input array and write them to the streams
 read_input_rows_for:
     for (index_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT avg=24 max=24 min=0
         row_in_1.write(Matrix[0][j]);
         row_in_2.write(Matrix[1][j]);
         row_in_3.write(Matrix[2][j]);
@@ -37,12 +40,14 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& row_x_out,
                               hls::stream<data_t, TAM>& row_y_out,
                               int col_rotator) {
+#pragma HLS INLINE off
     bool sign;
     data_t x[TAM], y[TAM];
     data_t aux;
 
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT avg=24 max=24 min=0
         x[j] = row_x_in.read();
         y[j] = row_y_in.read();
     }
@@ -51,7 +56,9 @@ read_input_data:
     // of the coordinates
     if (x[col_rotator] < 0) {
     sign_for:
-        for (index_t s = col_rotator; s < TAM; s++) {  // Debo cambiar el signo a los 24 elementos de la fila
+        for (index_t s = col_rotator; s < TAM; s++) {
+#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+ // Debo cambiar el signo a los 24 elementos de la fila
             if (y[s] >= 0) {
                 aux = x[s];
                 x[s] = y[s];
@@ -66,8 +73,10 @@ read_input_data:
 
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
+#pragma HLS LOOP_TRIPCOUNT max=30 min=0
     column_rotation_for:
         for (index_t j = col_rotator; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max=24 min=0
             if (y[col_rotator] < 0) {
                 sign = true;
             } else {
@@ -87,13 +96,17 @@ iterations_for:
             // do: operaciones opuestas? No
         }
     }
+
 scale_factor_for:
     for (index_t j = col_rotator; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max=24 min=0
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
     }
+
 write_output_data:
     for (index_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max=24 min=0
         row_x_out.write(x[j]);
         row_y_out.write(y[j]);
     }
@@ -104,6 +117,12 @@ extern "C" {
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                           data_t A_tiled_2[TAM_TILED][TAM],
                           index_t type_op, index_t col_offset) {
+
+#pragma HLS ARRAY_PARTITION dim=2 factor=6 type=block variable=A_tiled_1
+#pragma HLS ARRAY_PARTITION dim=2 factor=6 type=block variable=A_tiled_2
+#pragma HLS DATAFLOW
+#pragma HLS TOP name=krnl_givens_rotation
+
     if (type_op == GEQRT) {
     GEQRT_OPERATION:
         // Rotators for GEQRT operation
@@ -167,8 +186,12 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
     // Write output streams to matrix A_tiled_1
     write_output_streams_col_for:
         for (index_t c = 0; c < TAM; c++) {
+#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+
         write_output_streams_row_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
+#pragma HLS LOOP_TRIPCOUNT max=6 min=0
+
                 if (r == 0)
                     A_tiled_1[r][c] = rot6.row_x_out.read();
                 else if (r == 1)
@@ -294,8 +317,12 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
     // Write output streams to matrix A_tiled_1
     write_output_streams_col_TTQRT_for:
         for (index_t c = 0; c < TAM; c++) {
+#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+
         write_output_streams_row_TTQRT_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
+#pragma HLS LOOP_TRIPCOUNT max=6 min=0
+
                 if (r == 0)
                     A_tiled_1[r][c] = Rot21_TT.row_x_out.read();
                 else if (r == 1)
@@ -312,8 +339,12 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         }
     write_output_streams_col_TTQRT_y_for:
         for (index_t c = 0; c < TAM; c++) {
+#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+
         write_output_streams_row_TTQRT_y_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
+#pragma HLS LOOP_TRIPCOUNT max=6 min=0
+
                 if (r == 0)
                     A_tiled_2[r][c] = Rot21_TT.row_y_out.read();
                 else if (r == 1)
