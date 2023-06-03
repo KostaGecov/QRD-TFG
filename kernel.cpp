@@ -1,6 +1,60 @@
-#include "qrd.h"
-
+#include <ap_fixed.h>
+#include <ap_int.h>
+#include <hls_stream.h>
 #include <iostream>
+
+#define TAM_INDEX 6
+#define FIXED_POINT 28
+#define FX_POINT_INT 10
+
+#define TAM_TILED 6
+#define TAM 24
+#define NUM_GEQRT_OP 4  // (TAM / TAM_TILED)
+#define N_ITER 40
+#define NUM_OPERACIONES 9  //(7 + 2)
+
+#define GEQRT 0
+#define TTQRT 1
+
+// The more bits it has, more shifts can be performed later, so the
+// approximation to 0 will be more precise For bigger matrices, we need bigger
+// data formats to be able to calculate the right result
+typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;  // 24 bits fixed point data, 10 for integer value and 14 for
+                                                             // decimals
+
+// data type used for indexes variables in for loops
+typedef ap_uint<TAM_INDEX> index_t;  // Max value inside code is 15 (n_iter)
+
+class Rotator {
+   public:
+    // after data is read from an hls::stream<>, it cannot be read again
+    // Stream is FIFO type
+    hls::stream<data_t, TAM> row_x_in, row_y_in;
+    hls::stream<data_t, TAM> row_x_out, row_y_out;
+
+    int row_x, row_y, col;  // posiciones de las filas a rotar. En teor�a las
+                            // columnas son las mismas en ambas filas
+
+   public:
+    // Rotator();
+    Rotator(int x, int y, int c);
+    void givens_rotation(hls::stream<data_t, TAM>& row_x_in,
+                         hls::stream<data_t, TAM>& row_y_in,
+                         hls::stream<data_t, TAM>& row_x_out,
+                         hls::stream<data_t, TAM>& row_y_out, int col_rotator);
+};
+
+void read_input_rows(data_t A[TAM][TAM],
+                     hls::stream<data_t, TAM>& row_in_1,
+                     hls::stream<data_t, TAM>& row_in_2,
+                     hls::stream<data_t, TAM>& row_in_3,
+                     hls::stream<data_t, TAM>& row_in_4,
+                     hls::stream<data_t, TAM>& row_in_5,
+                     hls::stream<data_t, TAM>& row_in_6);
+extern "C" {
+void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM], data_t A_tiled_2[TAM_TILED][TAM],
+                          index_t type_op, index_t col_offset);
+}
 
 const data_t SCALE_FACTOR = 0.6072529;
 
@@ -23,7 +77,7 @@ void read_input_rows(data_t Matrix[TAM_TILED][TAM],
 // Read the rows from the input array and write them to the streams
 read_input_rows_for:
     for (index_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg=24 max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT avg = 24 max = 24 min = 0
         row_in_1.write(Matrix[0][j]);
         row_in_2.write(Matrix[1][j]);
         row_in_3.write(Matrix[2][j]);
@@ -47,7 +101,7 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
 
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg=24 max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT avg = 24 max = 24 min = 0
         x[j] = row_x_in.read();
         y[j] = row_y_in.read();
     }
@@ -57,8 +111,8 @@ read_input_data:
     if (x[col_rotator] < 0) {
     sign_for:
         for (index_t s = col_rotator; s < TAM; s++) {
-#pragma HLS LOOP_TRIPCOUNT max=24 min=0
- // Debo cambiar el signo a los 24 elementos de la fila
+#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+            // Debo cambiar el signo a los 24 elementos de la fila
             if (y[s] >= 0) {
                 aux = x[s];
                 x[s] = y[s];
@@ -73,10 +127,10 @@ read_input_data:
 
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
-#pragma HLS LOOP_TRIPCOUNT max=30 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 30 min = 0
     column_rotation_for:
         for (index_t j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
             if (y[col_rotator] < 0) {
                 sign = true;
             } else {
@@ -99,14 +153,14 @@ iterations_for:
 
 scale_factor_for:
     for (index_t j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
     }
 
 write_output_data:
     for (index_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
         row_x_out.write(x[j]);
         row_y_out.write(y[j]);
     }
@@ -117,11 +171,10 @@ extern "C" {
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                           data_t A_tiled_2[TAM_TILED][TAM],
                           index_t type_op, index_t col_offset) {
-
-#pragma HLS ARRAY_PARTITION dim=2 factor=6 type=block variable=A_tiled_1
-#pragma HLS ARRAY_PARTITION dim=2 factor=6 type=block variable=A_tiled_2
+#pragma HLS ARRAY_PARTITION dim = 2 factor = 6 type = block variable = A_tiled_1
+#pragma HLS ARRAY_PARTITION dim = 2 factor = 6 type = block variable = A_tiled_2
 #pragma HLS DATAFLOW
-#pragma HLS TOP name=krnl_givens_rotation
+#pragma HLS TOP name = krnl_givens_rotation
 
     if (type_op == GEQRT) {
     GEQRT_OPERATION:
@@ -186,11 +239,11 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
     // Write output streams to matrix A_tiled_1
     write_output_streams_col_for:
         for (index_t c = 0; c < TAM; c++) {
-#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
 
         write_output_streams_row_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
-#pragma HLS LOOP_TRIPCOUNT max=6 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 6 min = 0
 
                 if (r == 0)
                     A_tiled_1[r][c] = rot6.row_x_out.read();
@@ -317,11 +370,11 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
     // Write output streams to matrix A_tiled_1
     write_output_streams_col_TTQRT_for:
         for (index_t c = 0; c < TAM; c++) {
-#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
 
         write_output_streams_row_TTQRT_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
-#pragma HLS LOOP_TRIPCOUNT max=6 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 6 min = 0
 
                 if (r == 0)
                     A_tiled_1[r][c] = Rot21_TT.row_x_out.read();
@@ -339,11 +392,11 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         }
     write_output_streams_col_TTQRT_y_for:
         for (index_t c = 0; c < TAM; c++) {
-#pragma HLS LOOP_TRIPCOUNT max=24 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
 
         write_output_streams_row_TTQRT_y_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
-#pragma HLS LOOP_TRIPCOUNT max=6 min=0
+#pragma HLS LOOP_TRIPCOUNT max = 6 min = 0
 
                 if (r == 0)
                     A_tiled_2[r][c] = Rot21_TT.row_y_out.read();

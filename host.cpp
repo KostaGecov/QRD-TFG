@@ -1,9 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-// OpenCL utility layer include
-#include "qrd.h"
-#include "xcl2.hpp"
+#include "kernel.cpp"
 
 static index_t col_offset = 0;    // offset to access the right column for GEQRT operation
 static index_t n_iter_GEQRT = 4;  // 4 iteraciones iniciales, para controlar el
