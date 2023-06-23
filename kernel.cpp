@@ -7,11 +7,10 @@
 #define FIXED_POINT 28
 #define FX_POINT_INT 10
 
-#define TAM_TILED 6
-#define TAM 24
-#define NUM_GEQRT_OP 4  // (TAM / TAM_TILED)
+#define TAM_TILED 32
+#define TAM 256
 #define N_ITER 40
-#define NUM_OPERACIONES 9  //(7 + 2)
+#define NUM_OPERACIONES 17  //(15 + 2(offset))
 
 #define GEQRT 0
 #define TTQRT 1

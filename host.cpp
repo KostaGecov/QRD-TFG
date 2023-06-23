@@ -3,14 +3,25 @@
 
 #include "kernel.cpp"
 
-static index_t col_offset_geqrt = 0;    // offset to access the right column for GEQRT operation
-static index_t col_offset_ttqrt = 0;    // offset to access the right column for TTQRT operation
-static index_t n_iter_GEQRT = 4;  // 4 iteraciones iniciales, para controlar el
-                                  // nº de operaciones GEQRT en cada paso
-static index_t n_iter_TTQRT = 3;  // 3 iteraciones iniciales, para controlar el nº de operaciones TTQRT en
-                                  // cada paso para i=2, 4; para i = 4, 3; para i = 6, 2; para i = 8, 1;
-
 int main() {
+    /**
+     * offset to access the right column for GEQRT operation
+     */
+    static index_t col_offset_geqrt = 0;
+    /**
+     * offset to access the right column for TTQRT operation
+     */
+    static index_t col_offset_ttqrt = 0;
+    /**
+     * 4 iteraciones iniciales, para controlar el nº de operaciones GEQRT en cada paso
+     */
+    static index_t n_iter_GEQRT = 8;
+    /**
+     * 3 iteraciones iniciales, para controlar el nº de operaciones TTQRT en cada paso
+     *  para i=2, 4; para i = 4, 3; para i = 6, 2; para i = 8, 1;
+     */
+    static index_t n_iter_TTQRT = 7;
+
     data_t A[TAM][TAM];
     data_t A_aux[TAM][TAM];
 
@@ -18,6 +29,11 @@ int main() {
     data_t A_2[TAM_TILED][TAM];
     data_t A_3[TAM_TILED][TAM];
     data_t A_4[TAM_TILED][TAM];
+    data_t A_5[TAM_TILED][TAM];
+    data_t A_6[TAM_TILED][TAM];
+    data_t A_7[TAM_TILED][TAM];
+    data_t A_8[TAM_TILED][TAM];
+
     std::ifstream data_in("data_in.dat");
 
     if (!data_in.is_open()) {
@@ -42,6 +58,14 @@ divide_matrix_row_for:
                 A_3[r - TAM_TILED * 2][c] = A[r][c];
             } else if (r >= TAM_TILED * 3 && r < TAM_TILED * 4) {
                 A_4[r - TAM_TILED * 3][c] = A[r][c];
+            } else if (r >= TAM_TILED * 4 && r < TAM_TILED * 5) {
+                A_5[r - TAM_TILED * 4][c] = A[r][c];
+            } else if (r >= TAM_TILED * 5 && r < TAM_TILED * 6) {
+                A_6[r - TAM_TILED * 5][c] = A[r][c];
+            } else if (r >= TAM_TILED * 6 && r < TAM_TILED * 7) {
+                A_7[r - TAM_TILED * 6][c] = A[r][c];
+            } else if (r >= TAM_TILED * 7 && r < TAM_TILED * 8) {
+                A_8[r - TAM_TILED * 7][c] = A[r][c];
             }
         }
     }
@@ -51,23 +75,57 @@ num_operations_for:
         // GEQRT operation
         if (i % 2 == 0) {
             switch (n_iter_GEQRT) {
-                case 4:
+                case 8:
                     krnl_givens_rotation(A_1, A_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_2, A_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_3, A_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_4, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
                     break;
-                case 3:
+                case 7:
                     krnl_givens_rotation(A_2, A_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_3, A_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_4, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
                     break;
-                case 2:
+                case 6:
                     krnl_givens_rotation(A_3, A_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_4, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
+                    break;
+                case 5:
+                    krnl_givens_rotation(A_4, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
+                    break;
+                case 4:
+                    krnl_givens_rotation(A_5, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
+                    break;
+                case 3:
+                    krnl_givens_rotation(A_6, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
+                    break;
+                case 2:
+                    krnl_givens_rotation(A_7, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
                     break;
                 case 1:
-                    krnl_givens_rotation(A_4, A_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, GEQRT, col_offset_geqrt);
                     break;
                 default:
                     break;
@@ -77,21 +135,48 @@ num_operations_for:
 
         } else {
             switch (n_iter_TTQRT) {
-                case 3:
+                case 7:
                     krnl_givens_rotation(A_1, A_2, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_3, A_4, TTQRT, col_offset_ttqrt);
-
+                    krnl_givens_rotation(A_5, A_6, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_7, A_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_1, A_3, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_5, A_7, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_1, A_5, TTQRT, col_offset_ttqrt);
+                    break;
+                case 6:
+                    krnl_givens_rotation(A_2, A_3, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_4, A_5, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_6, A_7, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_2, A_8, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_2, A_4, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_2, A_6, TTQRT, col_offset_ttqrt);
+                    break;
+                case 5:
+                    krnl_givens_rotation(A_3, A_4, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_5, A_6, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_7, A_8, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_3, A_5, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_3, A_7, TTQRT, col_offset_ttqrt);
+                    break;
+                case 4:
+                    krnl_givens_rotation(A_4, A_5, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_6, A_7, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_4, A_6, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_4, A_8, TTQRT, col_offset_ttqrt);
+                    break;
+                case 3:
+                    krnl_givens_rotation(A_5, A_6, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_7, A_8, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_5, A_7, TTQRT, col_offset_ttqrt);
                     break;
                 case 2:
-                    krnl_givens_rotation(A_2, A_3, TTQRT, col_offset_ttqrt);
-
-                    krnl_givens_rotation(A_2, A_4, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_6, A_7, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_6, A_8, TTQRT, col_offset_ttqrt);
                     break;
                 case 1:
-                    krnl_givens_rotation(A_3, A_4, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_7, A_8, TTQRT, col_offset_ttqrt);
                     break;
-
                 default:
                     break;
             }
@@ -113,6 +198,14 @@ write_sol_to_matrix_row_for:
                 A[r][c] = A_3[r - TAM_TILED * 2][c];
             } else if (r >= TAM_TILED * 3 && r < TAM_TILED * 4) {
                 A[r][c] = A_4[r - TAM_TILED * 3][c];
+            } else if (r >= TAM_TILED * 4 && r < TAM_TILED * 5) {
+                A[r][c] = A_5[r - TAM_TILED * 4][c];
+            } else if (r >= TAM_TILED * 5 && r < TAM_TILED * 6) {
+                A[r][c] = A_6[r - TAM_TILED * 5][c];
+            } else if (r >= TAM_TILED * 6 && r < TAM_TILED * 7) {
+                A[r][c] = A_7[r - TAM_TILED * 6][c];
+            } else if (r >= TAM_TILED * 7 && r < TAM_TILED * 8) {
+                A[r][c] = A_8[r - TAM_TILED * 7][c];
             }
         }
     }
