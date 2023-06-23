@@ -1,6 +1,7 @@
 #include <ap_fixed.h>
 #include <ap_int.h>
 #include <hls_stream.h>
+
 #include <iostream>
 
 #define TAM_INDEX 6
@@ -15,14 +16,25 @@
 #define GEQRT 0
 #define TTQRT 1
 
-// The more bits it has, more shifts can be performed later, so the
-// approximation to 0 will be more precise For bigger matrices, we need bigger
-// data formats to be able to calculate the right result
-typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;  // 24 bits fixed point data, 10 for integer value and 14 for
-                                                             // decimals
+/**
+ * @brief 24 bits fixed point data, 10 for integer value and 14 for decimals.
+ * The more bits it has, more shifts can be performed later, so the approximation to 0 will be more precise.
+ * For bigger matrices, we need bigger data formats to be able to calculate the right result.
+ *
+ */
+typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;
 
-// data type used for indexes variables in for loops
-typedef ap_uint<TAM_INDEX> index_t;  // Max value inside code is 15 (n_iter)
+/**
+ * @brief data type used for indexes variables in for loops
+ *
+ */
+typedef ap_uint<TAM_INDEX> index_t;
+
+/**
+ * @brief Scale factor to compensate rotations
+ *
+ */
+const data_t SCALE_FACTOR = 0.6072529;
 
 class Rotator {
    public:
@@ -35,27 +47,65 @@ class Rotator {
                             // columnas son las mismas en ambas filas
 
    public:
-    // Rotator();
+    /**
+     * @brief Construct a new Rotator object
+     *
+     * @param x
+     * @param y
+     * @param c
+     */
     Rotator(int x, int y, int c);
+
+    /**
+     * @brief Perform a givens rotation to two input streams and stores the results in other two streams
+     *
+     * @param row_x_in
+     * @param row_y_in
+     * @param row_x_out
+     * @param row_y_out
+     * @param col_rotator From where the rotation should start
+     */
     void givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                          hls::stream<data_t, TAM>& row_y_in,
                          hls::stream<data_t, TAM>& row_x_out,
                          hls::stream<data_t, TAM>& row_y_out, int col_rotator);
 };
 
+/**
+ * @brief Read input rows using blocking write to streams
+ *
+ * @param A
+ * @param row_in_1
+ * @param row_in_2
+ * @param row_in_3
+ * @param row_in_4
+ * @param row_in_5
+ * @param row_in_6
+ * @param row_in_7
+ * @param row_in_8
+ */
 void read_input_rows(data_t A[TAM][TAM],
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
                      hls::stream<data_t, TAM>& row_in_3,
                      hls::stream<data_t, TAM>& row_in_4,
                      hls::stream<data_t, TAM>& row_in_5,
-                     hls::stream<data_t, TAM>& row_in_6);
+                     hls::stream<data_t, TAM>& row_in_6,
+                     hls::stream<data_t, TAM>& row_in_7,
+                     hls::stream<data_t, TAM>& row_in_8);
+
 extern "C" {
+/**
+ * @brief Performs the givens rotation of the tiles. It is the top function
+ *
+ * @param A_tiled_1
+ * @param A_tiled_2 In case 'type_op' is equal to GEQRT, this parameter is not used
+ * @param type_op It can be GEQRT or TTQRT
+ * @param col_offset Offset used to avoid reading the positions that had already become 0
+ */
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM], data_t A_tiled_2[TAM_TILED][TAM],
                           index_t type_op, index_t col_offset);
 }
-
-const data_t SCALE_FACTOR = 0.6072529;
 
 Rotator::Rotator(int x, int y, int c) {
     Rotator::row_x = x;  // Realmente no hace falta
@@ -63,31 +113,32 @@ Rotator::Rotator(int x, int y, int c) {
     Rotator::col = c;
 }
 
-// Read input rows using blocking write to streams
 void read_input_rows(data_t Matrix[TAM_TILED][TAM],
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
                      hls::stream<data_t, TAM>& row_in_3,
                      hls::stream<data_t, TAM>& row_in_4,
                      hls::stream<data_t, TAM>& row_in_5,
-                     hls::stream<data_t, TAM>& row_in_6) {
+                     hls::stream<data_t, TAM>& row_in_6,
+                     hls::stream<data_t, TAM>& row_in_7,
+                     hls::stream<data_t, TAM>& row_in_8) {
 #pragma HLS INLINE off
 
 // Read the rows from the input array and write them to the streams
 read_input_rows_for:
     for (index_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg = 24 max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 0
         row_in_1.write(Matrix[0][j]);
         row_in_2.write(Matrix[1][j]);
         row_in_3.write(Matrix[2][j]);
         row_in_4.write(Matrix[3][j]);
         row_in_5.write(Matrix[4][j]);
         row_in_6.write(Matrix[5][j]);
+        row_in_7.write(Matrix[6][j]);
+        row_in_8.write(Matrix[7][j]);
     }
 }
 
-// Performs the givens rotation of two streams and writes the outputs in other
-// two streams
 void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& row_y_in,
                               hls::stream<data_t, TAM>& row_x_out,
@@ -166,12 +217,11 @@ write_output_data:
 }
 
 extern "C" {
-// Dataflow function
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                           data_t A_tiled_2[TAM_TILED][TAM],
                           index_t type_op, index_t col_offset) {
-#pragma HLS ARRAY_PARTITION dim = 2 factor = 6 type = block variable = A_tiled_1
-#pragma HLS ARRAY_PARTITION dim = 2 factor = 6 type = block variable = A_tiled_2
+#pragma HLS ARRAY_PARTITION dim = 2 factor = 8 type = block variable = A_tiled_1
+#pragma HLS ARRAY_PARTITION dim = 2 factor = 8 type = block variable = A_tiled_2
 #pragma HLS DATAFLOW
 #pragma HLS TOP name = krnl_givens_rotation
 
@@ -205,44 +255,44 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                         Rot2_GE.row_y_in, Rot3_GE.row_x_in, Rot3_GE.row_y_in);
 
         Rot1_GE.givens_rotation(Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot1_GE.row_x_out,
-                             Rot1_GE.row_y_out, Rot1_GE.col + col_offset);
+                                Rot1_GE.row_y_out, Rot1_GE.col + col_offset);
         Rot2_GE.givens_rotation(Rot2_GE.row_x_in, Rot2_GE.row_y_in, Rot2_GE.row_x_out,
-                             Rot2_GE.row_y_out, Rot2_GE.col + col_offset);
+                                Rot2_GE.row_y_out, Rot2_GE.col + col_offset);
         Rot3_GE.givens_rotation(Rot3_GE.row_x_in, Rot3_GE.row_y_in, Rot3_GE.row_x_out,
-                             Rot3_GE.row_y_out, Rot3_GE.col + col_offset);
+                                Rot3_GE.row_y_out, Rot3_GE.col + col_offset);
         Rot4_GE.givens_rotation(Rot2_GE.row_x_out, Rot3_GE.row_x_out, Rot4_GE.row_x_out,
-                             Rot4_GE.row_y_out, Rot4_GE.col + col_offset);
+                                Rot4_GE.row_y_out, Rot4_GE.col + col_offset);
         Rot5_GE.givens_rotation(Rot2_GE.row_y_out, Rot3_GE.row_y_out, Rot5_GE.row_x_out,
-                             Rot5_GE.row_y_out, Rot5_GE.col + col_offset);
+                                Rot5_GE.row_y_out, Rot5_GE.col + col_offset);
         Rot6_GE.givens_rotation(Rot1_GE.row_x_out, Rot4_GE.row_x_out, Rot6_GE.row_x_out,
-                             Rot6_GE.row_y_out, Rot6_GE.col + col_offset);
+                                Rot6_GE.row_y_out, Rot6_GE.col + col_offset);
         Rot7_GE.givens_rotation(Rot1_GE.row_y_out, Rot5_GE.row_x_out, Rot7_GE.row_x_out,
-                             Rot7_GE.row_y_out, Rot7_GE.col + col_offset);
+                                Rot7_GE.row_y_out, Rot7_GE.col + col_offset);
         Rot8_GE.givens_rotation(Rot6_GE.row_y_out, Rot4_GE.row_y_out, Rot8_GE.row_x_out,
-                             Rot8_GE.row_y_out, Rot8_GE.col + col_offset);
+                                Rot8_GE.row_y_out, Rot8_GE.col + col_offset);
         Rot9_GE.givens_rotation(Rot7_GE.row_y_out, Rot5_GE.row_y_out, Rot9_GE.row_x_out,
-                             Rot9_GE.row_y_out, Rot9_GE.col + col_offset);
+                                Rot9_GE.row_y_out, Rot9_GE.col + col_offset);
         Rot10_GE.givens_rotation(Rot7_GE.row_x_out, Rot8_GE.row_x_out, Rot10_GE.row_x_out,
-                              Rot10_GE.row_y_out, Rot10_GE.col + col_offset);
+                                 Rot10_GE.row_y_out, Rot10_GE.col + col_offset);
         Rot11_GE.givens_rotation(Rot9_GE.row_x_out, Rot8_GE.row_y_out, Rot11_GE.row_x_out,
-                              Rot11_GE.row_y_out, Rot11_GE.col + col_offset);
+                                 Rot11_GE.row_y_out, Rot11_GE.col + col_offset);
         Rot12_GE.givens_rotation(Rot10_GE.row_y_out, Rot11_GE.row_x_out, Rot12_GE.row_x_out,
-                              Rot12_GE.row_y_out, Rot12_GE.col + col_offset);
+                                 Rot12_GE.row_y_out, Rot12_GE.col + col_offset);
         Rot13_GE.givens_rotation(Rot11_GE.row_y_out, Rot9_GE.row_y_out, Rot13_GE.row_x_out,
-                              Rot13_GE.row_y_out, Rot13_GE.col + col_offset);
+                                 Rot13_GE.row_y_out, Rot13_GE.col + col_offset);
         Rot14_GE.givens_rotation(Rot12_GE.row_y_out, Rot13_GE.row_x_out, Rot14_GE.row_x_out,
-                              Rot14_GE.row_y_out, Rot14_GE.col + col_offset);
+                                 Rot14_GE.row_y_out, Rot14_GE.col + col_offset);
         Rot15_GE.givens_rotation(Rot14_GE.row_y_out, Rot13_GE.row_y_out, Rot15_GE.row_x_out,
-                              Rot15_GE.row_y_out, Rot15_GE.col + col_offset);
+                                 Rot15_GE.row_y_out, Rot15_GE.col + col_offset);
 
     // Write output streams to matrix A_tiled_1
     write_output_streams_col_for:
         for (index_t c = 0; c < TAM; c++) {
-#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
 
         write_output_streams_row_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
-#pragma HLS LOOP_TRIPCOUNT max = 6 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 32 min = 0
 
                 if (r == 0)
                     A_tiled_1[r][c] = Rot6_GE.row_x_out.read();
@@ -369,11 +419,11 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
     // Write output streams to matrix A_tiled_1
     write_output_streams_col_TTQRT_for:
         for (index_t c = 0; c < TAM; c++) {
-#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
 
         write_output_streams_row_TTQRT_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
-#pragma HLS LOOP_TRIPCOUNT max = 6 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 32 min = 0
 
                 if (r == 0)
                     A_tiled_1[r][c] = Rot21_TT.row_x_out.read();
@@ -391,11 +441,11 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         }
     write_output_streams_col_TTQRT_y_for:
         for (index_t c = 0; c < TAM; c++) {
-#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
 
         write_output_streams_row_TTQRT_y_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
-#pragma HLS LOOP_TRIPCOUNT max = 6 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 32 min = 0
 
                 if (r == 0)
                     A_tiled_2[r][c] = Rot21_TT.row_y_out.read();
