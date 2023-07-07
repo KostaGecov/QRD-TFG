@@ -4,14 +4,14 @@
 
 #include <iostream>
 
-#define TAM_INDEX 6
+#define TAM_INDEX 9
 #define FIXED_POINT 28
 #define FX_POINT_INT 10
 
-#define TAM_TILED 32
+#define TAM_TILED 8
 #define TAM 256
 #define N_ITER 40
-#define NUM_OPERACIONES 17  //(15 + 2(offset))
+#define NUM_OPERACIONES 65  //(63 + 2(offset))
 
 #define GEQRT 0
 #define TTQRT 1
@@ -84,7 +84,7 @@ class Rotator {
  * @param row_in_7
  * @param row_in_8
  */
-void read_input_rows(data_t A[TAM][TAM],
+void read_input_rows(data_t Matrix[TAM][TAM],
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
                      hls::stream<data_t, TAM>& row_in_3,
@@ -151,7 +151,7 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
 
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg = 24 max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 0
         x[j] = row_x_in.read();
         y[j] = row_y_in.read();
     }
@@ -161,7 +161,7 @@ read_input_data:
     if (x[col_rotator] < 0) {
     sign_for:
         for (index_t s = col_rotator; s < TAM; s++) {
-#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
             // Debo cambiar el signo a los 24 elementos de la fila
             if (y[s] >= 0) {
                 aux = x[s];
@@ -177,10 +177,10 @@ read_input_data:
 
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
-#pragma HLS LOOP_TRIPCOUNT max = 30 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 40 min = 0
     column_rotation_for:
         for (index_t j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
             if (y[col_rotator] < 0) {
                 sign = true;
             } else {
@@ -203,14 +203,14 @@ iterations_for:
 
 scale_factor_for:
     for (index_t j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
     }
 
 write_output_data:
     for (index_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 24 min = 0
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
         row_x_out.write(x[j]);
         row_y_out.write(y[j]);
     }
@@ -275,7 +275,7 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                                 Rot2_GE.row_y_out, Rot2_GE.col + col_offset);
         Rot3_GE.givens_rotation(Rot3_GE.row_x_in, Rot3_GE.row_y_in, Rot3_GE.row_x_out,
                                 Rot3_GE.row_y_out, Rot3_GE.col + col_offset);
-        Rot4_GE.givens_rotation(Rot4_GE.row_x_in, Rot4_GE.row_x_in, Rot4_GE.row_x_out,
+        Rot4_GE.givens_rotation(Rot4_GE.row_x_in, Rot4_GE.row_y_in, Rot4_GE.row_x_out,
                                 Rot4_GE.row_y_out, Rot4_GE.col + col_offset);
         Rot5_GE.givens_rotation(Rot1_GE.row_x_out, Rot2_GE.row_x_out, Rot5_GE.row_x_out,
                                 Rot5_GE.row_y_out, Rot5_GE.col + col_offset);
@@ -530,29 +530,31 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
             for (index_t r = 0; r < TAM_TILED; r++) {
 #pragma HLS LOOP_TRIPCOUNT max = 32 min = 0
 
-                if (r == 0)
+                if (r == 0) {
                     A_tiled_1[r][c] = Rot36_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
-                else if (r == 1)
+                    A_tiled_2[r][c] = 0;
+                } else if (r == 1) {
                     A_tiled_1[r][c] = Rot35_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
-                else if (r == 2)
+                    A_tiled_2[r][c] = 0;
+                } else if (r == 2) {
                     A_tiled_1[r][c] = Rot33_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
-                else if (r == 3)
+                    A_tiled_2[r][c] = 0;
+                } else if (r == 3) {
                     A_tiled_1[r][c] = Rot30_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
-                else if (r == 4)
+                    A_tiled_2[r][c] = 0;
+                } else if (r == 4) {
                     A_tiled_1[r][c] = Rot26_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
-                else if (r == 5)
+                    A_tiled_2[r][c] = 0;
+                } else if (r == 5) {
                     A_tiled_1[r][c] = Rot21_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
-                else if (r == 6)
+                    A_tiled_2[r][c] = 0;
+                } else if (r == 6) {
                     A_tiled_1[r][c] = Rot15_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
-                else A_tiled_1[r][c] = Rot8_TT.row_x_out.read();
-                A_tiled_2[r][c] = 0;
+                    A_tiled_2[r][c] = 0;
+                } else {
+                    A_tiled_1[r][c] = Rot8_TT.row_x_out.read();
+                    A_tiled_2[r][c] = 0;
+                }
             }
         }
 
