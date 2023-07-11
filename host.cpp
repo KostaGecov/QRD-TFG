@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "kernel.cpp"
+#include "kernel.h"
 
 int main() {
     /**
@@ -61,7 +61,7 @@ int main() {
     std::ifstream data_in("data_in.dat");
 
     if (!data_in.is_open()) {
-        std::cerr << "Could not open data_in.dat" << std : endl;
+        std::cerr << "Could not open data_in.dat" << std::endl;
         return -1;
     }
 
@@ -70,6 +70,7 @@ int main() {
             data_in >> A[r][c];
         }
     }
+    data_in.close();
 
 divide_matrix_row_for:
     for (index_t r = 0; r < TAM; r++) {
@@ -979,7 +980,7 @@ num_operations_for:
 
                     krnl_givens_rotation(A_7, A_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_19, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_23, A_37, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_23, A_27, TTQRT, col_offset_ttqrt);
 
                     krnl_givens_rotation(A_7, A_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_31, TTQRT, col_offset_ttqrt);
@@ -1493,5 +1494,20 @@ write_sol_to_matrix_row_for:
         }
         std::cout << std::endl;
     }
+
+    std::ofstream qrd_out("qrd_out.dat");
+
+	if (!qrd_out.is_open()) {
+		std::cerr << "Could not open qrd_out.dat" << std::endl;
+		return -1;
+	}
+
+	for (index_t r = 0; r < TAM; r++) {
+		for (index_t c = 0; c < TAM; c++) {
+			qrd_out << A[r][c];
+		}
+	}
+	qrd_out.close();
+
     return 0;
 }
