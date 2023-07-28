@@ -131,6 +131,8 @@ void read_input_rows(data_t Matrix[TAM_TILED][TAM],
 read_input_rows_for:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
+//#pragma HLS PIPELINE off
+//#pragma HLS UNROLL
         row_in_1.write(Matrix[0][j]);
         row_in_2.write(Matrix[1][j]);
         row_in_3.write(Matrix[2][j]);
@@ -148,13 +150,17 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& row_y_out,
                               int col_rotator) {
 #pragma HLS INLINE off
-    bool sign;
+//    bool sign;
     data_t x[TAM], y[TAM];
+#pragma HLS ARRAY_PARTITION dim=1 factor=32 type=block variable=x
+#pragma HLS ARRAY_PARTITION dim=1 factor=32 type=block variable=y
     data_t aux;
 
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
+//#pragma HLS PIPELINE off
+//#pragma HLS UNROLL factor=8
         x[j] = row_x_in.read();
         y[j] = row_y_in.read();
     }
@@ -165,6 +171,8 @@ read_input_data:
     sign_for:
         for (index_t s = col_rotator; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+//#pragma HLS PIPELINE off
+//#pragma HLS UNROLL factor=8
             // Debo cambiar el signo a los 256 elementos de la fila
             if (y[s] >= 0) {
                 aux = x[s];
@@ -180,42 +188,51 @@ read_input_data:
 
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
-#pragma HLS LOOP_TRIPCOUNT max = 40 min = 40
+#pragma HLS LOOP_TRIPCOUNT max=10 min=10
+//#pragma HLS PIPELINE off
     column_rotation_for:
         for (index_t j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 256
-            if (y[col_rotator] <= 0) {
-                sign = true;
-            } else {
-                sign = false;
-            }
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+//#pragma HLS PIPELINE off
+#pragma HLS UNROLL factor=4
             // If Y is negative, we need to add to it so that it gets closer to zero
             // and to the contrary with X coordinate
             data_t x_prev = x[j];
-            data_t y_prev = y[j];
-            if (sign) {
-                x[j] = x[j] - (y_prev >> k);
+            if (y[col_rotator] <= 0) {
+                x[j] = x[j] - (y[j] >> k);
                 y[j] = y[j] + (x_prev >> k);
 
             } else {
-                x[j] = x[j] + (y_prev >> k);
+                x[j] = x[j] + (y[j] >> k);
                 y[j] = y[j] - (x_prev >> k);
             }
-            // if j >= TAM_TILED
-            // do: operaciones opuestas? No
         }
     }
+    y[col_rotator] = 0;
 
 scale_factor_for:
     for (index_t j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 0
-        x[j] = x[j] * SCALE_FACTOR;
-        y[j] = y[j] * SCALE_FACTOR;
+//#pragma HLS DEPENDENCE class=array dependent=false direction=raw distance=2 type=inter
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+//#pragma HLS PIPELINE off
+//#pragma HLS UNROLL factor=8
+//        data_t x_scale_aux = x[j];
+//		data_t y_scale_aux = y[j];
+//
+//    	x_scale_aux = x_scale_aux * SCALE_FACTOR;
+//    	y_scale_aux = y_scale_aux * SCALE_FACTOR;
+//
+//        x[j] = x_scale_aux;
+//        y[j] = y_scale_aux;
+    	x[j] = x[j] * SCALE_FACTOR;
+    	y[j] = y[j] * SCALE_FACTOR;
     }
 
 write_output_data:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 256
+//#pragma HLS PIPELINE off
+//#pragma HLS UNROLL factor=8
         row_x_out.write(x[j]);
         row_y_out.write(y[j]);
     }
@@ -225,6 +242,8 @@ extern "C" {
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                           data_t A_tiled_2[TAM_TILED][TAM],
                           index_t type_op, index_t col_offset) {
+#pragma HLS ARRAY_PARTITION dim=1 type=complete variable=A_tiled_2
+#pragma HLS ARRAY_PARTITION dim=1 type=complete variable=A_tiled_1
 #pragma HLS ARRAY_PARTITION dim = 2 factor = 32 type = block variable = A_tiled_1
 #pragma HLS ARRAY_PARTITION dim = 2 factor = 32 type = block variable = A_tiled_2
 #pragma HLS DATAFLOW

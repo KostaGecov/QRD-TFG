@@ -1,10 +1,10 @@
 #define TAM_INDEX 9
-#define FIXED_POINT 24
-#define FX_POINT_INT 10
+#define FIXED_POINT 32
+#define FX_POINT_INT 16
 
 #define TAM_TILED 8
 #define TAM 256
-#define N_ITER 40
+#define N_ITER 10
 #define NUM_OPERACIONES 65  //(63 + 2(offset))
 
 #define GEQRT 0

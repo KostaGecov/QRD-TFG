@@ -58,6 +58,40 @@ int main() {
     data_t A_31[TAM_TILED][TAM];
     data_t A_32[TAM_TILED][TAM];
 
+    data_t Q_1[TAM_TILED][TAM];
+    data_t Q_2[TAM_TILED][TAM];
+    data_t Q_3[TAM_TILED][TAM];
+    data_t Q_4[TAM_TILED][TAM];
+    data_t Q_5[TAM_TILED][TAM];
+    data_t Q_6[TAM_TILED][TAM];
+    data_t Q_7[TAM_TILED][TAM];
+    data_t Q_8[TAM_TILED][TAM];
+    data_t Q_9[TAM_TILED][TAM];
+    data_t Q_10[TAM_TILED][TAM];
+    data_t Q_11[TAM_TILED][TAM];
+    data_t Q_12[TAM_TILED][TAM];
+    data_t Q_13[TAM_TILED][TAM];
+    data_t Q_14[TAM_TILED][TAM];
+    data_t Q_15[TAM_TILED][TAM];
+    data_t Q_16[TAM_TILED][TAM];
+    data_t Q_17[TAM_TILED][TAM];
+    data_t Q_18[TAM_TILED][TAM];
+    data_t Q_19[TAM_TILED][TAM];
+    data_t Q_20[TAM_TILED][TAM];
+    data_t Q_21[TAM_TILED][TAM];
+    data_t Q_22[TAM_TILED][TAM];
+    data_t Q_23[TAM_TILED][TAM];
+    data_t Q_24[TAM_TILED][TAM];
+    data_t Q_25[TAM_TILED][TAM];
+    data_t Q_26[TAM_TILED][TAM];
+    data_t Q_27[TAM_TILED][TAM];
+    data_t Q_28[TAM_TILED][TAM];
+    data_t Q_29[TAM_TILED][TAM];
+    data_t Q_30[TAM_TILED][TAM];
+    data_t Q_31[TAM_TILED][TAM];
+    data_t Q_32[TAM_TILED][TAM];
+
+
     std::ifstream data_in("data_in.dat");
 
     if (!data_in.is_open()) {
@@ -1095,6 +1129,7 @@ num_operations_for:
 
                     krnl_givens_rotation(A_11, A_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_23, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_31, TTQRT, col_offset_ttqrt);
 
                     krnl_givens_rotation(A_11, A_19, TTQRT, col_offset_ttqrt);
 
