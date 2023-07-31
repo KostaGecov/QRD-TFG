@@ -51,7 +51,7 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               int col_rotator) {
 #pragma HLS INLINE off
     data_t x[TAM], y[TAM];
-    boolean sign[N_ITER];
+    bool sign[N_ITER];
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = x
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = y
     data_t aux;
