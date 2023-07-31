@@ -1,7 +1,29 @@
+/**
+ * @file host.cpp
+ * @author Kosta Gecov (kostagecov@gmail.com)
+ * @brief Vitis Hls host that implements the tiled QRD algorithm
+ * @version 0.1
+ * @date 2023-07-29
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include <fstream>
 #include <iostream>
 
 #include "kernel.h"
+
+/* void traspose(Q[TAM_TILED][TAM]) {
+}
+
+void multiply_matrices(A[TAM_TILED][TAM], Q[TAM_TILED][TAM]) {
+}
+
+void update(A[TAM_TILED][TAM], Q[TAM_TILED][TAM]) {
+    traspose(Q);
+    multiply(A, Q);
+} */
 
 int main() {
     /**
@@ -13,18 +35,16 @@ int main() {
      */
     static index_t col_offset_ttqrt = 0;
     /**
-     * 4 iteraciones iniciales, para controlar el nº de operaciones GEQRT en cada paso
+     * to control the GEQRT operations in each step
      */
     static index_t n_iter_GEQRT = 32;
     /**
-     * 3 iteraciones iniciales, para controlar el nº de operaciones TTQRT en cada paso
-     *  para i=2, 4; para i = 4, 3; para i = 6, 2; para i = 8, 1;
+     * to control the TTQRT operations in each step
      */
     static index_t n_iter_TTQRT = 31;
 
     data_t A[TAM][TAM];
     data_t A_aux[TAM][TAM];
-
     data_t A_1[TAM_TILED][TAM];
     data_t A_2[TAM_TILED][TAM];
     data_t A_3[TAM_TILED][TAM];
@@ -58,6 +78,7 @@ int main() {
     data_t A_31[TAM_TILED][TAM];
     data_t A_32[TAM_TILED][TAM];
 
+    /* data_t Q[TAM][TAM];
     data_t Q_1[TAM_TILED][TAM];
     data_t Q_2[TAM_TILED][TAM];
     data_t Q_3[TAM_TILED][TAM];
@@ -89,8 +110,7 @@ int main() {
     data_t Q_29[TAM_TILED][TAM];
     data_t Q_30[TAM_TILED][TAM];
     data_t Q_31[TAM_TILED][TAM];
-    data_t Q_32[TAM_TILED][TAM];
-
+    data_t Q_32[TAM_TILED][TAM]; */
 
     std::ifstream data_in("data_in.dat");
 
@@ -99,81 +119,119 @@ int main() {
         return -1;
     }
 
+initialize_matrices:
     for (index_t r = 0; r < TAM; r++) {
         for (int c = 0; c < TAM; c++) {
             data_in >> A[r][c];
+            /* if (r == c) {
+                Q[r][c] = 1;
+            } else {
+                Q[r][c] = 0;
+            } */
         }
     }
     data_in.close();
 
-divide_matrix_row_for:
+divide_matrices_row_for:
     for (index_t r = 0; r < TAM; r++) {
-    divide_matrix_col_for:
+    divide_matrices_col_for:
         for (index_t c = 0; c < TAM; c++) {
             if (r >= 0 && r < TAM_TILED) {
                 A_1[r][c] = A[r][c];
+                // Q_1[r][c] = Q[r][c];
             } else if (r >= TAM_TILED && r < TAM_TILED * 2) {
                 A_2[r - TAM_TILED][c] = A[r][c];
+                // Q_2[r - TAM_TILED][c] = Q[r][c];
             } else if (r >= TAM_TILED * 2 && r < TAM_TILED * 3) {
                 A_3[r - TAM_TILED * 2][c] = A[r][c];
+                // Q_3[r - TAM_TILED * 2][c] = Q[r][c];
             } else if (r >= TAM_TILED * 3 && r < TAM_TILED * 4) {
                 A_4[r - TAM_TILED * 3][c] = A[r][c];
+                // Q_4[r - TAM_TILED * 3][c] = Q[r][c];
             } else if (r >= TAM_TILED * 4 && r < TAM_TILED * 5) {
                 A_5[r - TAM_TILED * 4][c] = A[r][c];
+                // Q_5[r - TAM_TILED * 4][c] = Q[r][c];
             } else if (r >= TAM_TILED * 5 && r < TAM_TILED * 6) {
                 A_6[r - TAM_TILED * 5][c] = A[r][c];
+                // Q_6[r - TAM_TILED * 5][c] = Q[r][c];
             } else if (r >= TAM_TILED * 6 && r < TAM_TILED * 7) {
                 A_7[r - TAM_TILED * 6][c] = A[r][c];
+                // Q_7[r - TAM_TILED * 6][c] = Q[r][c];
             } else if (r >= TAM_TILED * 7 && r < TAM_TILED * 8) {
                 A_8[r - TAM_TILED * 7][c] = A[r][c];
+                // Q_8[r - TAM_TILED * 7][c] = Q[r][c];
             } else if (r >= TAM_TILED * 8 && r < TAM_TILED * 9) {
                 A_9[r - TAM_TILED * 8][c] = A[r][c];
+                // Q_9[r - TAM_TILED * 8][c] = Q[r][c];
             } else if (r >= TAM_TILED * 9 && r < TAM_TILED * 10) {
                 A_10[r - TAM_TILED * 9][c] = A[r][c];
+                // Q_10[r - TAM_TILED * 9][c] = Q[r][c];
             } else if (r >= TAM_TILED * 10 && r < TAM_TILED * 11) {
                 A_11[r - TAM_TILED * 10][c] = A[r][c];
+                // Q_11[r - TAM_TILED * 10][c] = Q[r][c];
             } else if (r >= TAM_TILED * 11 && r < TAM_TILED * 12) {
                 A_12[r - TAM_TILED * 11][c] = A[r][c];
+                // Q_12[r - TAM_TILED * 11][c] = Q[r][c];
             } else if (r >= TAM_TILED * 12 && r < TAM_TILED * 13) {
                 A_13[r - TAM_TILED * 12][c] = A[r][c];
+                // Q_13[r - TAM_TILED * 12][c] = Q[r][c];
             } else if (r >= TAM_TILED * 13 && r < TAM_TILED * 14) {
                 A_14[r - TAM_TILED * 13][c] = A[r][c];
+                // Q_14[r - TAM_TILED * 13][c] = Q[r][c];
             } else if (r >= TAM_TILED * 14 && r < TAM_TILED * 15) {
                 A_15[r - TAM_TILED * 14][c] = A[r][c];
+                // Q_15[r - TAM_TILED * 14][c] = Q[r][c];
             } else if (r >= TAM_TILED * 15 && r < TAM_TILED * 16) {
                 A_16[r - TAM_TILED * 15][c] = A[r][c];
+                // Q_16[r - TAM_TILED * 15][c] = Q[r][c];
             } else if (r >= TAM_TILED * 16 && r < TAM_TILED * 17) {
                 A_17[r - TAM_TILED * 16][c] = A[r][c];
+                // Q_17[r - TAM_TILED * 16][c] = Q[r][c];
             } else if (r >= TAM_TILED * 17 && r < TAM_TILED * 18) {
                 A_18[r - TAM_TILED * 17][c] = A[r][c];
+                // Q_18[r - TAM_TILED * 17][c] = Q[r][c];
             } else if (r >= TAM_TILED * 18 && r < TAM_TILED * 19) {
                 A_19[r - TAM_TILED * 18][c] = A[r][c];
+                // Q_19[r - TAM_TILED * 18][c] = Q[r][c];
             } else if (r >= TAM_TILED * 19 && r < TAM_TILED * 20) {
                 A_20[r - TAM_TILED * 19][c] = A[r][c];
+                // Q_20[r - TAM_TILED * 19][c] = Q[r][c];
             } else if (r >= TAM_TILED * 20 && r < TAM_TILED * 21) {
                 A_21[r - TAM_TILED * 20][c] = A[r][c];
+                // Q_21[r - TAM_TILED * 20][c] = Q[r][c];
             } else if (r >= TAM_TILED * 21 && r < TAM_TILED * 22) {
                 A_22[r - TAM_TILED * 21][c] = A[r][c];
+                // Q_22[r - TAM_TILED * 21][c] = Q[r][c];
             } else if (r >= TAM_TILED * 22 && r < TAM_TILED * 23) {
                 A_23[r - TAM_TILED * 22][c] = A[r][c];
+                // Q_23[r - TAM_TILED * 22][c] = Q[r][c];
             } else if (r >= TAM_TILED * 23 && r < TAM_TILED * 24) {
                 A_24[r - TAM_TILED * 23][c] = A[r][c];
+                // Q_24[r - TAM_TILED * 23][c] = Q[r][c];
             } else if (r >= TAM_TILED * 24 && r < TAM_TILED * 25) {
                 A_25[r - TAM_TILED * 24][c] = A[r][c];
+                // Q_25[r - TAM_TILED * 24][c] = Q[r][c];
             } else if (r >= TAM_TILED * 25 && r < TAM_TILED * 26) {
                 A_26[r - TAM_TILED * 25][c] = A[r][c];
+                // Q_26[r - TAM_TILED * 25][c] = Q[r][c];
             } else if (r >= TAM_TILED * 26 && r < TAM_TILED * 27) {
                 A_27[r - TAM_TILED * 26][c] = A[r][c];
+                // Q_27[r - TAM_TILED * 26][c] = Q[r][c];
             } else if (r >= TAM_TILED * 27 && r < TAM_TILED * 28) {
                 A_28[r - TAM_TILED * 27][c] = A[r][c];
+                // Q_28[r - TAM_TILED * 27][c] = Q[r][c];
             } else if (r >= TAM_TILED * 28 && r < TAM_TILED * 29) {
                 A_29[r - TAM_TILED * 28][c] = A[r][c];
+                // Q_29[r - TAM_TILED * 28][c] = Q[r][c];
             } else if (r >= TAM_TILED * 29 && r < TAM_TILED * 30) {
                 A_30[r - TAM_TILED * 29][c] = A[r][c];
+                // Q_30[r - TAM_TILED * 29][c] = Q[r][c];
             } else if (r >= TAM_TILED * 30 && r < TAM_TILED * 31) {
                 A_31[r - TAM_TILED * 30][c] = A[r][c];
+                // Q_31[r - TAM_TILED * 30][c] = Q[r][c];
             } else /*  if (r >= TAM_TILED * 31 && r < TAM_TILED * 32) */ {
                 A_32[r - TAM_TILED * 31][c] = A[r][c];
+                // Q_32[r - TAM_TILED * 31][c] = Q[r][c];
             }
         }
     }
@@ -1532,17 +1590,17 @@ write_sol_to_matrix_row_for:
 
     std::ofstream qrd_out("qrd_out.dat");
 
-	if (!qrd_out.is_open()) {
-		std::cerr << "Could not open qrd_out.dat" << std::endl;
-		return -1;
-	}
+    if (!qrd_out.is_open()) {
+        std::cerr << "Could not open qrd_out.dat" << std::endl;
+        return -1;
+    }
 
-	for (index_t r = 0; r < TAM; r++) {
-		for (index_t c = 0; c < TAM; c++) {
-			qrd_out << A[r][c];
-		}
-	}
-	qrd_out.close();
+    for (index_t r = 0; r < TAM; r++) {
+        for (index_t c = 0; c < TAM; c++) {
+            qrd_out << A[r][c];
+        }
+    }
+    qrd_out.close();
 
     return 0;
 }
