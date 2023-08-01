@@ -37,26 +37,24 @@ numpy.set_printoptions(precision=4, linewidth=300)
 # print('\nR_Vitis:\n',R_Vitis)
 
 # A = numpy.random.rand(256, 256)
-A = numpy.random.randint(-10, 10, (256, 256))
+# A = numpy.random.randint(-10, 10, (256, 256))
+A = numpy.loadtxt("data_in.dat", dtype=int)
+print('\nA:\n',A)
 
-A = numpy.array(numpy.around(A, decimals=15))  
+# A = numpy.array(numpy.around(A, decimals=15))
 Q, R = numpy.linalg.qr(A)
 
 Q = numpy.array(numpy.around(Q, decimals=15))
 R = numpy.array(numpy.around(R, decimals=15))
 
-print('\nA:\n', A)
-print('\nQ:\n', Q)
-print('\nR:\n', R)
+print("\nA:\n", A)
+print("\nQ:\n", Q)
+print("\nR:\n", R)
 
-with open('data_in.dat', 'w') as dataIn:
-    for row in A:
-        dataIn.write(' '.join([str(a) for a in row]) + '\n')
-        
-    
-with open('data_out.dat', 'w') as dataOut:
+
+with open("data_out.dat", "w") as dataOut:
     for row in R:
-        dataOut.write(' '.join([str(a) for a in row]) + '\n')
+        dataOut.write(" ".join([str(a) for a in row]) + "\n")
 
 # A_Reconstructed = numpy.around((numpy.dot(Q, R_Vitis)), decimals = 15)
 # print('\nA_Reconstructed:\n', A_Reconstructed)

@@ -4,7 +4,7 @@
 
 #define TAM_TILED 8
 #define TAM 256
-#define N_ITER 10
+#define N_ITER 20
 #define NUM_OPERACIONES 65  //(63 + 2(offset))
 
 #define GEQRT 0
@@ -36,13 +36,15 @@ typedef ap_uint<TAM_INDEX> index_t;
  */
 const data_t SCALE_FACTOR = 0.6072529;
 
-
 class Rotator {
    public:
     // after data is read from an hls::stream<>, it cannot be read again
     // Stream is FIFO type
     hls::stream<data_t, TAM> row_x_in, row_y_in;
     hls::stream<data_t, TAM> row_x_out, row_y_out;
+
+    hls::stream<data_t, TAM> q_u_in, q_v_in;
+    hls::stream<data_t, TAM> q_u_out, q_v_out;
 
     int row_x, row_y, col;  // posiciones de las filas a rotar. En teor�a las
                             // columnas son las mismas en ambas filas
@@ -69,7 +71,12 @@ class Rotator {
     void givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                          hls::stream<data_t, TAM>& row_y_in,
                          hls::stream<data_t, TAM>& row_x_out,
-                         hls::stream<data_t, TAM>& row_y_out, int col_rotator);
+                         hls::stream<data_t, TAM>& row_y_out,
+                         hls::stream<data_t, TAM>& q_u_in,
+                         hls::stream<data_t, TAM>& q_v_in,
+                         hls::stream<data_t, TAM>& q_u_out,
+                         hls::stream<data_t, TAM>& q_v_out,
+                         int col_rotator);
 };
 
 /**
@@ -101,9 +108,12 @@ extern "C" {
  *
  * @param A_tiled_1
  * @param A_tiled_2 In case 'type_op' is equal to GEQRT, this parameter is not used
+ * @param Q_tiled_1
+ * @param Q_tiled_2
  * @param type_op It can be GEQRT or TTQRT
  * @param col_offset Offset used to avoid reading the positions that had already become 0
  */
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM], data_t A_tiled_2[TAM_TILED][TAM],
+                          data_t Q_tiled_1[TAM_TILED][TAM], data_t Q_tiled_2[TAM_TILED][TAM],
                           index_t type_op, index_t col_offset);
 }
