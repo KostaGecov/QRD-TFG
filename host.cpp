@@ -26,10 +26,10 @@ void update(A[TAM_TILED][TAM], Q[TAM_TILED][TAM]) {
 } */
 
 void matrix_mul(data_t A[TAM][TAM], data_t Q[TAM][TAM], data_t A_res[TAM][TAM]) {
-    for (index_t i = 0; i < n; i++) {
-        for (index_t j = 0; j < n; j++) {
-            for (index_t k = 0; k < n; k++) {
-                A_res[i][j] += A[i][k] * Q[k][j];
+    for (index_t row = 0; row < TAM; row++) {
+        for (index_t col = 0; col < TAM; col++) {
+            for (index_t k = 0; k < TAM; k++) {
+                A_res[row][col] += A[row][k] * Q[k][col];
             }
         }
     }
@@ -386,11 +386,11 @@ num_operations_for:
                     krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt);
                     break;
                 case 28:
-                    krnl_givens_rotation(A_5, A_aux, Q_5, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_6, A_aux, Q_6, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_7, A_aux, Q_7, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_8, A_aux, Q_8, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, A_aux, Q_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5, A_aux, Q_5, Q_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6, A_aux, Q_6, Q_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, A_aux, Q_7, Q_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
@@ -858,7 +858,7 @@ num_operations_for:
                 case 31:
                     krnl_givens_rotation(A_1, A_2, Q_1, Q_2, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_3, A_4, Q_3, Q_4, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_5, A_6, Q_5, Q_6TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_5, A_6, Q_5, Q_6, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_7, A_8, Q_7, Q_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_9, A_10, Q_9, Q_10, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_11, A_12, Q_11, Q_12, TTQRT, col_offset_ttqrt);
@@ -1641,12 +1641,12 @@ write_sol_to_matrix_row_for:
         std::cout << std::endl;
     } */
 
-    matrix_mul(A, Q, A_res);
+//    matrix_mul(A, Q, A_res);
 
     // Print A_res matrix
     for (int i = 0; i < TAM; i++) {
         for (int j = 0; j < TAM; j++) {
-            std::cout << A_res[i][j] << "  |  ";
+            std::cout << A[i][j] << "  |  ";
         }
         std::cout << std::endl;
     }

@@ -63,10 +63,15 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
-        x[j] = row_x_in.read();
-        y[j] = row_y_in.read();
-        u[j] = q_u_in.read();
-        v[j] = q_v_in.read();
+//        x[j] = row_x_in.read();
+//        y[j] = row_y_in.read();
+//        u[j] = q_u_in.read();
+//        v[j] = q_v_in.read();
+
+         row_x_in.read(x[j]);
+		 row_y_in.read(y[j]);
+		 q_u_in.read(u[j]);
+		 q_v_in.read(v[j]);
     }
 
     // Choose the right sign for the rotation, taking into account the quadrants
@@ -280,29 +285,31 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         write_output_streams_row_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
 #pragma HLS LOOP_TRIPCOUNT max = 8 min = 8
-                if (r == 0)
+                if (r == 0){
                     A_tiled_1[r][c] = Rot9_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot9_GE.q_u_out.read();
-                else if (r == 1)
+                	Q_tiled_1[r][c] = Rot9_GE.q_u_out.read();
+                }else if (r == 1){
                     A_tiled_1[r][c] = Rot15_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot15_GE.q_u_out.read();
-                else if (r == 2)
+                	Q_tiled_1[r][c] = Rot15_GE.q_u_out.read();
+            	}else if (r == 2){
                     A_tiled_1[r][c] = Rot20_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot20_GE.q_u_out.read();
-                else if (r == 3)
+                	Q_tiled_1[r][c] = Rot20_GE.q_u_out.read();
+        		}else if (r == 3){
                     A_tiled_1[r][c] = Rot23_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot23_GE.q_u_out.read();
-                else if (r == 4)
-                    A_tiled_1[r][c] = Rot25_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot25_GE.q_u_out.read();
-                else if (r == 5)
+                	Q_tiled_1[r][c] = Rot23_GE.q_u_out.read();
+        		}else if (r == 4){
+                	A_tiled_1[r][c] = Rot25_GE.row_x_out.read();
+                	Q_tiled_1[r][c] = Rot25_GE.q_u_out.read();
+        		}else if (r == 5){
                     A_tiled_1[r][c] = Rot27_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot27_GE.q_u_out.read();
-                else if (r == 6)
+                	Q_tiled_1[r][c] = Rot27_GE.q_u_out.read();
+        		}else if (r == 6){
                     A_tiled_1[r][c] = Rot28_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot28_GE.q_u_out.read();
-                else A_tiled_1[r][c] = Rot28_GE.row_y_out.read();
-                Q_tiled_1[r][c] = Rot28_GE.q_v_out.read();
+                	Q_tiled_1[r][c] = Rot28_GE.q_u_out.read();
+                }else {
+                	A_tiled_1[r][c] = Rot28_GE.row_y_out.read();
+                	Q_tiled_1[r][c] = Rot28_GE.q_v_out.read();
+                }
             }
         }
 
@@ -366,9 +373,9 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                         Rot3_TT.q_u_in, Rot4_TT.q_u_in, Rot5_TT.q_u_in,
                         Rot6_TT.q_u_in, Rot7_TT.q_u_in, Rot8_TT.q_u_in);
 
-        read_input_rows(Q_tiled_2, Rot1_TT.q_v_in, Rot2_TT.q_u_in,
-                        Rot3_TT.q_u_in, Rot4_TT.q_u_in, Rot5_TT.q_u_in,
-                        Rot6_TT.q_u_in, Rot7_TT.q_u_in, Rot8_TT.q_u_in);
+        read_input_rows(Q_tiled_2, Rot1_TT.q_v_in, Rot2_TT.q_v_in,
+                        Rot3_TT.q_v_in, Rot4_TT.q_v_in, Rot5_TT.q_v_in,
+                        Rot6_TT.q_v_in, Rot7_TT.q_v_in, Rot8_TT.q_v_in);
         /*
             ToDo: refactor and optimize
         */
