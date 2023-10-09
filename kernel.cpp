@@ -80,23 +80,28 @@ read_input_data:
     sign_for:
         for (index_t s = col_rotator; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
-            if (y[s] >= 0) {
-                aux = x[s];
-                x[s] = y[s];
-                y[s] = -aux;
+        	x[s] = -x[s];
+        	y[s] = -y[s];
 
-                aux = u[s];
-                u[s] = v[s];
-                v[s] = -aux;
-            } else {
-                aux = x[s];
-                x[s] = -y[s];
-                y[s] = aux;
-
-                aux = u[s];
-                u[s] = -v[s];
-                v[s] = aux;
-            }
+        	u[s] = -u[s];
+        	v[s] = -v[s];
+//            if (y[s] >= 0) {
+//                aux = x[s];
+//                x[s] = y[s];
+//                y[s] = -aux;
+//
+//                aux = u[s];
+//                u[s] = v[s];
+//                v[s] = -aux;
+//            } else {
+//                aux = x[s];
+//                x[s] = -y[s];
+//                y[s] = aux;
+//
+//                aux = u[s];
+//                u[s] = -v[s];
+//                v[s] = aux;
+//            }
         }
     }
 
@@ -112,7 +117,7 @@ iterations_for:
             // and to the contrary with X coordinate
             data_t x_prev = x[j];
             data_t u_prev = u[j];
-            if (y[col_rotator] <= 0) {
+            if (y[col_rotator] < 0) {
                 x[j] = x[j] - (y[j] >> k);
                 y[j] = y[j] + (x_prev >> k);
 
