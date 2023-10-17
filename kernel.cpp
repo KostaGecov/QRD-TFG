@@ -18,7 +18,7 @@ Rotator::Rotator(int x, int y, int c) {
     Rotator::col = c;
 }
 
-void read_input_rows(data_t Matrix[TAM_TILED][TAM],
+void read_input_rows(data_t Matrix[NUM_TILED][TAM_TILED][TAM],
                      index_t n_matrix,
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
@@ -158,10 +158,10 @@ write_output_data:
 }
 
 extern "C" {
-void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
-                          data_t A_tiled_2[TAM_TILED][TAM],
-                          data_t Q_tiled_1[TAM_TILED][TAM],
-                          data_t Q_tiled_2[TAM_TILED][TAM],
+void krnl_givens_rotation(data_t A_tiled_1[NUM_TILED][TAM_TILED][TAM],
+                          data_t A_tiled_2[NUM_TILED][TAM_TILED][TAM],
+                          data_t Q_tiled_1[NUM_TILED][TAM_TILED][TAM],
+                          data_t Q_tiled_2[NUM_TILED][TAM_TILED][TAM],
                           index_t type_op, index_t col_offset,
                           index_t n_matrix) {
 #pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = A_tiled_2
@@ -283,29 +283,29 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
             for (index_t r = 0; r < TAM_TILED; r++) {
 #pragma HLS LOOP_TRIPCOUNT max = 8 min = 8
                 if (r == 0) {
-                    A_tiled_1[r][c] = Rot9_GE.row_x_out.read();
-                    Q_tiled_1[r][c] = Rot9_GE.q_u_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot9_GE.row_x_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot9_GE.q_u_out.read();
                 } else if (r == 1) {
-                    A_tiled_1[r][c] = Rot15_GE.row_x_out.read();
-                    Q_tiled_1[r][c] = Rot15_GE.q_u_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot15_GE.row_x_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot15_GE.q_u_out.read();
                 } else if (r == 2) {
-                    A_tiled_1[r][c] = Rot20_GE.row_x_out.read();
-                    Q_tiled_1[r][c] = Rot20_GE.q_u_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot20_GE.row_x_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot20_GE.q_u_out.read();
                 } else if (r == 3) {
-                    A_tiled_1[r][c] = Rot23_GE.row_x_out.read();
-                    Q_tiled_1[r][c] = Rot23_GE.q_u_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot23_GE.row_x_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot23_GE.q_u_out.read();
                 } else if (r == 4) {
-                    A_tiled_1[r][c] = Rot25_GE.row_x_out.read();
-                    Q_tiled_1[r][c] = Rot25_GE.q_u_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot25_GE.row_x_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot25_GE.q_u_out.read();
                 } else if (r == 5) {
-                    A_tiled_1[r][c] = Rot27_GE.row_x_out.read();
-                    Q_tiled_1[r][c] = Rot27_GE.q_u_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot27_GE.row_x_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot27_GE.q_u_out.read();
                 } else if (r == 6) {
-                    A_tiled_1[r][c] = Rot28_GE.row_x_out.read();
-                    Q_tiled_1[r][c] = Rot28_GE.q_u_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot28_GE.row_x_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot28_GE.q_u_out.read();
                 } else {
-                    A_tiled_1[r][c] = Rot28_GE.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot28_GE.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot28_GE.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot28_GE.q_v_out.read();
                 }
             }
         }
@@ -565,45 +565,45 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
             for (index_t r = 0; r < TAM_TILED; r++) {
 #pragma HLS LOOP_TRIPCOUNT max = 8 min = 8
                 if (r == 0) {
-                    A_tiled_1[r][c] = Rot36_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot36_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot36_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot36_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot36_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot36_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot36_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot36_TT.q_v_out.read();
                 } else if (r == 1) {
-                    A_tiled_1[r][c] = Rot35_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot35_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot35_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot35_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot35_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot35_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot35_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot35_TT.q_v_out.read();
                 } else if (r == 2) {
-                    A_tiled_1[r][c] = Rot33_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot33_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot33_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot33_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot33_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot33_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot33_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot33_TT.q_v_out.read();
                 } else if (r == 3) {
-                    A_tiled_1[r][c] = Rot30_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot30_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot30_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot30_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot30_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot30_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot30_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot30_TT.q_v_out.read();
                 } else if (r == 4) {
-                    A_tiled_1[r][c] = Rot26_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot26_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot26_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot26_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot26_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot26_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot26_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot26_TT.q_v_out.read();
                 } else if (r == 5) {
-                    A_tiled_1[r][c] = Rot21_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot21_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot21_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot21_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot21_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot21_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot21_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot21_TT.q_v_out.read();
                 } else if (r == 6) {
-                    A_tiled_1[r][c] = Rot15_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot15_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot15_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot15_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot15_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot15_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot15_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot15_TT.q_v_out.read();
                 } else {
-                    A_tiled_1[r][c] = Rot8_TT.row_x_out.read();
-                    A_tiled_2[r][c] = Rot8_TT.row_y_out.read();
-                    Q_tiled_1[r][c] = Rot8_TT.q_u_out.read();
-                    Q_tiled_2[r][c] = Rot8_TT.q_v_out.read();
+                    A_tiled_1[n_matrix][r][c] = Rot8_TT.row_x_out.read();
+                    A_tiled_2[n_matrix][r][c] = Rot8_TT.row_y_out.read();
+                    Q_tiled_1[n_matrix][r][c] = Rot8_TT.q_u_out.read();
+                    Q_tiled_2[n_matrix][r][c] = Rot8_TT.q_v_out.read();
                 }
             }
         }

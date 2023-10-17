@@ -25,7 +25,7 @@ void update(A[TAM_TILED][TAM], Q[TAM_TILED][TAM]) {
     multiply(A, Q);
 } */
 
-void matrix_mul(data_t A[TAM][TAM], data_t Q[TAM][TAM], data_t A_res[TAM][TAM]) {
+/* void matrix_mul(data_t A[TAM][TAM], data_t Q[TAM][TAM], data_t A_res[TAM][TAM]) {
     for (index_t i = 0; i < n; i++) {
         for (index_t j = 0; j < n; j++) {
             for (index_t k = 0; k < n; k++) {
@@ -33,7 +33,7 @@ void matrix_mul(data_t A[TAM][TAM], data_t Q[TAM][TAM], data_t A_res[TAM][TAM]) 
             }
         }
     }
-}
+} */
 
 int main() {
     /**
@@ -63,7 +63,7 @@ int main() {
 
     data_t A[TAM][TAM];
     data_t A_res[TAM][TAM];
-    data_t A_aux[TAM_TILED][TAM];  // Not used
+    data_t A_aux[NUM_TILED][TAM_TILED][TAM];  // Not used
 /*  data_t A_1[TAM_TILED][TAM];
     data_t A_2[TAM_TILED][TAM];
     data_t A_3[TAM_TILED][TAM];
@@ -104,7 +104,7 @@ int main() {
     data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
 
     data_t Q[TAM][TAM];
-    data_t Q_aux[TAM_TILED][TAM];  // Not used
+    data_t Q_aux[NUM_TILED][TAM_TILED][TAM];  // Not used
 /*  data_t Q_1[TAM_TILED][TAM];
     data_t Q_2[TAM_TILED][TAM];
     data_t Q_3[TAM_TILED][TAM];
@@ -1749,7 +1749,7 @@ write_sol_to_matrix_row_for:
             std::cout << std::endl;
         } */
 
-    matrix_mul(A, Q, A_res);
+    // matrix_mul(A, Q, A_res);
 
     // Print A_res matrix
     for (int i = 0; i < TAM; i++) {
