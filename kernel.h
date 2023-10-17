@@ -4,6 +4,8 @@
 
 #define TAM_TILED 8
 #define TAM 256
+
+#define NUM_TILED 32
 #define N_ITER 20
 #define NUM_OPERACIONES 65  //(63 + 2(offset))
 
@@ -83,6 +85,7 @@ class Rotator {
  * @brief Read input rows using blocking write to streams
  *
  * @param A
+ * @param index_t index to access the correct matrix
  * @param row_in_1
  * @param row_in_2
  * @param row_in_3
@@ -92,7 +95,8 @@ class Rotator {
  * @param row_in_7
  * @param row_in_8
  */
-void read_input_rows(data_t Matrix[TAM][TAM],
+void read_input_rows(data_t Matrix[TAM_TILED][TAM],
+                     index_t n_matrix,
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
                      hls::stream<data_t, TAM>& row_in_3,
@@ -115,5 +119,5 @@ extern "C" {
  */
 void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM], data_t A_tiled_2[TAM_TILED][TAM],
                           data_t Q_tiled_1[TAM_TILED][TAM], data_t Q_tiled_2[TAM_TILED][TAM],
-                          index_t type_op, index_t col_offset);
+                          index_t type_op, index_t col_offset, index_t n_matrix);
 }

@@ -19,6 +19,7 @@ Rotator::Rotator(int x, int y, int c) {
 }
 
 void read_input_rows(data_t Matrix[TAM_TILED][TAM],
+                     index_t n_matrix,
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
                      hls::stream<data_t, TAM>& row_in_3,
@@ -33,14 +34,14 @@ void read_input_rows(data_t Matrix[TAM_TILED][TAM],
 read_input_rows_for:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
-        row_in_1.write(Matrix[0][j]);
-        row_in_2.write(Matrix[1][j]);
-        row_in_3.write(Matrix[2][j]);
-        row_in_4.write(Matrix[3][j]);
-        row_in_5.write(Matrix[4][j]);
-        row_in_6.write(Matrix[5][j]);
-        row_in_7.write(Matrix[6][j]);
-        row_in_8.write(Matrix[7][j]);
+        row_in_1.write(Matrix[n_matrix][0][j]);
+        row_in_2.write(Matrix[n_matrix][1][j]);
+        row_in_3.write(Matrix[n_matrix][2][j]);
+        row_in_4.write(Matrix[n_matrix][3][j]);
+        row_in_5.write(Matrix[n_matrix][4][j]);
+        row_in_6.write(Matrix[n_matrix][5][j]);
+        row_in_7.write(Matrix[n_matrix][6][j]);
+        row_in_8.write(Matrix[n_matrix][7][j]);
     }
 }
 
@@ -161,7 +162,8 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
                           data_t A_tiled_2[TAM_TILED][TAM],
                           data_t Q_tiled_1[TAM_TILED][TAM],
                           data_t Q_tiled_2[TAM_TILED][TAM],
-                          index_t type_op, index_t col_offset) {
+                          index_t type_op, index_t col_offset,
+                          index_t n_matrix) {
 #pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = A_tiled_2
 #pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = A_tiled_1
 #pragma HLS ARRAY_PARTITION dim = 2 factor = 32 type = block variable = A_tiled_1
@@ -210,10 +212,10 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         Rotator Rot27_GE(5, 6, 5);
         Rotator Rot28_GE(6, 7, 6);
 
-        read_input_rows(A_tiled_1, Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot2_GE.row_x_in,
+        read_input_rows(A_tiled_1, n_matrix, Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot2_GE.row_x_in,
                         Rot2_GE.row_y_in, Rot3_GE.row_x_in, Rot3_GE.row_y_in, Rot4_GE.row_x_in, Rot4_GE.row_y_in);
 
-        read_input_rows(Q_tiled_1, Rot1_GE.q_u_in, Rot1_GE.q_v_in, Rot2_GE.q_u_in,
+        read_input_rows(Q_tiled_1, n_matrix, Rot1_GE.q_u_in, Rot1_GE.q_v_in, Rot2_GE.q_u_in,
                         Rot2_GE.q_v_in, Rot3_GE.q_u_in, Rot3_GE.q_v_in, Rot4_GE.q_u_in, Rot4_GE.q_v_in);
 
         Rot1_GE.givens_rotation(Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot1_GE.row_x_out,
@@ -280,29 +282,31 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         write_output_streams_row_for:
             for (index_t r = 0; r < TAM_TILED; r++) {
 #pragma HLS LOOP_TRIPCOUNT max = 8 min = 8
-                if (r == 0)
+                if (r == 0) {
                     A_tiled_1[r][c] = Rot9_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot9_GE.q_u_out.read();
-                else if (r == 1)
+                    Q_tiled_1[r][c] = Rot9_GE.q_u_out.read();
+                } else if (r == 1) {
                     A_tiled_1[r][c] = Rot15_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot15_GE.q_u_out.read();
-                else if (r == 2)
+                    Q_tiled_1[r][c] = Rot15_GE.q_u_out.read();
+                } else if (r == 2) {
                     A_tiled_1[r][c] = Rot20_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot20_GE.q_u_out.read();
-                else if (r == 3)
+                    Q_tiled_1[r][c] = Rot20_GE.q_u_out.read();
+                } else if (r == 3) {
                     A_tiled_1[r][c] = Rot23_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot23_GE.q_u_out.read();
-                else if (r == 4)
+                    Q_tiled_1[r][c] = Rot23_GE.q_u_out.read();
+                } else if (r == 4) {
                     A_tiled_1[r][c] = Rot25_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot25_GE.q_u_out.read();
-                else if (r == 5)
+                    Q_tiled_1[r][c] = Rot25_GE.q_u_out.read();
+                } else if (r == 5) {
                     A_tiled_1[r][c] = Rot27_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot27_GE.q_u_out.read();
-                else if (r == 6)
+                    Q_tiled_1[r][c] = Rot27_GE.q_u_out.read();
+                } else if (r == 6) {
                     A_tiled_1[r][c] = Rot28_GE.row_x_out.read();
-                Q_tiled_1[r][c] = Rot28_GE.q_u_out.read();
-                else A_tiled_1[r][c] = Rot28_GE.row_y_out.read();
-                Q_tiled_1[r][c] = Rot28_GE.q_v_out.read();
+                    Q_tiled_1[r][c] = Rot28_GE.q_u_out.read();
+                } else {
+                    A_tiled_1[r][c] = Rot28_GE.row_y_out.read();
+                    Q_tiled_1[r][c] = Rot28_GE.q_v_out.read();
+                }
             }
         }
 
@@ -354,19 +358,19 @@ void krnl_givens_rotation(data_t A_tiled_1[TAM_TILED][TAM],
         Rotator Rot36_TT(0, 0, 7);
 
         // Read X coordinates rows from first matrix
-        read_input_rows(A_tiled_1, Rot1_TT.row_x_in, Rot2_TT.row_x_in,
+        read_input_rows(A_tiled_1, n_matrix, Rot1_TT.row_x_in, Rot2_TT.row_x_in,
                         Rot3_TT.row_x_in, Rot4_TT.row_x_in, Rot5_TT.row_x_in,
                         Rot6_TT.row_x_in, Rot7_TT.row_x_in, Rot8_TT.row_x_in);
         // Read Y coordinates rows from second matrix
-        read_input_rows(A_tiled_2, Rot1_TT.row_y_in, Rot2_TT.row_y_in,
+        read_input_rows(A_tiled_2, n_matrix, Rot1_TT.row_y_in, Rot2_TT.row_y_in,
                         Rot3_TT.row_y_in, Rot4_TT.row_y_in, Rot5_TT.row_y_in,
                         Rot6_TT.row_y_in, Rot7_TT.row_y_in, Rot8_TT.row_y_in);
 
-        read_input_rows(Q_tiled_1, Rot1_TT.q_u_in, Rot2_TT.q_u_in,
+        read_input_rows(Q_tiled_1, n_matrix, Rot1_TT.q_u_in, Rot2_TT.q_u_in,
                         Rot3_TT.q_u_in, Rot4_TT.q_u_in, Rot5_TT.q_u_in,
                         Rot6_TT.q_u_in, Rot7_TT.q_u_in, Rot8_TT.q_u_in);
 
-        read_input_rows(Q_tiled_2, Rot1_TT.q_v_in, Rot2_TT.q_u_in,
+        read_input_rows(Q_tiled_2, n_matrix, Rot1_TT.q_v_in, Rot2_TT.q_u_in,
                         Rot3_TT.q_u_in, Rot4_TT.q_u_in, Rot5_TT.q_u_in,
                         Rot6_TT.q_u_in, Rot7_TT.q_u_in, Rot8_TT.q_u_in);
         /*
