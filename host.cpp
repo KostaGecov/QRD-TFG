@@ -63,39 +63,38 @@ int main() {
 
     data_t A[TAM][TAM];
     data_t A_res[TAM][TAM];
-    data_t A_aux[NUM_TILED][TAM_TILED][TAM];  // Not used
-/*  data_t A_1[TAM_TILED][TAM];
-    data_t A_2[TAM_TILED][TAM];
-    data_t A_3[TAM_TILED][TAM];
-    data_t A_4[TAM_TILED][TAM];
-    data_t A_5[TAM_TILED][TAM];
-    data_t A_6[TAM_TILED][TAM];
-    data_t A_7[TAM_TILED][TAM];
-    data_t A_8[TAM_TILED][TAM];
-    data_t A_9[TAM_TILED][TAM];
-    data_t A_10[TAM_TILED][TAM];
-    data_t A_11[TAM_TILED][TAM];
-    data_t A_12[TAM_TILED][TAM];
-    data_t A_13[TAM_TILED][TAM];
-    data_t A_14[TAM_TILED][TAM];
-    data_t A_15[TAM_TILED][TAM];
-    data_t A_16[TAM_TILED][TAM];
-    data_t A_17[TAM_TILED][TAM];
-    data_t A_18[TAM_TILED][TAM];
-    data_t A_19[TAM_TILED][TAM];
-    data_t A_20[TAM_TILED][TAM];
-    data_t A_21[TAM_TILED][TAM];
-    data_t A_22[TAM_TILED][TAM];
-    data_t A_23[TAM_TILED][TAM];
-    data_t A_24[TAM_TILED][TAM];
-    data_t A_25[TAM_TILED][TAM];
-    data_t A_26[TAM_TILED][TAM];
-    data_t A_27[TAM_TILED][TAM];
-    data_t A_28[TAM_TILED][TAM];
-    data_t A_29[TAM_TILED][TAM];
-    data_t A_30[TAM_TILED][TAM];
-    data_t A_31[TAM_TILED][TAM];
-    data_t A_32[TAM_TILED][TAM]; */
+    /*  data_t A_1[TAM_TILED][TAM];
+        data_t A_2[TAM_TILED][TAM];
+        data_t A_3[TAM_TILED][TAM];
+        data_t A_4[TAM_TILED][TAM];
+        data_t A_5[TAM_TILED][TAM];
+        data_t A_6[TAM_TILED][TAM];
+        data_t A_7[TAM_TILED][TAM];
+        data_t A_8[TAM_TILED][TAM];
+        data_t A_9[TAM_TILED][TAM];
+        data_t A_10[TAM_TILED][TAM];
+        data_t A_11[TAM_TILED][TAM];
+        data_t A_12[TAM_TILED][TAM];
+        data_t A_13[TAM_TILED][TAM];
+        data_t A_14[TAM_TILED][TAM];
+        data_t A_15[TAM_TILED][TAM];
+        data_t A_16[TAM_TILED][TAM];
+        data_t A_17[TAM_TILED][TAM];
+        data_t A_18[TAM_TILED][TAM];
+        data_t A_19[TAM_TILED][TAM];
+        data_t A_20[TAM_TILED][TAM];
+        data_t A_21[TAM_TILED][TAM];
+        data_t A_22[TAM_TILED][TAM];
+        data_t A_23[TAM_TILED][TAM];
+        data_t A_24[TAM_TILED][TAM];
+        data_t A_25[TAM_TILED][TAM];
+        data_t A_26[TAM_TILED][TAM];
+        data_t A_27[TAM_TILED][TAM];
+        data_t A_28[TAM_TILED][TAM];
+        data_t A_29[TAM_TILED][TAM];
+        data_t A_30[TAM_TILED][TAM];
+        data_t A_31[TAM_TILED][TAM];
+        data_t A_32[TAM_TILED][TAM]; */
 
     /**
      * stores all 32 Q matrices needed for tiled operations
@@ -104,39 +103,38 @@ int main() {
     data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
 
     data_t Q[TAM][TAM];
-    data_t Q_aux[NUM_TILED][TAM_TILED][TAM];  // Not used
-/*  data_t Q_1[TAM_TILED][TAM];
-    data_t Q_2[TAM_TILED][TAM];
-    data_t Q_3[TAM_TILED][TAM];
-    data_t Q_4[TAM_TILED][TAM];
-    data_t Q_5[TAM_TILED][TAM];
-    data_t Q_6[TAM_TILED][TAM];
-    data_t Q_7[TAM_TILED][TAM];
-    data_t Q_8[TAM_TILED][TAM];
-    data_t Q_9[TAM_TILED][TAM];
-    data_t Q_10[TAM_TILED][TAM];
-    data_t Q_11[TAM_TILED][TAM];
-    data_t Q_12[TAM_TILED][TAM];
-    data_t Q_13[TAM_TILED][TAM];
-    data_t Q_14[TAM_TILED][TAM];
-    data_t Q_15[TAM_TILED][TAM];
-    data_t Q_16[TAM_TILED][TAM];
-    data_t Q_17[TAM_TILED][TAM];
-    data_t Q_18[TAM_TILED][TAM];
-    data_t Q_19[TAM_TILED][TAM];
-    data_t Q_20[TAM_TILED][TAM];
-    data_t Q_21[TAM_TILED][TAM];
-    data_t Q_22[TAM_TILED][TAM];
-    data_t Q_23[TAM_TILED][TAM];
-    data_t Q_24[TAM_TILED][TAM];
-    data_t Q_25[TAM_TILED][TAM];
-    data_t Q_26[TAM_TILED][TAM];
-    data_t Q_27[TAM_TILED][TAM];
-    data_t Q_28[TAM_TILED][TAM];
-    data_t Q_29[TAM_TILED][TAM];
-    data_t Q_30[TAM_TILED][TAM];
-    data_t Q_31[TAM_TILED][TAM];
-    data_t Q_32[TAM_TILED][TAM]; */
+    /*  data_t Q_1[TAM_TILED][TAM];
+        data_t Q_2[TAM_TILED][TAM];
+        data_t Q_3[TAM_TILED][TAM];
+        data_t Q_4[TAM_TILED][TAM];
+        data_t Q_5[TAM_TILED][TAM];
+        data_t Q_6[TAM_TILED][TAM];
+        data_t Q_7[TAM_TILED][TAM];
+        data_t Q_8[TAM_TILED][TAM];
+        data_t Q_9[TAM_TILED][TAM];
+        data_t Q_10[TAM_TILED][TAM];
+        data_t Q_11[TAM_TILED][TAM];
+        data_t Q_12[TAM_TILED][TAM];
+        data_t Q_13[TAM_TILED][TAM];
+        data_t Q_14[TAM_TILED][TAM];
+        data_t Q_15[TAM_TILED][TAM];
+        data_t Q_16[TAM_TILED][TAM];
+        data_t Q_17[TAM_TILED][TAM];
+        data_t Q_18[TAM_TILED][TAM];
+        data_t Q_19[TAM_TILED][TAM];
+        data_t Q_20[TAM_TILED][TAM];
+        data_t Q_21[TAM_TILED][TAM];
+        data_t Q_22[TAM_TILED][TAM];
+        data_t Q_23[TAM_TILED][TAM];
+        data_t Q_24[TAM_TILED][TAM];
+        data_t Q_25[TAM_TILED][TAM];
+        data_t Q_26[TAM_TILED][TAM];
+        data_t Q_27[TAM_TILED][TAM];
+        data_t Q_28[TAM_TILED][TAM];
+        data_t Q_29[TAM_TILED][TAM];
+        data_t Q_30[TAM_TILED][TAM];
+        data_t Q_31[TAM_TILED][TAM];
+        data_t Q_32[TAM_TILED][TAM]; */
 
     std::ifstream data_in("data_in.dat");
 
@@ -268,692 +266,692 @@ num_operations_for:
         if (i % 2 == 0) {
             switch (n_iter_GEQRT) {
                 case 32:
-                    for (index_t n_mat = 1; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 1; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /*                     krnl_givens_rotation(A_1, A_aux, Q_1, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_2, A_aux, Q_2, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_3, A_aux, Q_3, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_4, A_aux, Q_4, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_5, A_aux, Q_5, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_6, A_aux, Q_6, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_7, A_aux, Q_7, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                                        krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_1, Q_1, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_2, Q_2, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_3, Q_3, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_4, Q_4, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5, Q_5, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6, Q_6, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7, Q_7, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8, Q_8, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9, Q_9, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10, Q_10, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11, Q_11, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12, Q_12, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13, Q_13, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14, Q_14, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15, Q_15, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16, Q_16, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17, Q_17, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18, Q_18, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19, Q_19, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20, Q_20, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21, Q_21, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22, Q_22, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23, Q_23, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24, Q_24, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25, Q_25, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26, Q_26, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27, Q_27, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28, Q_28, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29, Q_29, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30, Q_30, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31, Q_31, GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32, Q_32, GEQRT, col_offset_geqrt); */
                     break;
                 case 31:
-                    for (index_t n_mat = 2; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 2; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_2, A_aux, Q_2, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_3, A_aux, Q_3, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_4, A_aux, Q_4, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_5, A_aux, Q_5, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_6, A_aux, Q_6, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_7, A_aux, Q_7, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_2,  Q_2,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_3,  Q_3,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_4,  Q_4,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5,  Q_5,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6,  Q_6,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7,  Q_7,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8,  Q_8,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 30:
-                    for (index_t n_mat = 3; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 3; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_3, A_aux, Q_3, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_4, A_aux, Q_4, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_5, A_aux, Q_5, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_6, A_aux, Q_6, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_7, A_aux, Q_7, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_3,  Q_3,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_4,  Q_4,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5,  Q_5,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6,  Q_6,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7,  Q_7,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8,  Q_8,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 29:
-                    for (index_t n_mat = 4; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 4; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_4, A_aux, Q_4, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_5, A_aux, Q_5, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_6, A_aux, Q_6, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_7, A_aux, Q_7, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_4,  Q_4,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_5,  Q_5,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6,  Q_6,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7,  Q_7,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8,  Q_8,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 28:
-                    for (index_t n_mat = 5; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 5; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_5, A_aux, Q_5, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_6, A_aux, Q_6, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_7, A_aux, Q_7, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_8, A_aux, Q_8, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, A_aux, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_5,  Q_5,   GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_6,  Q_6,   GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7,  Q_7,   GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8,  Q_8,   GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9,  Q_9,   GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 27:
-                    for (index_t n_mat = 6; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 6; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_6, A_aux, Q_6, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_7, A_aux, Q_7, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_6,  Q_6,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_7,  Q_7,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8,  Q_8,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 26:
-                    for (index_t n_mat = 7; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 7; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_7, A_aux, Q_7, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_7,  Q_7,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_8,  Q_8,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 25:
-                    for (index_t n_mat = 8; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 8; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_8, A_aux, Q_8, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_8,  Q_8,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 24:
-                    for (index_t n_mat = 9; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 9; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_9, A_aux, Q_9, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 23:
-                    for (index_t n_mat = 10; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 10; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_10, A_aux, Q_10, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 22:
-                    for (index_t n_mat = 11; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 11; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_11, A_aux, Q_11, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 21:
-                    for (index_t n_mat = 12; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 12; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_12, A_aux, Q_12, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 20:
-                    for (index_t n_mat = 13; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 13; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_13, A_aux, Q_13, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 19:
-                    for (index_t n_mat = 14; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 14; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_14, A_aux, Q_14, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 18:
-                    for (index_t n_mat = 15; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 15; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_15, A_aux, Q_15, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 17:
-                    for (index_t n_mat = 16; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 16; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_16, A_aux, Q_16, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 16:
-                    for (index_t n_mat = 17; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 17; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_17, A_aux, Q_17, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 15:
-                    for (index_t n_mat = 18; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 18; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_18, A_aux, Q_18, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 14:
-                    for (index_t n_mat = 19; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 19; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_19, A_aux, Q_19, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 13:
-                    for (index_t n_mat = 20; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 20; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_20, A_aux, Q_20, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 12:
-                    for (index_t n_mat = 21; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 21; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_21, A_aux, Q_21, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 11:
-                    for (index_t n_mat = 22; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 22; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_22, A_aux, Q_22, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 10:
-                    for (index_t n_mat = 23; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 23; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_23, A_aux, Q_23, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 9:
-                    for (index_t n_mat = 24; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 24; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_24, A_aux, Q_24, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 8:
-                    for (index_t n_mat = 25; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 25; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_25, A_aux, Q_25, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 7:
-                    for (index_t n_mat = 26; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 26; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_26, A_aux, Q_26, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 6:
-                    for (index_t n_mat = 27; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 27; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_27, A_aux, Q_27, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 5:
-                    for (index_t n_mat = 28; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 28; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_28, A_aux, Q_28, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 4:
-                    for (index_t n_mat = 29; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 29; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_29, A_aux, Q_29, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 3:
-                    for (index_t n_mat = 30; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 30; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_30, A_aux, Q_30, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 2:
-                    for (index_t n_mat = 31; i < 33; i++) {
-                        krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    for (index_t idx_mat_1 = 31; i < 33; i++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
-                    /* krnl_givens_rotation(A_31, A_aux, Q_31, Q_aux, GEQRT, col_offset_geqrt);
-                    krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
+                    krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 1:
-                    n_mat = 32;
-                    krnl_givens_rotation(A_tiled, A_aux, Q_tiled, Q_aux, GEQRT, col_offset_geqrt, n_mat);
+                    idx_mat_1 = 32;
+                    krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
 
-                    /* krnl_givens_rotation(A_32, A_aux, Q_32, Q_aux, GEQRT, col_offset_geqrt); */
+                    /* krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 default:
                     break;
@@ -964,7 +962,11 @@ num_operations_for:
         } else {
             switch (n_iter_TTQRT) {
                 case 31:
-                    krnl_givens_rotation(A_1, A_2, Q_1, Q_2, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 1, idx_mat_2 = 2; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_1, A_2, Q_1, Q_2, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_3, A_4, Q_3, Q_4, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_5, A_6, Q_5, Q_6TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_7, A_8, Q_7, Q_8, TTQRT, col_offset_ttqrt);
@@ -979,29 +981,47 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_1, A_3, Q_1, Q_13, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 1, idx_mat_2 = 3; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_1, A_3, Q_1, Q_3, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_5, A_7, Q_5, Q_7, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_9, A_11, Q_9, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_13, A_15, Q_13, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_19, Q_17, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_23, Q_21, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_1, A_5, Q_1, Q_5, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 1, idx_mat_2 = 5; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_1, A_5, Q_1, Q_5, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_9, A_13, Q_9, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_21, Q_17, Q_21, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_1, A_9, Q_1, Q_9, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_17, A_25, Q_17, Q_25, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 1, idx_mat_2 = 9; idx_mat_2 < 26; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_1, A_17, Q_1, Q_17, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_1, A_9, Q_1, Q_9, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_17, A_25, Q_17, Q_25, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 1, 17);
+
+                    /* krnl_givens_rotation(A_1, A_17, Q_1, Q_17, TTQRT, col_offset_ttqrt); */
                     break;
                 case 30:
-                    krnl_givens_rotation(A_2, A_3, Q_2, Q_3, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 2, idx_mat_2 = 3; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_2, A_3, Q_2, Q_3, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_4, A_5, Q_4, Q_5, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_6, A_7, Q_6, Q_7, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_8, A_9, Q_8, Q_9, TTQRT, col_offset_ttqrt);
@@ -1015,29 +1035,47 @@ num_operations_for:
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_2, A_4, Q_2, Q_4, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 2, idx_mat_2 = 4; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_2, A_4, Q_2, Q_4, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_6, A_8, Q_6, Q_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_10, A_12, Q_10, Q_12, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_14, A_16, Q_14, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_20, Q_18, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_24, Q_22, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_2, A_6, Q_2, Q_6, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 2, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_2, A_6, Q_2, Q_6, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_10, A_14, Q_10, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_22, Q_18, Q_22, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_2, A_10, Q_2, Q_10, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_18, A_26, Q_18, Q_26, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 2, idx_mat_2 = 10; idx_mat_2 < 27; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_2, A_18, Q_2, Q_18, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_2, A_10, Q_2, Q_10, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_18, A_26, Q_18, Q_26, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 2, 18);
+
+                    /* krnl_givens_rotation(A_2, A_18, Q_2, Q_18, TTQRT, col_offset_ttqrt); */
                     break;
                 case 29:
-                    krnl_givens_rotation(A_3, A_4, Q_3, Q_4, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 3, idx_mat_2 = 4; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_3, A_4, Q_3, Q_4, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_5, A_6, Q_5, Q_6, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_7, A_8, Q_7, Q_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_9, A_10, Q_9, Q_10, TTQRT, col_offset_ttqrt);
@@ -1051,28 +1089,46 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_3, A_5, Q_3, Q_5, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 3, idx_mat_2 = 5; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_3, A_5, Q_3, Q_5, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_7, A_9, Q_7, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_11, A_13, Q_11, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_17, Q_15, Q_17, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_21, Q_19, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_25, Q_23, Q_25, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_3, A_7, Q_3, Q_7, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 3, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_3, A_7, Q_3, Q_7, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_11, A_15, Q_11, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_23, Q_19, Q_23, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_3, A_11, Q_3, Q_11, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_19, A_27, Q_19, Q_27, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 3, idx_mat_2 = 11; idx_mat_2 < 28; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_3, A_19, Q_3, Q_19, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_3, A_11, Q_3, Q_11, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_19, A_27, Q_19, Q_27, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+
+                    /* krnl_givens_rotation(A_3, A_19, Q_3, Q_19, TTQRT, col_offset_ttqrt); */
                     break;
                 case 28:
-                    krnl_givens_rotation(A_4, A_5, Q_4, Q_5, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 4, idx_mat_2 = 5; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_4, A_5, Q_4, Q_5, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_6, A_7, Q_6, Q_7, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_8, A_9, Q_8, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_10, A_11, Q_10, Q_11, TTQRT, col_offset_ttqrt);
@@ -1085,28 +1141,46 @@ num_operations_for:
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_4, A_6, Q_4, Q_6, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 4, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_4, A_6, Q_4, Q_6, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_8, A_10, Q_8, Q_10, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_12, A_14, Q_12, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_16, A_18, Q_16, Q_18, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_22, Q_20, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_26, Q_24, Q_26, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_4, A_8, Q_4, Q_8, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 4, idx_mat_2 = 8; idx_mat_2 < 33; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_4, A_8, Q_4, Q_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_12, A_16, Q_12, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_24, Q_20, Q_24, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_4, A_12, Q_4, Q_12, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_20, A_28, Q_20, Q_28, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 4, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_4, A_20, Q_4, Q_20, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_4, A_12, Q_4, Q_12, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_20, A_28, Q_20, Q_28, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 4, 20);
+
+                    /* krnl_givens_rotation(A_4, A_20, Q_4, Q_20, TTQRT, col_offset_ttqrt); */
                     break;
                 case 27:
-                    krnl_givens_rotation(A_5, A_6, Q_5, Q_6, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 5, idx_mat_2 = 6; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_5, A_6, Q_5, Q_6, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_7, A_8, Q_7, Q_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_9, A_10, Q_9, Q_10, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_11, A_12, Q_11, Q_12, TTQRT, col_offset_ttqrt);
@@ -1119,27 +1193,45 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_5, A_7, Q_5, Q_7, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 5, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_5, A_7, Q_5, Q_7, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_9, A_11, Q_9, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_13, A_15, Q_13, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_19, Q_17, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_23, Q_21, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_5, A_9, Q_5, Q_9, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 5, idx_mat_2 = 9; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_5, A_9, Q_5, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_13, A_17, Q_13, Q_17, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_21, A_25, Q_21, Q_25, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_21, A_25, Q_21, Q_25, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_5, A_13, Q_5, Q_13, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_21, A_29, Q_21, Q_29, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 5, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_5, A_21, Q_5, Q_21, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_5, A_13, Q_5, Q_13, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_21, A_29, Q_21, Q_29, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 5, 21);
+
+                    /* krnl_givens_rotation(A_5, A_21, Q_5, Q_21, TTQRT, col_offset_ttqrt); */
                     break;
                 case 26:
-                    krnl_givens_rotation(A_6, A_7, Q_6, Q_7, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 6, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_6, A_7, Q_6, Q_7, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_8, A_9, Q_8, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_10, A_11, Q_10, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_12, A_13, Q_12, Q_13, TTQRT, col_offset_ttqrt);
@@ -1151,27 +1243,45 @@ num_operations_for:
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_6, A_8, Q_6, Q_8, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 6, idx_mat_2 = 8; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_6, A_8, Q_6, Q_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_10, A_12, Q_10, Q_12, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_14, A_16, Q_14, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_20, Q_18, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_24, Q_22, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_6, A_10, Q_6, Q_10, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 6, idx_mat_2 = 10; idx_mat_2 < 27; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_6, A_10, Q_6, Q_10, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_14, A_18, Q_14, Q_18, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_22, A_26, Q_22, Q_26, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_22, A_26, Q_22, Q_26, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_6, A_14, Q_6, Q_14, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_22, A_30, Q_22, Q_30, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 6, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_6, A_22, Q_6, Q_22, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_6, A_14, Q_6, Q_14, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_22, A_30, Q_22, Q_30, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 6, 22);
+
+                    /* krnl_givens_rotation(A_6, A_22, Q_6, Q_22, TTQRT, col_offset_ttqrt); */
                     break;
                 case 25:
-                    krnl_givens_rotation(A_7, A_8, Q_7, Q_8, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 7, idx_mat_2 = 8; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_7, A_8, Q_7, Q_8, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_9, A_10, Q_9, Q_10, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_11, A_12, Q_11, Q_12, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_13, A_14, Q_13, Q_14, TTQRT, col_offset_ttqrt);
@@ -1183,26 +1293,44 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_7, A_9, Q_7, Q_9, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 7, idx_mat_2 = 9; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_7, A_9, Q_7, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_11, A_13, Q_11, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_17, Q_15, Q_17, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_21, Q_19, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_25, Q_23, Q_25, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_7, A_11, Q_7, Q_11, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 7, idx_mat_2 = 11; idx_mat_2 < 28; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_7, A_11, Q_7, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_19, Q_15, Q_19, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_23, A_27, Q_23, Q_27, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_23, A_27, Q_23, Q_27, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_7, A_15, Q_7, Q_15, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_23, A_31, Q_23, Q_31, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 7, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_7, A_23, Q_7, Q_23, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_7, A_15, Q_7, Q_15, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_23, A_31, Q_23, Q_31, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 7, 23);
+
+                    /* krnl_givens_rotation(A_7, A_23, Q_7, Q_23, TTQRT, col_offset_ttqrt); */
                     break;
                 case 24:
-                    krnl_givens_rotation(A_8, A_9, Q_8, Q_9, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 8, idx_mat_2 = 9; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_8, A_9, Q_8, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_10, A_11, Q_10, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_12, A_13, Q_12, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_14, A_15, Q_14, Q_15, TTQRT, col_offset_ttqrt);
@@ -1213,26 +1341,44 @@ num_operations_for:
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_8, A_10, Q_8, Q_10, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 8, idx_mat_2 = 10; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_8, A_10, Q_8, Q_10, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_12, A_14, Q_12, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_16, A_18, Q_16, Q_18, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_22, Q_20, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_26, Q_24, Q_26, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_8, A_12, Q_8, Q_12, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 8, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_8, A_12, Q_8, Q_12, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_16, A_20, Q_16, Q_20, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_24, A_28, Q_24, Q_28, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_24, A_28, Q_24, Q_28, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_8, A_16, Q_8, Q_16, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_24, A_32, Q_24, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 8, idx_mat_2 = 16; idx_mat_2 < 33; idx_mat_1 += 16, idx_mat_2 += 16) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_8, A_24, Q_8, Q_24, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_8, A_16, Q_8, Q_16, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_24, A_32, Q_24, Q_32, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 8, 24);
+
+                    /* krnl_givens_rotation(A_8, A_24, Q_8, Q_24, TTQRT, col_offset_ttqrt); */
                     break;
                 case 23:
-                    krnl_givens_rotation(A_9, A_10, Q_9, Q_10, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 9, idx_mat_2 = 10; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_9, A_10, Q_9, Q_10, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_11, A_12, Q_11, Q_12, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_13, A_14, Q_13, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_16, Q_15, Q_16, TTQRT, col_offset_ttqrt);
@@ -1243,25 +1389,41 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_9, A_11, Q_9, Q_11, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 9, idx_mat_2 = 11; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_9, A_11, Q_9, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_13, A_15, Q_13, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_19, Q_17, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_23, Q_21, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_9, A_13, Q_9, Q_13, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 9, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_9, A_13, Q_9, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_21, Q_17, Q_21, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_9, A_17, Q_9, Q_17, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 9, idx_mat_2 = 17; idx_mat_2 < 26; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_9, A_25, Q_9, Q_25, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_9, A_17, Q_9, Q_17, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_9, A_25, Q_9, Q_25, TTQRT, col_offset_ttqrt); */
                     break;
                 case 22:
-                    krnl_givens_rotation(A_10, A_11, Q_10, Q_11, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 10, idx_mat_2 = 11; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_10, A_11, Q_10, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_12, A_13, Q_12, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_14, A_15, Q_14, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_16, A_17, Q_16, Q_17, TTQRT, col_offset_ttqrt);
@@ -1271,25 +1433,41 @@ num_operations_for:
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_10, A_12, Q_10, Q_12, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 10, idx_mat_2 = 12; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_10, A_12, Q_10, Q_12, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_14, A_16, Q_14, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_20, Q_18, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_24, Q_22, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_10, A_14, Q_10, Q_14, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 10, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_10, A_14, Q_10, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_22, Q_18, Q_22, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_10, A_18, Q_10, Q_18, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 10, idx_mat_2 = 18; idx_mat_2 < 27; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_10, A_26, Q_10, Q_26, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_10, A_18, Q_10, Q_18, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_10, A_26, Q_10, Q_26, TTQRT, col_offset_ttqrt); */
                     break;
                 case 21:
-                    krnl_givens_rotation(A_11, A_12, Q_11, Q_12, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 11, idx_mat_2 = 12; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_11, A_12, Q_11, Q_12, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_13, A_14, Q_13, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_16, Q_15, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_18, Q_17, Q_18, TTQRT, col_offset_ttqrt);
@@ -1299,24 +1477,40 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_11, A_13, Q_11, Q_13, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 11, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_11, A_13, Q_11, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_17, Q_15, Q_17, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_21, Q_19, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_25, Q_23, Q_25, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_11, A_15, Q_11, Q_15, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 11, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_11, A_15, Q_11, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_23, Q_19, Q_23, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_11, A_19, Q_11, Q_19, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 11, idx_mat_2 = 19; idx_mat_2 < 28; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_11, A_27, Q_11, Q_27, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_11, A_19, Q_11, Q_19, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_11, A_27, Q_11, Q_27, TTQRT, col_offset_ttqrt); */
                     break;
                 case 20:
-                    krnl_givens_rotation(A_12, A_13, Q_12, Q_13, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 12, idx_mat_2 = 13; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_12, A_13, Q_12, Q_13, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_14, A_15, Q_14, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_16, A_17, Q_16, Q_17, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_19, Q_18, Q_19, TTQRT, col_offset_ttqrt);
@@ -1325,24 +1519,40 @@ num_operations_for:
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_12, A_14, Q_12, Q_14, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 12, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_12, A_14, Q_12, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_16, A_18, Q_16, Q_18, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_22, Q_20, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_26, Q_24, Q_26, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_12, A_16, Q_12, Q_16, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 12, idx_mat_2 = 16; idx_mat_2 < 33; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_12, A_16, Q_12, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_24, Q_20, Q_24, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_12, A_20, Q_12, Q_20, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 12, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_12, A_28, Q_12, Q_28, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_12, A_20, Q_12, Q_20, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_12, A_28, Q_12, Q_28, TTQRT, col_offset_ttqrt); */
                     break;
                 case 19:
-                    krnl_givens_rotation(A_13, A_14, Q_13, Q_14, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 13, idx_mat_2 = 14; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_13, A_14, Q_13, Q_14, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_15, A_16, Q_15, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_18, Q_17, Q_18, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_20, Q_19, Q_20, TTQRT, col_offset_ttqrt);
@@ -1351,23 +1561,39 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_13, A_15, Q_13, Q_15, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 13, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_13, A_15, Q_13, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_19, Q_17, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_23, Q_21, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_13, A_17, Q_13, Q_17, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_21, A_25, Q_21, Q_25, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 13, idx_mat_2 = 17; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_13, A_21, Q_13, Q_21, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_13, A_17, Q_13, Q_17, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_21, A_25, Q_21, Q_25, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_13, A_29, Q_13, Q_29, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 13, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_13, A_21, Q_13, Q_21, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_13, A_29, Q_13, Q_29, TTQRT, col_offset_ttqrt); */
                     break;
                 case 18:
-                    krnl_givens_rotation(A_14, A_15, Q_14, Q_15, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 14, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_14, A_15, Q_14, Q_15, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_16, A_17, Q_16, Q_17, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_19, Q_18, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_21, Q_20, Q_21, TTQRT, col_offset_ttqrt);
@@ -1375,23 +1601,39 @@ num_operations_for:
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_14, A_16, Q_14, Q_16, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 14, idx_mat_2 = 16; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_14, A_16, Q_14, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_20, Q_18, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_24, Q_22, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_14, A_18, Q_14, Q_18, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_22, A_26, Q_22, Q_26, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 14, idx_mat_2 = 18; idx_mat_2 < 27; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_14, A_22, Q_14, Q_22, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_14, A_18, Q_14, Q_18, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_22, A_26, Q_22, Q_26, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_14, A_30, Q_14, Q_30, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 14, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_14, A_22, Q_14, Q_22, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_14, A_30, Q_14, Q_30, TTQRT, col_offset_ttqrt); */
                     break;
                 case 17:
-                    krnl_givens_rotation(A_15, A_16, Q_15, Q_16, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 15, idx_mat_2 = 16; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_15, A_16, Q_15, Q_16, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_18, Q_17, Q_18, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_20, Q_19, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_22, Q_21, Q_22, TTQRT, col_offset_ttqrt);
@@ -1399,227 +1641,408 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_15, A_17, Q_15, Q_17, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 15, idx_mat_2 = 17; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_15, A_17, Q_15, Q_17, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_21, Q_19, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_25, Q_23, Q_25, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_15, A_19, Q_15, Q_19, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_23, A_27, Q_23, Q_27, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 15, idx_mat_2 = 19; idx_mat_2 < 28; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_15, A_23, Q_15, Q_23, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_15, A_19, Q_15, Q_19, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_23, A_27, Q_23, Q_27, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_15, A_31, Q_15, Q_31, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 15, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_15, A_23, Q_15, Q_23, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_15, A_31, Q_15, Q_31, TTQRT, col_offset_ttqrt); */
                     break;
                 case 16:
-                    krnl_givens_rotation(A_16, A_17, Q_16, Q_17, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 16, idx_mat_2 = 17; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_16, A_17, Q_16, Q_17, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_18, A_19, Q_18, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_21, Q_20, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_23, Q_22, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_16, A_18, Q_16, Q_18, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 16, idx_mat_2 = 18; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_16, A_18, Q_16, Q_18, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_22, Q_20, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_26, Q_24, Q_26, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_16, A_20, Q_16, Q_20, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_24, A_28, Q_24, Q_28, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 16, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_16, A_24, Q_16, Q_24, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_16, A_20, Q_16, Q_20, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_24, A_28, Q_24, Q_28, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_16, A_32, Q_16, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 16, idx_mat_2 = 24; idx_mat_2 < 33; idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_16, A_24, Q_16, Q_24, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_16, A_32, Q_16, Q_32, TTQRT, col_offset_ttqrt); */
                     break;
                 case 15:
-                    krnl_givens_rotation(A_17, A_18, Q_17, Q_18, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 17, idx_mat_2 = 18; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_17, A_18, Q_17, Q_18, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_20, Q_19, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_22, Q_21, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_24, Q_23, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_17, A_19, Q_17, Q_19, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 17, idx_mat_2 = 19; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_17, A_19, Q_17, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_23, Q_21, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_17, A_21, Q_17, Q_21, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 17, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_17, A_25, Q_17, Q_25, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_17, A_21, Q_17, Q_21, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 17, 25);
+
+                    /* krnl_givens_rotation(A_17, A_25, Q_17, Q_25, TTQRT, col_offset_ttqrt); */
                     break;
                 case 14:
-                    krnl_givens_rotation(A_18, A_19, Q_18, Q_19, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 18, idx_mat_2 = 19; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+                    /* krnl_givens_rotation(A_18, A_19, Q_18, Q_19, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_20, A_21, Q_20, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_23, Q_22, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_18, A_20, Q_18, Q_20, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 18, idx_mat_2 = 20; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_18, A_20, Q_18, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_24, Q_22, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_18, A_22, Q_18, Q_22, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 18, idx_mat_2 = 22; idx_mat_2 < 33; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_18, A_26, Q_18, Q_26, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_18, A_22, Q_18, Q_22, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_18, A_32, Q_18, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 18, idx_mat_2 = 26; idx_mat_2 < 33; idx_mat_2 += 6) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_18, A_26, Q_18, Q_26, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_18, A_32, Q_18, Q_32, TTQRT, col_offset_ttqrt); */
                     break;
                 case 13:
-                    krnl_givens_rotation(A_19, A_20, Q_19, Q_20, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 19, idx_mat_2 = 20; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_19, A_20, Q_19, Q_20, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_21, A_22, Q_21, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_24, Q_23, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_19, A_21, Q_19, Q_21, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 19, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_19, A_21, Q_19, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_25, Q_23, Q_25, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_19, A_23, Q_19, Q_23, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 19, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_19, A_27, Q_19, Q_27, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_19, A_23, Q_19, Q_23, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 19, 27);
+
+                    /* krnl_givens_rotation(A_19, A_27, Q_19, Q_27, TTQRT, col_offset_ttqrt); */
                     break;
                 case 12:
-                    krnl_givens_rotation(A_20, A_21, Q_20, Q_21, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 20, idx_mat_2 = 21; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_20, A_21, Q_20, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_22, A_23, Q_22, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_20, A_22, Q_20, Q_22, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 20, idx_mat_2 = 22; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_20, A_22, Q_20, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_26, Q_24, Q_26, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_20, A_24, Q_20, Q_24, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 20, idx_mat_2 = 24; idx_mat_2 < 33; idx_mat_1 += 8, idx_mat_2 += 8) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_20, A_28, Q_20, Q_28, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_20, A_24, Q_20, Q_24, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 20, 28);
+
+                    /* krnl_givens_rotation(A_20, A_28, Q_20, Q_28, TTQRT, col_offset_ttqrt); */
                     break;
                 case 11:
-                    krnl_givens_rotation(A_21, A_22, Q_21, Q_22, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 21, idx_mat_2 = 22; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_21, A_22, Q_21, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_23, A_24, Q_23, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_21, A_23, Q_21, Q_23, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 21, idx_mat_2 = 23; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_21, A_23, Q_21, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_21, A_25, Q_21, Q_25, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 21, idx_mat_2 = 25; idx_mat_2 < 33; idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_21, A_29, Q_21, Q_29, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_21, A_25, Q_21, Q_25, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_21, A_29, Q_21, Q_29, TTQRT, col_offset_ttqrt); */
                     break;
                 case 10:
-                    krnl_givens_rotation(A_22, A_23, Q_22, Q_23, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 22, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_22, A_23, Q_22, Q_23, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_22, A_24, Q_22, Q_24, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 22, idx_mat_2 = 24; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_22, A_24, Q_22, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_22, A_26, Q_22, Q_26, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 22, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_22, A_30, Q_22, Q_30, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_22, A_26, Q_22, Q_26, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_22, A_30, Q_22, Q_30, TTQRT, col_offset_ttqrt); */
                     break;
                 case 9:
-                    krnl_givens_rotation(A_23, A_24, Q_23, Q_24, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 23, idx_mat_2 = 24; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_23, A_24, Q_23, Q_24, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_23, A_25, Q_23, Q_25, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 23, idx_mat_2 = 25; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_23, A_27, Q_23, Q_27, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_23, A_25, Q_23, Q_25, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_23, A_31, Q_23, Q_31, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 23, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_23, A_27, Q_23, Q_27, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_23, A_31, Q_23, Q_31, TTQRT, col_offset_ttqrt); */
                     break;
                 case 8:
-                    krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 24, idx_mat_2 = 26; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_24, A_25, Q_24, Q_25, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_24, A_26, Q_24, Q_26, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 24, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_24, A_28, Q_24, Q_28, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_24, A_26, Q_24, Q_26, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_24, A_32, Q_24, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 24, idx_mat_2 = 28; idx_mat_2 < 33; idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_24, A_28, Q_24, Q_28, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_24, A_32, Q_24, Q_32, TTQRT, col_offset_ttqrt); */
                     break;
                 case 7:
-                    krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 25, idx_mat_2 = 26; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_25, A_26, Q_25, Q_26, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 25, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 25, 29);
+
+                    /* krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt); */
                     break;
                 case 6:
-                    krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 26, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_26, A_27, Q_26, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 26, idx_mat_2 = 28; idx_mat_2 < 33; idx_mat_1 += 4, idx_mat_2 += 4) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_26, A_28, Q_26, Q_28, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 26, 30);
+
+                    /* krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt); */
                     break;
                 case 5:
-                    krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 27, idx_mat_2 = 28; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_27, A_28, Q_27, Q_28, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 27, idx_mat_2 = 29; idx_mat_2 < 32; idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_27, A_29, Q_27, Q_29, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt); */
                     break;
                 case 4:
-                    krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 28, idx_mat_2 = 29; idx_mat_2 < 32; idx_mat_1++, idx_mat_2++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 28, idx_mat_2 = 30; idx_mat_2 < 33; idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
+
+                    /* krnl_givens_rotation(A_28, A_30, Q_28, Q_30, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_28, A_32, Q_28, Q_32, TTQRT, col_offset_ttqrt); */
                     break;
                 case 3:
-                    krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 29, idx_mat_2 = 30; idx_mat_2 < 33; idx_mat_1 += 2, idx_mat_2 += 2) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
+
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 29, 31);
+
+                    /* krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
                     break;
                 case 2:
-                    krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+                    for (index_t idx_mat_1 = 30, idx_mat_2 = 31; idx_mat_2 < 33; idx_mat_2++) {
+                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    }
 
-                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt);
+                    /* krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt);
+
+                    krnl_givens_rotation(A_30, A_32, Q_30, Q_32, TTQRT, col_offset_ttqrt); */
                     break;
                 case 1:
-                    krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt);
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 31, 32);
+
+                    /* krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
                     break;
                 default:
                     break;
