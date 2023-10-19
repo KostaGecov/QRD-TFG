@@ -948,8 +948,7 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 1:
-                    idx_mat_1 = 32;
-                    krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                    krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, 32, 0);
 
                     /* krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
@@ -1119,7 +1118,7 @@ num_operations_for:
                     /* krnl_givens_rotation(A_3, A_11, Q_3, Q_11, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_19, A_27, Q_19, Q_27, TTQRT, col_offset_ttqrt); */
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 3, 19);
 
                     /* krnl_givens_rotation(A_3, A_19, Q_3, Q_19, TTQRT, col_offset_ttqrt); */
                     break;
