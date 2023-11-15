@@ -33,7 +33,7 @@ void update(A[TAM_TILED][TAM], Q[TAM_TILED][TAM]) {
             }
         }
     }
-} */
+}*/
 
 int main() {
     /**
@@ -60,87 +60,23 @@ int main() {
      *
      */
     data_t A_tiled[NUM_TILED][TAM_TILED][TAM];
-
     data_t A[TAM][TAM];
     data_t A_res[TAM][TAM];
-    /*  data_t A_1[TAM_TILED][TAM];
-        data_t A_2[TAM_TILED][TAM];
-        data_t A_3[TAM_TILED][TAM];
-        data_t A_4[TAM_TILED][TAM];
-        data_t A_5[TAM_TILED][TAM];
-        data_t A_6[TAM_TILED][TAM];
-        data_t A_7[TAM_TILED][TAM];
-        data_t A_8[TAM_TILED][TAM];
-        data_t A_9[TAM_TILED][TAM];
-        data_t A_10[TAM_TILED][TAM];
-        data_t A_11[TAM_TILED][TAM];
-        data_t A_12[TAM_TILED][TAM];
-        data_t A_13[TAM_TILED][TAM];
-        data_t A_14[TAM_TILED][TAM];
-        data_t A_15[TAM_TILED][TAM];
-        data_t A_16[TAM_TILED][TAM];
-        data_t A_17[TAM_TILED][TAM];
-        data_t A_18[TAM_TILED][TAM];
-        data_t A_19[TAM_TILED][TAM];
-        data_t A_20[TAM_TILED][TAM];
-        data_t A_21[TAM_TILED][TAM];
-        data_t A_22[TAM_TILED][TAM];
-        data_t A_23[TAM_TILED][TAM];
-        data_t A_24[TAM_TILED][TAM];
-        data_t A_25[TAM_TILED][TAM];
-        data_t A_26[TAM_TILED][TAM];
-        data_t A_27[TAM_TILED][TAM];
-        data_t A_28[TAM_TILED][TAM];
-        data_t A_29[TAM_TILED][TAM];
-        data_t A_30[TAM_TILED][TAM];
-        data_t A_31[TAM_TILED][TAM];
-        data_t A_32[TAM_TILED][TAM]; */
 
     /**
      * stores all 32 Q matrices needed for tiled operations
      *
      */
     data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
-
     data_t Q[TAM][TAM];
-    /*  data_t Q_1[TAM_TILED][TAM];
-        data_t Q_2[TAM_TILED][TAM];
-        data_t Q_3[TAM_TILED][TAM];
-        data_t Q_4[TAM_TILED][TAM];
-        data_t Q_5[TAM_TILED][TAM];
-        data_t Q_6[TAM_TILED][TAM];
-        data_t Q_7[TAM_TILED][TAM];
-        data_t Q_8[TAM_TILED][TAM];
-        data_t Q_9[TAM_TILED][TAM];
-        data_t Q_10[TAM_TILED][TAM];
-        data_t Q_11[TAM_TILED][TAM];
-        data_t Q_12[TAM_TILED][TAM];
-        data_t Q_13[TAM_TILED][TAM];
-        data_t Q_14[TAM_TILED][TAM];
-        data_t Q_15[TAM_TILED][TAM];
-        data_t Q_16[TAM_TILED][TAM];
-        data_t Q_17[TAM_TILED][TAM];
-        data_t Q_18[TAM_TILED][TAM];
-        data_t Q_19[TAM_TILED][TAM];
-        data_t Q_20[TAM_TILED][TAM];
-        data_t Q_21[TAM_TILED][TAM];
-        data_t Q_22[TAM_TILED][TAM];
-        data_t Q_23[TAM_TILED][TAM];
-        data_t Q_24[TAM_TILED][TAM];
-        data_t Q_25[TAM_TILED][TAM];
-        data_t Q_26[TAM_TILED][TAM];
-        data_t Q_27[TAM_TILED][TAM];
-        data_t Q_28[TAM_TILED][TAM];
-        data_t Q_29[TAM_TILED][TAM];
-        data_t Q_30[TAM_TILED][TAM];
-        data_t Q_31[TAM_TILED][TAM];
-        data_t Q_32[TAM_TILED][TAM]; */
 
     std::ifstream data_in("data_in.dat");
 
     if (!data_in.is_open()) {
-        std::cerr << "Could not open data_in.dat" << std::endl;
+        std::cout << "Could not open data_in.dat" << std::endl;
         return -1;
+    } else {
+    	std::cout << "Abierto fichero de entrada de datos" << std::endl;
     }
 
 initialize_matrices:
@@ -266,7 +202,8 @@ num_operations_for:
         if (i % 2 == 0) {
             switch (n_iter_GEQRT) {
                 case 32:
-                    for (index_t idx_mat_1 = 0; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 32" << std::endl;
+                    for (index_t idx_mat_1 = 0; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_1, Q_1, GEQRT, col_offset_geqrt);
@@ -303,7 +240,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32, Q_32, GEQRT, col_offset_geqrt); */
                     break;
                 case 31:
-                    for (index_t idx_mat_1 = 1; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 31" << std::endl;
+                    for (index_t idx_mat_1 = 1; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_2,  Q_2,  GEQRT, col_offset_geqrt);
@@ -339,7 +277,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 30:
-                    for (index_t idx_mat_1 = 2; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 30" << std::endl;
+                    for (index_t idx_mat_1 = 2; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_3,  Q_3,  GEQRT, col_offset_geqrt);
@@ -374,7 +313,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 29:
-                    for (index_t idx_mat_1 = 3; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 29" << std::endl;
+                    for (index_t idx_mat_1 = 3; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_4,  Q_4,  GEQRT, col_offset_geqrt);
@@ -408,7 +348,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 28:
-                    for (index_t idx_mat_1 = 4; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 28" << std::endl;
+                    for (index_t idx_mat_1 = 4; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_5,  Q_5,   GEQRT, col_offset_geqrt);
@@ -441,7 +382,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 27:
-                    for (index_t idx_mat_1 = 5; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 27" << std::endl;
+                    for (index_t idx_mat_1 = 5; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_6,  Q_6,  GEQRT, col_offset_geqrt);
@@ -473,7 +415,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 26:
-                    for (index_t idx_mat_1 = 6; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 26" << std::endl;
+                    for (index_t idx_mat_1 = 6; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_7,  Q_7,  GEQRT, col_offset_geqrt);
@@ -504,7 +447,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 25:
-                    for (index_t idx_mat_1 = 7; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 25" << std::endl;
+                    for (index_t idx_mat_1 = 7; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_8,  Q_8,  GEQRT, col_offset_geqrt);
@@ -534,7 +478,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 24:
-                    for (index_t idx_mat_1 = 8; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 24" << std::endl;
+                    for (index_t idx_mat_1 = 8; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_9,  Q_9,  GEQRT, col_offset_geqrt);
@@ -563,7 +508,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 23:
-                    for (index_t idx_mat_1 = 9; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 23" << std::endl;
+                    for (index_t idx_mat_1 = 9; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_10,  Q_10,  GEQRT, col_offset_geqrt);
@@ -591,7 +537,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 22:
-                    for (index_t idx_mat_1 = 10; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 22" << std::endl;
+                    for (index_t idx_mat_1 = 10; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_11,  Q_11,  GEQRT, col_offset_geqrt);
@@ -618,7 +565,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 21:
-                    for (index_t idx_mat_1 = 11; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 21" << std::endl;
+                    for (index_t idx_mat_1 = 11; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_12,  Q_12,  GEQRT, col_offset_geqrt);
@@ -644,7 +592,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 20:
-                    for (index_t idx_mat_1 = 12; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 20" << std::endl;
+                    for (index_t idx_mat_1 = 12; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_13,  Q_13,  GEQRT, col_offset_geqrt);
@@ -669,7 +618,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 19:
-                    for (index_t idx_mat_1 = 13; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 19" << std::endl;
+                    for (index_t idx_mat_1 = 13; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_14,  Q_14,  GEQRT, col_offset_geqrt);
@@ -693,7 +643,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 18:
-                    for (index_t idx_mat_1 = 14; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 18" << std::endl;
+                    for (index_t idx_mat_1 = 14; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_15,  Q_15,  GEQRT, col_offset_geqrt);
@@ -716,7 +667,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 17:
-                    for (index_t idx_mat_1 = 15; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 17" << std::endl;
+                    for (index_t idx_mat_1 = 15; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_16,  Q_16,  GEQRT, col_offset_geqrt);
@@ -738,7 +690,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 16:
-                    for (index_t idx_mat_1 = 16; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 16" << std::endl;
+                    for (index_t idx_mat_1 = 16; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_17,  Q_17,  GEQRT, col_offset_geqrt);
@@ -759,7 +712,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 15:
-                    for (index_t idx_mat_1 = 17; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 15" << std::endl;
+                    for (index_t idx_mat_1 = 17; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_18,  Q_18,  GEQRT, col_offset_geqrt);
@@ -779,7 +733,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 14:
-                    for (index_t idx_mat_1 = 18; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 14" << std::endl;
+                    for (index_t idx_mat_1 = 18; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_19,  Q_19,  GEQRT, col_offset_geqrt);
@@ -798,7 +753,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 13:
-                    for (index_t idx_mat_1 = 19; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 13" << std::endl;
+                    for (index_t idx_mat_1 = 19; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_20,  Q_20,  GEQRT, col_offset_geqrt);
@@ -816,7 +772,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 12:
-                    for (index_t idx_mat_1 = 20; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 12" << std::endl;
+                    for (index_t idx_mat_1 = 20; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_21,  Q_21,  GEQRT, col_offset_geqrt);
@@ -833,7 +790,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 11:
-                    for (index_t idx_mat_1 = 21; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 11" << std::endl;
+                    for (index_t idx_mat_1 = 21; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_22,  Q_22,  GEQRT, col_offset_geqrt);
@@ -849,7 +807,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 10:
-                    for (index_t idx_mat_1 = 22; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 10" << std::endl;
+                    for (index_t idx_mat_1 = 22; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_23,  Q_23,  GEQRT, col_offset_geqrt);
@@ -864,7 +823,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 9:
-                    for (index_t idx_mat_1 = 23; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 9" << std::endl;
+                    for (index_t idx_mat_1 = 23; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_24,  Q_24,  GEQRT, col_offset_geqrt);
@@ -878,7 +838,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 8:
-                    for (index_t idx_mat_1 = 24; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 8" << std::endl;
+                    for (index_t idx_mat_1 = 24; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_25,  Q_25,  GEQRT, col_offset_geqrt);
@@ -891,7 +852,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 7:
-                    for (index_t idx_mat_1 = 25; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 7" << std::endl;
+                    for (index_t idx_mat_1 = 25; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_26,  Q_26,  GEQRT, col_offset_geqrt);
@@ -903,7 +865,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 6:
-                    for (index_t idx_mat_1 = 26; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 6" << std::endl;
+                    for (index_t idx_mat_1 = 26; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_27,  Q_27,  GEQRT, col_offset_geqrt);
@@ -914,7 +877,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 5:
-                    for (index_t idx_mat_1 = 27; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 5" << std::endl;
+                    for (index_t idx_mat_1 = 27; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_28,  Q_28,  GEQRT, col_offset_geqrt);
@@ -924,7 +888,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 4:
-                    for (index_t idx_mat_1 = 28; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 4" << std::endl;
+                    for (index_t idx_mat_1 = 28; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_29,  Q_29,  GEQRT, col_offset_geqrt);
@@ -933,7 +898,8 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 3:
-                    for (index_t idx_mat_1 = 29; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 3" << std::endl;
+                    for (index_t idx_mat_1 = 29; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_30,  Q_30,  GEQRT, col_offset_geqrt);
@@ -941,13 +907,15 @@ num_operations_for:
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 2:
-                    for (index_t idx_mat_1 = 30; i < 32; i++) {
+                	std::cout << "Entro en GEQRT 2" << std::endl;
+                    for (index_t idx_mat_1 = 30; idx_mat_1 < 32; idx_mat_1++) {
                         krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
                     /* krnl_givens_rotation(A_31,  Q_31,  GEQRT, col_offset_geqrt);
                     krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
                     break;
                 case 1:
+                	std::cout << "Entro en GEQRT 1" << std::endl;
                     krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, 31, 0);
 
                     /* krnl_givens_rotation(A_32,  Q_32,  GEQRT, col_offset_geqrt); */
@@ -961,7 +929,10 @@ num_operations_for:
         } else {
             switch (n_iter_TTQRT) {
                 case 31:
+                	std::cout << "Entro en TTQRT 31_1" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 1; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
+//                    	std::cout << "Iteracion: " << idx_mat_1 << std::endl;
+//                    	std::cout << "Valores indices de matriz: " << idx_mat_1 << ", " << idx_mat_2 << std::endl;
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -982,6 +953,7 @@ num_operations_for:
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
+                    std::cout << "Entro en TTQRT 31_2" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 2; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -995,6 +967,7 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_29, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
+                    std::cout << "Entro en TTQRT 31_3" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 4; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1004,6 +977,7 @@ num_operations_for:
                     krnl_givens_rotation(A_17, A_21, Q_17, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt); */
 
+                    std::cout << "Entro en TTQRT 31_4" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 8; idx_mat_2 < 25; idx_mat_1 += 16, idx_mat_2 += 16) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1011,11 +985,13 @@ num_operations_for:
                     /* krnl_givens_rotation(A_1, A_9, Q_1, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_25, Q_17, Q_25, TTQRT, col_offset_ttqrt); */
 
+                    std::cout << "Entro en TTQRT 31_5" << std::endl;
                     krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 0, 16);
 
                     /* krnl_givens_rotation(A_1, A_17, Q_1, Q_17, TTQRT, col_offset_ttqrt); */
                     break;
                 case 30:
+                	std::cout << "Entro en TTQRT 30" << std::endl;
                     for (index_t idx_mat_1 = 1, idx_mat_2 = 2; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1070,6 +1046,7 @@ num_operations_for:
                     /* krnl_givens_rotation(A_2, A_18, Q_2, Q_18, TTQRT, col_offset_ttqrt); */
                     break;
                 case 29:
+                	std::cout << "Entro en TTQRT 29" << std::endl;
                     for (index_t idx_mat_1 = 2, idx_mat_2 = 3; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1123,7 +1100,8 @@ num_operations_for:
                     /* krnl_givens_rotation(A_3, A_19, Q_3, Q_19, TTQRT, col_offset_ttqrt); */
                     break;
                 case 28:
-                    for (index_t idx_mat_1 = 2, idx_mat_2 = 4; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
+                	std::cout << "Entro en TTQRT 28" << std::endl;
+                    for (index_t idx_mat_1 = 3, idx_mat_2 = 4; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -1175,6 +1153,7 @@ num_operations_for:
                     /* krnl_givens_rotation(A_4, A_20, Q_4, Q_20, TTQRT, col_offset_ttqrt); */
                     break;
                 case 27:
+                	std::cout << "Entro en TTQRT 27" << std::endl;
                     for (index_t idx_mat_1 = 4, idx_mat_2 = 5; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1226,6 +1205,7 @@ num_operations_for:
                     /* krnl_givens_rotation(A_5, A_21, Q_5, Q_21, TTQRT, col_offset_ttqrt); */
                     break;
                 case 26:
+                	std::cout << "Entro en TTQRT 26" << std::endl;
                     for (index_t idx_mat_1 = 5, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1276,6 +1256,7 @@ num_operations_for:
                     /* krnl_givens_rotation(A_6, A_22, Q_6, Q_22, TTQRT, col_offset_ttqrt); */
                     break;
                 case 25:
+                	std::cout << "Entro en TTQRT 25" << std::endl;
                     for (index_t idx_mat_1 = 6, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1321,10 +1302,11 @@ num_operations_for:
                     krnl_givens_rotation(A_23, A_31, Q_23, Q_31, TTQRT, col_offset_ttqrt); */
 
                     krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 6, 22);
-
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 6, 26);
                     /* krnl_givens_rotation(A_7, A_23, Q_7, Q_23, TTQRT, col_offset_ttqrt); */
                     break;
                 case 24:
+                	std::cout << "Entro en TTQRT 24" << std::endl;
                     for (index_t idx_mat_1 = 7, idx_mat_2 = 8; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1373,6 +1355,7 @@ num_operations_for:
                     /* krnl_givens_rotation(A_8, A_24, Q_8, Q_24, TTQRT, col_offset_ttqrt); */
                     break;
                 case 23:
+                	std::cout << "Entro en TTQRT 23" << std::endl;
                     for (index_t idx_mat_1 = 8, idx_mat_2 = 9; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1390,7 +1373,7 @@ num_operations_for:
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    for (index_t idx_mat_1 = 8, idx_mat_2 = 1; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
+                    for (index_t idx_mat_1 = 8, idx_mat_2 = 10; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -1418,6 +1401,7 @@ num_operations_for:
                     krnl_givens_rotation(A_9, A_25, Q_9, Q_25, TTQRT, col_offset_ttqrt); */
                     break;
                 case 22:
+                	std::cout << "Entro en TTQRT 22" << std::endl;
                     for (index_t idx_mat_1 = 9, idx_mat_2 = 10; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -1766,13 +1750,9 @@ num_operations_for:
                     /* krnl_givens_rotation(A_18, A_22, Q_18, Q_22, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_26, A_30, Q_26, Q_30, TTQRT, col_offset_ttqrt); */
 
-                    for (index_t idx_mat_1 = 17, idx_mat_2 = 25; idx_mat_2 < 32; idx_mat_2 += 6) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
-                    }
+                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 17, 25);
 
-                    /* krnl_givens_rotation(A_18, A_26, Q_18, Q_26, TTQRT, col_offset_ttqrt);
-
-                    krnl_givens_rotation(A_18, A_32, Q_18, Q_32, TTQRT, col_offset_ttqrt); */
+                    /* krnl_givens_rotation(A_18, A_26, Q_18, Q_26, TTQRT, col_offset_ttqrt); */
                     break;
                 case 13:
                     for (index_t idx_mat_1 = 18, idx_mat_2 = 19; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
@@ -1818,7 +1798,7 @@ num_operations_for:
                     krnl_givens_rotation(A_28, A_29, Q_28, Q_29, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_30, A_31, Q_30, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    for (index_t idx_mat_1 = 19, idx_mat_2 = 21; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                    for (index_t idx_mat_1 = 19, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -1849,7 +1829,7 @@ num_operations_for:
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    for (index_t idx_mat_1 = 20, idx_mat_2 = 22; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
+                    for (index_t idx_mat_1 = 20, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -1857,7 +1837,7 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_27, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    for (index_t idx_mat_1 = 20, idx_mat_2 = 24; idx_mat_2 < 32; idx_mat_2 += 4) {
+                    for (index_t idx_mat_1 = 20, idx_mat_2 = 24; idx_mat_2 < 29; idx_mat_2 += 4) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -1919,7 +1899,7 @@ num_operations_for:
                     krnl_givens_rotation(A_23, A_31, Q_23, Q_31, TTQRT, col_offset_ttqrt); */
                     break;
                 case 8:
-                    for (index_t idx_mat_1 = 23, idx_mat_2 = 25; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
+                    for (index_t idx_mat_1 = 23, idx_mat_2 = 24; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -2002,7 +1982,7 @@ num_operations_for:
                     krnl_givens_rotation(A_27, A_31, Q_27, Q_31, TTQRT, col_offset_ttqrt); */
                     break;
                 case 4:
-                    for (index_t idx_mat_1 = 27, idx_mat_2 = 28; idx_mat_2 < 31; idx_mat_1++, idx_mat_2++) {
+                    for (index_t idx_mat_1 = 27, idx_mat_2 = 28; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -2156,44 +2136,49 @@ write_sol_to_matrix_row_for:
         }
     }
 
-    // Print R matrix
-    /*     for (int i = 0; i < TAM; i++) {
-            for (int j = 0; j < TAM; j++) {
-                std::cout << A[i][j] << "  |  ";
-            }
-            std::cout << std::endl;
-        }
-        // Print Q matrix
-        for (int i = 0; i < TAM; i++) {
-            for (int j = 0; j < TAM; j++) {
-                std::cout << Q[i][j] << "  |  ";
-            }
-            std::cout << std::endl;
-        } */
+	// Print R matrix
+	for (int i = 0; i < TAM; i++) {
+		for (int j = 0; j < TAM; j++) {
+			std::cout << A[i][j] << "  |  ";
+		}
+		std::cout << std::endl;
+	}
+	// Print Q matrix
+	for (int i = 0; i < TAM; i++) {
+		for (int j = 0; j < TAM; j++) {
+			std::cout << Q[i][j] << "  |  ";
+		}
+		std::cout << std::endl;
+	}
 
-    // matrix_mul(A, Q, A_res);
+//     matrix_mul(A, Q, A_res);
 
     // Print A_res matrix
-    for (int i = 0; i < TAM; i++) {
+    /*for (int i = 0; i < TAM; i++) {
         for (int j = 0; j < TAM; j++) {
             std::cout << A_res[i][j] << "  |  ";
         }
         std::cout << std::endl;
-    }
+    }*/
 
-    std::ofstream qrd_out("qrd_out.dat");
+	// Specify the full path for the output file
+	std::string filepath = "/home/kgecov/git/QRD-TFG/data_out.dat";
+    std::ofstream data_out(filepath);
 
-    if (!qrd_out.is_open()) {
-        std::cerr << "Could not open qrd_out.dat" << std::endl;
+    if (!data_out) {
+        std::cout << "Could not open data_out.dat" << std::endl;
         return -1;
+    }  else {
+    	std::cout << "Abierto fichero de salida de datos" << std::endl;
     }
 
     for (index_t r = 0; r < TAM; r++) {
         for (index_t c = 0; c < TAM; c++) {
-            qrd_out << A_res[r][c];
+            data_out << A[r][c] << ' ';
         }
+        data_out << '\n';
     }
-    qrd_out.close();
+    data_out.close();
 
     return 0;
 }

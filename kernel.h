@@ -36,17 +36,20 @@ typedef ap_uint<TAM_INDEX> index_t;
  * @brief Scale factor to compensate rotations
  *
  */
-const data_t SCALE_FACTOR = 0.6072529;
+const data_t SCALE_FACTOR = 0.607252935009249;
 
 class Rotator {
    public:
+
     // after data is read from an hls::stream<>, it cannot be read again
     // Stream is FIFO type
-    hls::stream<data_t, TAM> row_x_in, row_y_in;
-    hls::stream<data_t, TAM> row_x_out, row_y_out;
+	hls::stream<data_t, TAM> row_x_in;
+	hls::stream<data_t, TAM> row_y_in;
+	hls::stream<data_t, TAM> row_x_out;
+	hls::stream<data_t, TAM> row_y_out;
 
-    hls::stream<data_t, TAM> q_u_in, q_v_in;
-    hls::stream<data_t, TAM> q_u_out, q_v_out;
+	hls::stream<data_t, TAM> q_u_in, q_v_in;
+	hls::stream<data_t, TAM> q_u_out, q_v_out;
 
     int row_x, row_y, col;  // posiciones de las filas a rotar. En teor�a las
                             // columnas son las mismas en ambas filas

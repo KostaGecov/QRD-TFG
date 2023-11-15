@@ -55,28 +55,35 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& q_v_out,
                               int col_rotator) {
 #pragma HLS INLINE off
-    data_t x[TAM], y[TAM];
-    data_t u[TAM], v[TAM];
+    data_t x[TAM] = {0}, y[TAM] = {0};
+    data_t u[TAM] = {0}, v[TAM] = {0};
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = x
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = y
-    data_t aux;
+    data_t aux = 0;
 
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
-        x[j] = row_x_in.read();
-        y[j] = row_y_in.read();
-        u[j] = q_u_in.read();
-        v[j] = q_v_in.read();
+    	if(!row_x_in.empty() && !row_y_in.empty() && !q_u_in.empty() && !q_v_in.empty()) {
+	//        x[j] = row_x_in.read();
+			row_x_in.read(x[j]);
+	//        y[j] = row_y_in.read();
+			row_y_in.read(y[j]);
+	//        u[j] = q_u_in.read();
+			q_u_in.read(u[j]);
+	//        v[j] = q_v_in.read();
+			q_v_in.read(v[j]);
+    	} else {
+    		std::cout << "Empty stream" << std::endl;
+    	}
     }
-
     // Choose the right sign for the rotation, taking into account the quadrants
     // of the coordinates
     if (x[col_rotator] < 0) {
     sign_for:
         for (index_t s = col_rotator; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
-            if (y[s] >= 0) {
+            /*if (y[s] >= 0) {
                 aux = x[s];
                 x[s] = y[s];
                 y[s] = -aux;
@@ -92,7 +99,11 @@ read_input_data:
                 aux = u[s];
                 u[s] = -v[s];
                 v[s] = aux;
-            }
+            }*/
+        	x[s] = -x[s];
+        	y[s] = -y[s];
+        	u[s] = -u[s];
+        	v[s] = -v[s];
         }
     }
 
@@ -108,7 +119,7 @@ iterations_for:
             // and to the contrary with X coordinate
             data_t x_prev = x[j];
             data_t u_prev = u[j];
-            if (y[col_rotator] <= 0) {
+            if (y[col_rotator] < 0) {
                 x[j] = x[j] - (y[j] >> k);
                 y[j] = y[j] + (x_prev >> k);
 
@@ -162,10 +173,10 @@ void krnl_givens_rotation(data_t A_tiled_1[NUM_TILED][TAM_TILED][TAM],
                           data_t Q_tiled_1[NUM_TILED][TAM_TILED][TAM],
                           index_t type_op, index_t col_offset,
                           index_t idx_mat_1, index_t idx_mat_2) {
-#pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = A_tiled_2
+//#pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = A_tiled_2
 #pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = A_tiled_1
 #pragma HLS ARRAY_PARTITION dim = 2 factor = 32 type = block variable = A_tiled_1
-#pragma HLS ARRAY_PARTITION dim = 2 factor = 32 type = block variable = A_tiled_2
+//#pragma HLS ARRAY_PARTITION dim = 2 factor = 32 type = block variable = A_tiled_2
 #pragma HLS DATAFLOW
 #pragma HLS TOP name = krnl_givens_rotation
 
@@ -281,29 +292,37 @@ void krnl_givens_rotation(data_t A_tiled_1[NUM_TILED][TAM_TILED][TAM],
             for (index_t r = 0; r < TAM_TILED; r++) {
 #pragma HLS LOOP_TRIPCOUNT max = 8 min = 8
                 if (r == 0) {
-                    A_tiled_1[idx_mat_1][r][c] = Rot9_GE.row_x_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot9_GE.q_u_out.read();
+                     Rot9_GE.row_x_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 1: " << Rot9_GE.row_x_out.size() << std::endl;
+                    Rot9_GE.q_u_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 } else if (r == 1) {
-                    A_tiled_1[idx_mat_1][r][c] = Rot15_GE.row_x_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot15_GE.q_u_out.read();
+                    Rot15_GE.row_x_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 2: " << Rot15_GE.row_x_out.size() << std::endl;
+                    Rot15_GE.q_u_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 } else if (r == 2) {
-                    A_tiled_1[idx_mat_1][r][c] = Rot20_GE.row_x_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot20_GE.q_u_out.read();
+                    Rot20_GE.row_x_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 3: " << Rot20_GE.row_x_out.size() << std::endl;
+                    Rot20_GE.q_u_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 } else if (r == 3) {
-                    A_tiled_1[idx_mat_1][r][c] = Rot23_GE.row_x_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot23_GE.q_u_out.read();
+                    Rot23_GE.row_x_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 4: " << Rot23_GE.row_x_out.size() << std::endl;
+                    Rot23_GE.q_u_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 } else if (r == 4) {
-                    A_tiled_1[idx_mat_1][r][c] = Rot25_GE.row_x_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot25_GE.q_u_out.read();
+                    Rot25_GE.row_x_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 5: " << Rot25_GE.row_x_out.size() << std::endl;
+                    Rot25_GE.q_u_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 } else if (r == 5) {
-                    A_tiled_1[idx_mat_1][r][c] = Rot27_GE.row_x_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot27_GE.q_u_out.read();
+                    Rot27_GE.row_x_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 6: " << Rot27_GE.row_x_out.size() << std::endl;
+                    Rot27_GE.q_u_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 } else if (r == 6) {
-                    A_tiled_1[idx_mat_1][r][c] = Rot28_GE.row_x_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot28_GE.q_u_out.read();
+                    Rot28_GE.row_x_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 7: " << Rot28_GE.row_x_out.size() << std::endl;
+                    Rot28_GE.q_u_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 } else {
-                    A_tiled_1[idx_mat_1][r][c] = Rot28_GE.row_y_out.read();
-                    Q_tiled_1[idx_mat_1][r][c] = Rot28_GE.q_v_out.read();
+                    Rot28_GE.row_y_out.read(A_tiled_1[idx_mat_1][r][c]);
+//                    std::cout << "Num de elementos de stream 8: " << Rot28_GE.row_y_out.size() << std::endl;
+                    Rot28_GE.q_v_out.read(Q_tiled_1[idx_mat_1][r][c]);
                 }
             }
         }
@@ -359,6 +378,7 @@ void krnl_givens_rotation(data_t A_tiled_1[NUM_TILED][TAM_TILED][TAM],
         read_input_rows(A_tiled_1, idx_mat_1, Rot1_TT.row_x_in, Rot2_TT.row_x_in,
                         Rot3_TT.row_x_in, Rot4_TT.row_x_in, Rot5_TT.row_x_in,
                         Rot6_TT.row_x_in, Rot7_TT.row_x_in, Rot8_TT.row_x_in);
+
         // Read Y coordinates rows from second matrix
         read_input_rows(A_tiled_1, idx_mat_2, Rot1_TT.row_y_in, Rot2_TT.row_y_in,
                         Rot3_TT.row_y_in, Rot4_TT.row_y_in, Rot5_TT.row_y_in,
@@ -368,20 +388,24 @@ void krnl_givens_rotation(data_t A_tiled_1[NUM_TILED][TAM_TILED][TAM],
                         Rot3_TT.q_u_in, Rot4_TT.q_u_in, Rot5_TT.q_u_in,
                         Rot6_TT.q_u_in, Rot7_TT.q_u_in, Rot8_TT.q_u_in);
 
-        read_input_rows(Q_tiled_1, idx_mat_2, Rot1_TT.q_v_in, Rot2_TT.q_u_in,
-                        Rot3_TT.q_u_in, Rot4_TT.q_u_in, Rot5_TT.q_u_in,
-                        Rot6_TT.q_u_in, Rot7_TT.q_u_in, Rot8_TT.q_u_in);
+        read_input_rows(Q_tiled_1, idx_mat_2, Rot1_TT.q_v_in, Rot2_TT.q_v_in,
+                        Rot3_TT.q_v_in, Rot4_TT.q_v_in, Rot5_TT.q_v_in,
+                        Rot6_TT.q_v_in, Rot7_TT.q_v_in, Rot8_TT.q_v_in);
 
         Rot1_TT.givens_rotation(Rot1_TT.row_x_in, Rot1_TT.row_y_in,
                                 Rot1_TT.row_x_out, Rot1_TT.row_y_out,
                                 Rot1_TT.q_u_in, Rot1_TT.q_v_in,
                                 Rot1_TT.q_u_out, Rot1_TT.q_v_out,
                                 Rot1_TT.col + col_offset);
+//        std::cout << "Termino Rot1_TT y comienzo Rot2_TT" << std::endl;
+
         Rot2_TT.givens_rotation(Rot2_TT.row_x_in, Rot2_TT.row_y_in,
                                 Rot2_TT.row_x_out, Rot2_TT.row_y_out,
                                 Rot2_TT.q_u_in, Rot2_TT.q_v_in,
                                 Rot2_TT.q_u_out, Rot2_TT.q_v_out,
                                 Rot2_TT.col + col_offset);
+//        std::cout << "Termino Rot2_TT y comienzo Rot3_TT" << std::endl;
+
         Rot3_TT.givens_rotation(Rot3_TT.row_x_in, Rot3_TT.row_y_in,
                                 Rot3_TT.row_x_out, Rot3_TT.row_y_out,
                                 Rot3_TT.q_u_in, Rot3_TT.q_v_in,
@@ -565,41 +589,49 @@ void krnl_givens_rotation(data_t A_tiled_1[NUM_TILED][TAM_TILED][TAM],
                     A_tiled_1[idx_mat_2][r][c] = Rot36_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot36_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot36_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 1" << std::endl;
                 } else if (r == 1) {
                     A_tiled_1[idx_mat_1][r][c] = Rot35_TT.row_x_out.read();
                     A_tiled_1[idx_mat_2][r][c] = Rot35_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot35_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot35_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 2" << std::endl;
                 } else if (r == 2) {
                     A_tiled_1[idx_mat_1][r][c] = Rot33_TT.row_x_out.read();
                     A_tiled_1[idx_mat_2][r][c] = Rot33_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot33_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot33_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 3" << std::endl;
                 } else if (r == 3) {
                     A_tiled_1[idx_mat_1][r][c] = Rot30_TT.row_x_out.read();
                     A_tiled_1[idx_mat_2][r][c] = Rot30_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot30_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot30_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 4" << std::endl;
                 } else if (r == 4) {
                     A_tiled_1[idx_mat_1][r][c] = Rot26_TT.row_x_out.read();
                     A_tiled_1[idx_mat_2][r][c] = Rot26_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot26_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot26_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 5" << std::endl;
                 } else if (r == 5) {
                     A_tiled_1[idx_mat_1][r][c] = Rot21_TT.row_x_out.read();
                     A_tiled_1[idx_mat_2][r][c] = Rot21_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot21_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot21_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 6" << std::endl;
                 } else if (r == 6) {
                     A_tiled_1[idx_mat_1][r][c] = Rot15_TT.row_x_out.read();
                     A_tiled_1[idx_mat_2][r][c] = Rot15_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot15_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot15_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 7" << std::endl;
                 } else {
                     A_tiled_1[idx_mat_1][r][c] = Rot8_TT.row_x_out.read();
                     A_tiled_1[idx_mat_2][r][c] = Rot8_TT.row_y_out.read();
                     Q_tiled_1[idx_mat_1][r][c] = Rot8_TT.q_u_out.read();
                     Q_tiled_1[idx_mat_2][r][c] = Rot8_TT.q_v_out.read();
+//                    std::cout << "TTQRT escribir fila 8" << std::endl;
                 }
             }
         }
