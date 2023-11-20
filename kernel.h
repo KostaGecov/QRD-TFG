@@ -40,16 +40,15 @@ const data_t SCALE_FACTOR = 0.607252935009249;
 
 class Rotator {
    public:
-
     // after data is read from an hls::stream<>, it cannot be read again
     // Stream is FIFO type
-	hls::stream<data_t, TAM> row_x_in;
-	hls::stream<data_t, TAM> row_y_in;
-	hls::stream<data_t, TAM> row_x_out;
-	hls::stream<data_t, TAM> row_y_out;
+    hls::stream<data_t, TAM> row_x_in;
+    hls::stream<data_t, TAM> row_y_in;
+    hls::stream<data_t, TAM> row_x_out;
+    hls::stream<data_t, TAM> row_y_out;
 
-	hls::stream<data_t, TAM> q_u_in, q_v_in;
-	hls::stream<data_t, TAM> q_u_out, q_v_out;
+    hls::stream<data_t, TAM> q_u_in, q_v_in;
+    hls::stream<data_t, TAM> q_u_out, q_v_out;
 
     int row_x, row_y, col;  // posiciones de las filas a rotar. En teor�a las
                             // columnas son las mismas en ambas filas
@@ -113,15 +112,15 @@ extern "C" {
 /**
  * @brief Performs the givens rotation of the tiles. It is the top function
  *
- * @param A_tiled_1 A_tiled matrix
- * @param Q_tiled_1 Q_tiled matrix
+ * @param A_tile A_tiled matrix
+ * @param Q_tile Q_tiled matrix
  * @param type_op It can be GEQRT or TTQRT
  * @param col_offset Offset used to avoid reading the positions that had already become 0
  * @param idx_mat_1 To access the right A and Q matrices
  * @param idx_mat_2 To access the right A and Q matrices. In case the operation is GEQRT, this value is 0
  */
-void krnl_givens_rotation(data_t A_tiled_1[NUM_TILED][TAM_TILED][TAM],
-                          data_t Q_tiled_1[NUM_TILED][TAM_TILED][TAM],
+void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
+                          data_t Q_tile[NUM_TILED][TAM_TILED][TAM],
                           index_t type_op, index_t col_offset,
                           index_t idx_mat_1, index_t idx_mat_2);
 }
