@@ -64,18 +64,18 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
-        if (!row_x_in.empty() && !row_y_in.empty() && !q_u_in.empty() && !q_v_in.empty()) {
-            //        x[j] = row_x_in.read();
-            row_x_in.read(x[j]);
-            //        y[j] = row_y_in.read();
-            row_y_in.read(y[j]);
-            //        u[j] = q_u_in.read();
-            q_u_in.read(u[j]);
-            //        v[j] = q_v_in.read();
-            q_v_in.read(v[j]);
-        } else {
-            std::cout << "Empty stream" << std::endl;
-        }
+        // if (!row_x_in.empty() && !row_y_in.empty() && !q_u_in.empty() && !q_v_in.empty()) {
+        //        x[j] = row_x_in.read();
+        row_x_in.read(x[j]);
+        //        y[j] = row_y_in.read();
+        row_y_in.read(y[j]);
+        //        u[j] = q_u_in.read();
+        q_u_in.read(u[j]);
+        //        v[j] = q_v_in.read();
+        q_v_in.read(v[j]);
+        // } else {
+        // std::cout << "Empty stream" << std::endl;
+        // }
     }
     // Choose the right sign for the rotation, taking into account the quadrants
     // of the coordinates
@@ -106,19 +106,22 @@ read_input_data:
             v[s] = -v[s];
         }
     }
-
+    /**
+     * @todo: revisar viendo codigo de matlab
+     *
+     */
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
 #pragma HLS LOOP_TRIPCOUNT max = 20 min = 20
-        // sign[k] = y[col_rotator] <= 0;
+        data_t x_prev = x[col_rotator];
+        data_t u_prev = u[col_rotator];
     column_rotation_for:
         for (index_t j = col_rotator; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
 #pragma HLS UNROLL factor = 4
             // If Y is negative, we need to add to it so that it gets closer to zero
             // and to the contrary with X coordinate
-            data_t x_prev = x[j];
-            data_t u_prev = u[j];
+
             if (y[col_rotator] < 0) {
                 x[j] = x[j] - (y[j] >> k);
                 y[j] = y[j] + (x_prev >> k);

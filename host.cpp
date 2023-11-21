@@ -76,7 +76,7 @@ int main() {
         std::cout << "Could not open data_in.dat" << std::endl;
         return -1;
     } else {
-        std::cout << "Abierto fichero de entrada de datos" << std::endl;
+        std::cout << "Opened input data file" << std::endl;
     }
 
 initialize_matrices:
@@ -929,10 +929,8 @@ num_operations_for:
         } else {
             switch (n_iter_TTQRT) {
                 case 31:
-                    std::cout << "Entro en TTQRT 31_1" << std::endl;
+                    std::cout << "Entro en TTQRT 31" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 1; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        //                    	std::cout << "Iteracion: " << idx_mat_1 << std::endl;
-                        //                    	std::cout << "Valores indices de matriz: " << idx_mat_1 << ", " << idx_mat_2 << std::endl;
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
@@ -953,7 +951,6 @@ num_operations_for:
                     krnl_givens_rotation(A_29, A_30, Q_29, Q_30, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_31, A_32, Q_31, Q_32, TTQRT, col_offset_ttqrt); */
 
-                    std::cout << "Entro en TTQRT 31_2" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 2; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -967,7 +964,6 @@ num_operations_for:
                     krnl_givens_rotation(A_25, A_27, Q_25, Q_29, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_29, A_31, Q_29, Q_31, TTQRT, col_offset_ttqrt); */
 
-                    std::cout << "Entro en TTQRT 31_3" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 4; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -977,7 +973,6 @@ num_operations_for:
                     krnl_givens_rotation(A_17, A_21, Q_17, Q_21, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_25, A_29, Q_25, Q_29, TTQRT, col_offset_ttqrt); */
 
-                    std::cout << "Entro en TTQRT 31_4" << std::endl;
                     for (index_t idx_mat_1 = 0, idx_mat_2 = 8; idx_mat_2 < 25; idx_mat_1 += 16, idx_mat_2 += 16) {
                         krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
@@ -985,7 +980,6 @@ num_operations_for:
                     /* krnl_givens_rotation(A_1, A_9, Q_1, Q_9, TTQRT, col_offset_ttqrt);
                     krnl_givens_rotation(A_17, A_25, Q_17, Q_25, TTQRT, col_offset_ttqrt); */
 
-                    std::cout << "Entro en TTQRT 31_5" << std::endl;
                     krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 0, 16);
 
                     /* krnl_givens_rotation(A_1, A_17, Q_1, Q_17, TTQRT, col_offset_ttqrt); */
@@ -2137,13 +2131,18 @@ write_sol_to_matrix_row_for:
     }
 
     // Print R matrix
+    std::cout << "R Matrix: " << std::endl;
     for (int i = 0; i < TAM; i++) {
         for (int j = 0; j < TAM; j++) {
             std::cout << A[i][j] << "  |  ";
         }
         std::cout << std::endl;
     }
+
+    std::cout << std::endl;
+
     // Print Q matrix
+    std::cout << "Q Matrix: " << std::endl;
     for (int i = 0; i < TAM; i++) {
         for (int j = 0; j < TAM; j++) {
             std::cout << Q[i][j] << "  |  ";
@@ -2169,7 +2168,7 @@ write_sol_to_matrix_row_for:
         std::cout << "Could not open data_out.dat" << std::endl;
         return -1;
     } else {
-        std::cout << "Abierto fichero de salida de datos" << std::endl;
+        std::cout << "Opened output data file" << std::endl;
     }
 
     for (index_t r = 0; r < TAM; r++) {
