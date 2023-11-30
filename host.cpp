@@ -56,6 +56,11 @@ int main() {
     bool sign[N_ITER];
 
     /**
+     * @todo: cambiar rango de valores a entre [-1, 1]
+     * 
+     */
+    
+    /**
      * stores all 32 A matrices needed for tiled operations
      *
      */
@@ -70,7 +75,7 @@ int main() {
     data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
     data_t Q[TAM][TAM];
 
-    std::ifstream data_in("data_in.dat");
+    std::ifstream data_in("data_in2.dat");
 
     if (!data_in.is_open()) {
         std::cout << "Could not open data_in.dat" << std::endl;

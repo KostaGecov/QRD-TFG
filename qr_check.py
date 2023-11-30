@@ -1,10 +1,12 @@
-import pprint
 import numpy
 
 numpy.set_printoptions(precision=4, linewidth=300)
 
-# RandomMatrix = numpy.random.randint(-10, 10, (24, 24))
-# print('\nRandomMatrix:\n', RandomMatrix)
+# RandomMatrix = numpy.random.randint(-1, 1, (256, 256))
+randomMatrix = numpy.random.uniform(-1, 1, size=(256, 256))
+print('\nrandomMatrix:\n', randomMatrix)
+
+numpy.savetxt('data_in2.dat', randomMatrix)
 
 # M = [
 #     [-1, 5, -6, 0, -2, 8, -1, -2, 2, -6, -4, 9, -2, -3, -7, -8, -8, 8, -6, -8, 5, -8, -9, 5],
@@ -39,7 +41,6 @@ numpy.set_printoptions(precision=4, linewidth=300)
 # A = numpy.random.rand(256, 256)
 # A = numpy.random.randint(-10, 10, (256, 256))
 A = numpy.loadtxt("data_in.dat", dtype=int)
-print('\nA:\n',A)
 
 # A = numpy.array(numpy.around(A, decimals=15))
 Q, R = numpy.linalg.qr(A)

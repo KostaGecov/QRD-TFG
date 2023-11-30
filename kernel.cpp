@@ -77,6 +77,7 @@ read_input_data:
         // std::cout << "Empty stream" << std::endl;
         // }
     }
+
     // Choose the right sign for the rotation, taking into account the quadrants
     // of the coordinates
     if (x[col_rotator] < 0) {
@@ -106,10 +107,7 @@ read_input_data:
             v[s] = -v[s];
         }
     }
-    /**
-     * @todo: revisar viendo codigo de matlab
-     *
-     */
+
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
 #pragma HLS LOOP_TRIPCOUNT max = 20 min = 20
@@ -138,21 +136,12 @@ iterations_for:
             }
         }
     }
+
     y[col_rotator] = 0;
 
 scale_factor_for:
     for (index_t j = col_rotator; j < TAM; j++) {
-// #pragma HLS DEPENDENCE class=array dependent=false direction=raw distance=2 type=inter
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
-
-        //        data_t x_scale_aux = x[j];
-        //		data_t y_scale_aux = y[j];
-        //
-        //    	x_scale_aux = x_scale_aux * SCALE_FACTOR;
-        //    	y_scale_aux = y_scale_aux * SCALE_FACTOR;
-        //
-        //        x[j] = x_scale_aux;
-        //        y[j] = y_scale_aux;
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
 
