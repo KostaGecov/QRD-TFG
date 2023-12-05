@@ -57,6 +57,9 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
 #pragma HLS INLINE off
     data_t x[TAM] = {0}, y[TAM] = {0};
     data_t u[TAM] = {0}, v[TAM] = {0};
+
+    data_t x_aux[TAM] = {0}, u_aux[TAM] = {0};
+
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = x
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = y
     data_t aux = 0;
@@ -111,33 +114,52 @@ read_input_data:
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
 #pragma HLS LOOP_TRIPCOUNT max = 20 min = 20
-        data_t x_prev = x[col_rotator];
-        data_t u_prev = u[col_rotator];
-    column_rotation_for:
-        for (index_t j = col_rotator; j < TAM; j++) {
+    	for (index_t i = col_rotator; i < TAM; i++) {
+    		x_aux[i] = x[i];
+        	u_aux[i] = u[i];
+    	}
+
+		// If Y is negative, we need to add to it so that it gets closer to zero
+		// and to the contrary with X coordinate
+    	if (y[col_rotator] < 0) {
+    		column_rotation_pos_for:
+            for (index_t j = col_rotator; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
 #pragma HLS UNROLL factor = 4
-            // If Y is negative, we need to add to it so that it gets closer to zero
-            // and to the contrary with X coordinate
 
-            if (y[col_rotator] < 0) {
                 x[j] = x[j] - (y[j] >> k);
-                y[j] = y[j] + (x_prev >> k);
+                y[j] = y[j] + (x_aux[j] >> k);
 
                 u[j] = u[j] - (v[j] >> k);
-                v[j] = v[j] + (u_prev >> k);
+                v[j] = v[j] + (u_aux[j] >> k);
 
-            } else {
+//            	x[j] -= y[j] / (1 << k);
+//				u[j] -= v[j] / (1 << k);
+//				y[j] += x_aux[j] / (1 << k);
+//				v[j] += u_aux[j] / (1 << k);
+            }
+		} else {
+			column_rotation_neg_for:
+			for (index_t j = col_rotator; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS UNROLL factor = 4
                 x[j] = x[j] + (y[j] >> k);
-                y[j] = y[j] - (x_prev >> k);
+                y[j] = y[j] - (x_aux[j] >> k);
 
                 u[j] = u[j] + (v[j] >> k);
-                v[j] = v[j] - (u_prev >> k);
+                v[j] = v[j] - (u_aux[j] >> k);
+
+//				x[j] += y[j] / (1 << k);
+//				u[j] += v[j] / (1 << k);
+//				y[j] -= x_aux[j] / (1 << k);
+//				v[j] -= u_aux[j] / (1 << k);
             }
         }
     }
 
-    y[col_rotator] = 0;
+    if ((y[col_rotator] < 0.001) && (y[col_rotator] > -0.001)) {
+    	y[col_rotator] = 0;
+    }
 
 scale_factor_for:
     for (index_t j = col_rotator; j < TAM; j++) {
