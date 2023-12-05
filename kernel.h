@@ -1,11 +1,11 @@
 #define TAM_INDEX 9
 #define FIXED_POINT 32
-#define FX_POINT_INT 4
+#define FX_POINT_INT 6
 
 #define TAM_TILED 8
 #define TAM 256
-
 #define NUM_TILED 32
+
 #define N_ITER 31 // word_lenght - 1
 #define NUM_OPERACIONES 65  //(63 + 2(offset))
 

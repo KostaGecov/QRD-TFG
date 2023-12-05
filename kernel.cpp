@@ -399,64 +399,73 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
         read_input_rows(Q_tile, idx_mat_2, Rot1_TT.q_v_in, Rot2_TT.q_v_in,
                         Rot3_TT.q_v_in, Rot4_TT.q_v_in, Rot5_TT.q_v_in,
                         Rot6_TT.q_v_in, Rot7_TT.q_v_in, Rot8_TT.q_v_in);
-
+//        std::cout << "Entro en TTQRT 1" << std::endl;
         Rot1_TT.givens_rotation(Rot1_TT.row_x_in, Rot1_TT.row_y_in,
                                 Rot1_TT.row_x_out, Rot1_TT.row_y_out,
                                 Rot1_TT.q_u_in, Rot1_TT.q_v_in,
                                 Rot1_TT.q_u_out, Rot1_TT.q_v_out,
                                 Rot1_TT.col + col_offset);
-
+//        std::cout << "Entro en TTQRT 2" << std::endl;
         Rot2_TT.givens_rotation(Rot2_TT.row_x_in, Rot2_TT.row_y_in,
                                 Rot2_TT.row_x_out, Rot2_TT.row_y_out,
                                 Rot2_TT.q_u_in, Rot2_TT.q_v_in,
                                 Rot2_TT.q_u_out, Rot2_TT.q_v_out,
                                 Rot2_TT.col + col_offset);
-
+//        std::cout << "Entro en TTQRT 3" << std::endl;
         Rot3_TT.givens_rotation(Rot3_TT.row_x_in, Rot3_TT.row_y_in,
                                 Rot3_TT.row_x_out, Rot3_TT.row_y_out,
                                 Rot3_TT.q_u_in, Rot3_TT.q_v_in,
                                 Rot3_TT.q_u_out, Rot3_TT.q_v_out,
                                 Rot3_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 4" << std::endl;
         Rot4_TT.givens_rotation(Rot4_TT.row_x_in, Rot4_TT.row_y_in,
                                 Rot4_TT.row_x_out, Rot4_TT.row_y_out,
                                 Rot4_TT.q_u_in, Rot4_TT.q_v_in,
                                 Rot4_TT.q_u_out, Rot4_TT.q_v_out,
                                 Rot4_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 5" << std::endl;
         Rot5_TT.givens_rotation(Rot5_TT.row_x_in, Rot5_TT.row_y_in,
                                 Rot5_TT.row_x_out, Rot5_TT.row_y_out,
                                 Rot5_TT.q_u_in, Rot5_TT.q_v_in,
                                 Rot5_TT.q_u_out, Rot5_TT.q_v_out,
                                 Rot5_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 6" << std::endl;
         Rot6_TT.givens_rotation(Rot6_TT.row_x_in, Rot6_TT.row_y_in,
                                 Rot6_TT.row_x_out, Rot6_TT.row_y_out,
                                 Rot6_TT.q_u_in, Rot6_TT.q_v_in,
                                 Rot6_TT.q_u_out, Rot6_TT.q_v_out,
                                 Rot6_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 7" << std::endl;
         Rot7_TT.givens_rotation(Rot7_TT.row_x_in, Rot7_TT.row_y_in,
                                 Rot7_TT.row_x_out, Rot7_TT.row_y_out,
                                 Rot7_TT.q_u_in, Rot7_TT.q_v_in,
                                 Rot7_TT.q_u_out, Rot7_TT.q_v_out,
                                 Rot7_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 8" << std::endl;
         Rot8_TT.givens_rotation(Rot8_TT.row_x_in, Rot8_TT.row_y_in,
                                 Rot8_TT.row_x_out, Rot8_TT.row_y_out,
                                 Rot8_TT.q_u_in, Rot8_TT.q_v_in,
                                 Rot8_TT.q_u_out, Rot8_TT.q_v_out,
                                 Rot8_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 9" << std::endl;
         Rot9_TT.givens_rotation(Rot2_TT.row_x_out, Rot1_TT.row_y_out,
                                 Rot9_TT.row_x_out, Rot9_TT.row_y_out,
                                 Rot2_TT.q_u_out, Rot1_TT.q_v_out,
                                 Rot9_TT.q_u_out, Rot9_TT.q_v_out,
                                 Rot9_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 10" << std::endl;
         Rot10_TT.givens_rotation(Rot3_TT.row_x_out, Rot2_TT.row_y_out,
                                  Rot10_TT.row_x_out, Rot10_TT.row_y_out,
                                  Rot3_TT.q_u_out, Rot2_TT.q_v_out,
                                  Rot10_TT.q_u_out, Rot10_TT.q_v_out,
                                  Rot10_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 11" << std::endl;
         Rot11_TT.givens_rotation(Rot4_TT.row_x_out, Rot3_TT.row_y_out,
                                  Rot11_TT.row_x_out, Rot11_TT.row_y_out,
                                  Rot4_TT.q_u_out, Rot3_TT.q_v_out,
                                  Rot11_TT.q_u_out, Rot11_TT.q_v_out,
                                  Rot11_TT.col + col_offset);
+//        std::cout << "Entro en TTQRT 12" << std::endl;
         Rot12_TT.givens_rotation(Rot5_TT.row_x_out, Rot4_TT.row_y_out,
                                  Rot12_TT.row_x_out, Rot12_TT.row_y_out,
                                  Rot5_TT.q_u_out, Rot4_TT.q_v_out,
@@ -583,6 +592,7 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
                                  Rot36_TT.q_u_out, Rot36_TT.q_v_out,
                                  Rot36_TT.col + col_offset);
 
+//        std::cout << "Entro en TTQRT lectura resultado" << std::endl;
     // Write output streams to matrix A_tile and 0s to A_tiled_2
     write_output_streams_col_TTQRT_for:
         for (index_t c = 0; c < TAM; c++) {
@@ -591,44 +601,44 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
             for (index_t r = 0; r < TAM_TILED; r++) {
 #pragma HLS LOOP_TRIPCOUNT max = 8 min = 8
                 if (r == 0) {
-                    A_tile[idx_mat_1][r][c] = Rot36_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot1_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot36_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot36_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot1_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot36_TT.q_v_out.read();
                 } else if (r == 1) {
-                    A_tile[idx_mat_1][r][c] = Rot35_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot9_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot35_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot35_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot9_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot35_TT.q_v_out.read();
                 } else if (r == 2) {
-                    A_tile[idx_mat_1][r][c] = Rot33_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot16_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot33_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot33_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot16_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot33_TT.q_v_out.read();
                 } else if (r == 3) {
-                    A_tile[idx_mat_1][r][c] = Rot30_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot22_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot30_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot30_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot22_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot30_TT.q_v_out.read();
                 } else if (r == 4) {
-                    A_tile[idx_mat_1][r][c] = Rot26_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot27_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot26_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot26_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot27_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot26_TT.q_v_out.read();
                 } else if (r == 5) {
-                    A_tile[idx_mat_1][r][c] = Rot21_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot31_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot21_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot21_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot31_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot21_TT.q_v_out.read();
                 } else if (r == 6) {
-                    A_tile[idx_mat_1][r][c] = Rot15_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot34_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot15_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot15_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot34_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot15_TT.q_v_out.read();
                 } else {
-                    A_tile[idx_mat_1][r][c] = Rot8_TT.row_x_out.read();
+                    A_tile[idx_mat_1][r][c] = Rot36_TT.row_x_out.read();
                     A_tile[idx_mat_2][r][c] = Rot8_TT.row_y_out.read();
-                    Q_tile[idx_mat_1][r][c] = Rot8_TT.q_u_out.read();
+                    Q_tile[idx_mat_1][r][c] = Rot36_TT.q_u_out.read();
                     Q_tile[idx_mat_2][r][c] = Rot8_TT.q_v_out.read();
                 }
             }
