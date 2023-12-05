@@ -1,6 +1,6 @@
 #define TAM_INDEX 9
-#define FIXED_POINT 64
-#define FX_POINT_INT 8
+#define FIXED_POINT 32
+#define FX_POINT_INT 4
 
 #define TAM_TILED 8
 #define TAM 256
