@@ -121,105 +121,13 @@ initialize_Q:
 
 divide_matrices_row_for:
     for (index_t r = 0; r < TAM; r++) {
+    	int tile_index = r / TAM_TILED;
+    	int tile_offset = r % TAM_TILED;
+
     divide_matrices_col_for:
         for (index_t c = 0; c < TAM; c++) {
-            if (r >= 0 && r < TAM_TILED) {
-                A_tiled[1 - 1][r][c] = A[r][c];
-                Q_tiled[1 - 1][r][c] = Q[r][c];
-            } else if (r >= TAM_TILED && r < TAM_TILED * 2) {
-                A_tiled[2 - 1][r - TAM_TILED][c] = A[r][c];
-                Q_tiled[2 - 1][r - TAM_TILED][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 2 && r < TAM_TILED * 3) {
-                A_tiled[3 - 1][r - TAM_TILED * 2][c] = A[r][c];
-                Q_tiled[3 - 1][r - TAM_TILED * 2][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 3 && r < TAM_TILED * 4) {
-                A_tiled[4 - 1][r - TAM_TILED * 3][c] = A[r][c];
-                Q_tiled[4 - 1][r - TAM_TILED * 3][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 4 && r < TAM_TILED * 5) {
-                A_tiled[5 - 1][r - TAM_TILED * 4][c] = A[r][c];
-                Q_tiled[5 - 1][r - TAM_TILED * 4][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 5 && r < TAM_TILED * 6) {
-                A_tiled[6 - 1][r - TAM_TILED * 5][c] = A[r][c];
-                Q_tiled[6 - 1][r - TAM_TILED * 5][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 6 && r < TAM_TILED * 7) {
-                A_tiled[7 - 1][r - TAM_TILED * 6][c] = A[r][c];
-                Q_tiled[7 - 1][r - TAM_TILED * 6][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 7 && r < TAM_TILED * 8) {
-                A_tiled[8 - 1][r - TAM_TILED * 7][c] = A[r][c];
-                Q_tiled[8 - 1][r - TAM_TILED * 7][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 8 && r < TAM_TILED * 9) {
-                A_tiled[9 - 1][r - TAM_TILED * 8][c] = A[r][c];
-                Q_tiled[9 - 1][r - TAM_TILED * 8][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 9 && r < TAM_TILED * 10) {
-                A_tiled[10 - 1][r - TAM_TILED * 9][c] = A[r][c];
-                Q_tiled[10 - 1][r - TAM_TILED * 9][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 10 && r < TAM_TILED * 11) {
-                A_tiled[11 - 1][r - TAM_TILED * 10][c] = A[r][c];
-                Q_tiled[11 - 1][r - TAM_TILED * 10][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 11 && r < TAM_TILED * 12) {
-                A_tiled[12 - 1][r - TAM_TILED * 11][c] = A[r][c];
-                Q_tiled[12 - 1][r - TAM_TILED * 11][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 12 && r < TAM_TILED * 13) {
-                A_tiled[13 - 1][r - TAM_TILED * 12][c] = A[r][c];
-                Q_tiled[13 - 1][r - TAM_TILED * 12][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 13 && r < TAM_TILED * 14) {
-                A_tiled[14 - 1][r - TAM_TILED * 13][c] = A[r][c];
-                Q_tiled[14 - 1][r - TAM_TILED * 13][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 14 && r < TAM_TILED * 15) {
-                A_tiled[15 - 1][r - TAM_TILED * 14][c] = A[r][c];
-                Q_tiled[15 - 1][r - TAM_TILED * 14][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 15 && r < TAM_TILED * 16) {
-                A_tiled[16 - 1][r - TAM_TILED * 15][c] = A[r][c];
-                Q_tiled[16 - 1][r - TAM_TILED * 15][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 16 && r < TAM_TILED * 17) {
-                A_tiled[17 - 1][r - TAM_TILED * 16][c] = A[r][c];
-                Q_tiled[17 - 1][r - TAM_TILED * 16][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 17 && r < TAM_TILED * 18) {
-                A_tiled[18 - 1][r - TAM_TILED * 17][c] = A[r][c];
-                Q_tiled[18 - 1][r - TAM_TILED * 17][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 18 && r < TAM_TILED * 19) {
-                A_tiled[19 - 1][r - TAM_TILED * 18][c] = A[r][c];
-                Q_tiled[19 - 1][r - TAM_TILED * 18][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 19 && r < TAM_TILED * 20) {
-                A_tiled[20 - 1][r - TAM_TILED * 19][c] = A[r][c];
-                Q_tiled[20 - 1][r - TAM_TILED * 19][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 20 && r < TAM_TILED * 21) {
-                A_tiled[21 - 1][r - TAM_TILED * 20][c] = A[r][c];
-                Q_tiled[21 - 1][r - TAM_TILED * 20][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 21 && r < TAM_TILED * 22) {
-                A_tiled[22 - 1][r - TAM_TILED * 21][c] = A[r][c];
-                Q_tiled[22 - 1][r - TAM_TILED * 21][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 22 && r < TAM_TILED * 23) {
-                A_tiled[23 - 1][r - TAM_TILED * 22][c] = A[r][c];
-                Q_tiled[23 - 1][r - TAM_TILED * 22][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 23 && r < TAM_TILED * 24) {
-                A_tiled[24 - 1][r - TAM_TILED * 23][c] = A[r][c];
-                Q_tiled[24 - 1][r - TAM_TILED * 23][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 24 && r < TAM_TILED * 25) {
-                A_tiled[25 - 1][r - TAM_TILED * 24][c] = A[r][c];
-                Q_tiled[25 - 1][r - TAM_TILED * 24][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 25 && r < TAM_TILED * 26) {
-                A_tiled[26 - 1][r - TAM_TILED * 25][c] = A[r][c];
-                Q_tiled[26 - 1][r - TAM_TILED * 25][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 26 && r < TAM_TILED * 27) {
-                A_tiled[27 - 1][r - TAM_TILED * 26][c] = A[r][c];
-                Q_tiled[27 - 1][r - TAM_TILED * 26][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 27 && r < TAM_TILED * 28) {
-                A_tiled[28 - 1][r - TAM_TILED * 27][c] = A[r][c];
-                Q_tiled[28 - 1][r - TAM_TILED * 27][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 28 && r < TAM_TILED * 29) {
-                A_tiled[29 - 1][r - TAM_TILED * 28][c] = A[r][c];
-                Q_tiled[29 - 1][r - TAM_TILED * 28][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 29 && r < TAM_TILED * 30) {
-                A_tiled[30 - 1][r - TAM_TILED * 29][c] = A[r][c];
-                Q_tiled[30 - 1][r - TAM_TILED * 29][c] = Q[r][c];
-            } else if (r >= TAM_TILED * 30 && r < TAM_TILED * 31) {
-                A_tiled[31 - 1][r - TAM_TILED * 30][c] = A[r][c];
-                Q_tiled[31 - 1][r - TAM_TILED * 30][c] = Q[r][c];
-            } else /*  if (r >= TAM_TILED * 31 && r < TAM_TILED * 32) */ {
-                A_tiled[32 - 1][r - TAM_TILED * 31][c] = A[r][c];
-                Q_tiled[32 - 1][r - TAM_TILED * 31][c] = Q[r][c];
-            }
+        	A_tiled[tile_index][tile_offset][c] = A[r][c];
+			Q_tiled[tile_index][tile_offset][c] = Q[r][c];
         }
     }
 
@@ -2052,108 +1960,14 @@ num_operations_for:
         }
     }
 
-// Escritura de solución en matriz grande
 write_sol_to_matrix_row_for:
     for (index_t r = 0; r < TAM; r++) {
+    	int tile_index = r / TAM_TILED;
+		int tile_offset = r % TAM_TILED;
     write_sol_to_matrix_col_for:
         for (index_t c = 0; c < TAM; c++) {
-            if (r >= 0 && r < TAM_TILED) {
-                A[r][c] = A_tiled[1 - 1][r][c];
-                Q[r][c] = Q_tiled[1 - 1][r][c];
-            } else if (r >= TAM_TILED && r < TAM_TILED * 2) {
-                A[r][c] = A_tiled[2 - 1][r - TAM_TILED][c];
-                Q[r][c] = Q_tiled[2 - 1][r - TAM_TILED][c];
-            } else if (r >= TAM_TILED * 2 && r < TAM_TILED * 3) {
-                A[r][c] = A_tiled[3 - 1][r - TAM_TILED * 2][c];
-                Q[r][c] = Q_tiled[3 - 1][r - TAM_TILED * 2][c];
-            } else if (r >= TAM_TILED * 3 && r < TAM_TILED * 4) {
-                A[r][c] = A_tiled[4 - 1][r - TAM_TILED * 3][c];
-                Q[r][c] = Q_tiled[4 - 1][r - TAM_TILED * 3][c];
-            } else if (r >= TAM_TILED * 4 && r < TAM_TILED * 5) {
-                A[r][c] = A_tiled[5 - 1][r - TAM_TILED * 4][c];
-                Q[r][c] = Q_tiled[5 - 1][r - TAM_TILED * 4][c];
-            } else if (r >= TAM_TILED * 5 && r < TAM_TILED * 6) {
-                A[r][c] = A_tiled[6 - 1][r - TAM_TILED * 5][c];
-                Q[r][c] = Q_tiled[6 - 1][r - TAM_TILED * 5][c];
-            } else if (r >= TAM_TILED * 6 && r < TAM_TILED * 7) {
-                A[r][c] = A_tiled[7 - 1][r - TAM_TILED * 6][c];
-                Q[r][c] = Q_tiled[7 - 1][r - TAM_TILED * 6][c];
-            } else if (r >= TAM_TILED * 7 && r < TAM_TILED * 8) {
-                A[r][c] = A_tiled[8 - 1][r - TAM_TILED * 7][c];
-                Q[r][c] = Q_tiled[8 - 1][r - TAM_TILED * 7][c];
-            } else if (r >= TAM_TILED * 8 && r < TAM_TILED * 9) {
-                A[r][c] = A_tiled[9 - 1][r - TAM_TILED * 8][c];
-                Q[r][c] = Q_tiled[9 - 1][r - TAM_TILED * 8][c];
-            } else if (r >= TAM_TILED * 9 && r < TAM_TILED * 10) {
-                A[r][c] = A_tiled[10 - 1][r - TAM_TILED * 9][c];
-                Q[r][c] = Q_tiled[10 - 1][r - TAM_TILED * 9][c];
-            } else if (r >= TAM_TILED * 10 && r < TAM_TILED * 11) {
-                A[r][c] = A_tiled[11 - 1][r - TAM_TILED * 10][c];
-                Q[r][c] = Q_tiled[11 - 1][r - TAM_TILED * 10][c];
-            } else if (r >= TAM_TILED * 11 && r < TAM_TILED * 12) {
-                A[r][c] = A_tiled[12 - 1][r - TAM_TILED * 11][c];
-                Q[r][c] = Q_tiled[12 - 1][r - TAM_TILED * 11][c];
-            } else if (r >= TAM_TILED * 12 && r < TAM_TILED * 13) {
-                A[r][c] = A_tiled[13 - 1][r - TAM_TILED * 12][c];
-                Q[r][c] = Q_tiled[13 - 1][r - TAM_TILED * 12][c];
-            } else if (r >= TAM_TILED * 13 && r < TAM_TILED * 14) {
-                A[r][c] = A_tiled[14 - 1][r - TAM_TILED * 13][c];
-                Q[r][c] = Q_tiled[14 - 1][r - TAM_TILED * 13][c];
-            } else if (r >= TAM_TILED * 14 && r < TAM_TILED * 15) {
-                A[r][c] = A_tiled[15 - 1][r - TAM_TILED * 14][c];
-                Q[r][c] = Q_tiled[15 - 1][r - TAM_TILED * 14][c];
-            } else if (r >= TAM_TILED * 15 && r < TAM_TILED * 16) {
-                A[r][c] = A_tiled[16 - 1][r - TAM_TILED * 15][c];
-                Q[r][c] = Q_tiled[16 - 1][r - TAM_TILED * 15][c];
-            } else if (r >= TAM_TILED * 16 && r < TAM_TILED * 17) {
-                A[r][c] = A_tiled[17 - 1][r - TAM_TILED * 16][c];
-                Q[r][c] = Q_tiled[17 - 1][r - TAM_TILED * 16][c];
-            } else if (r >= TAM_TILED * 17 && r < TAM_TILED * 18) {
-                A[r][c] = A_tiled[18 - 1][r - TAM_TILED * 17][c];
-                Q[r][c] = Q_tiled[18 - 1][r - TAM_TILED * 17][c];
-            } else if (r >= TAM_TILED * 18 && r < TAM_TILED * 19) {
-                A[r][c] = A_tiled[19 - 1][r - TAM_TILED * 18][c];
-                Q[r][c] = Q_tiled[19 - 1][r - TAM_TILED * 18][c];
-            } else if (r >= TAM_TILED * 19 && r < TAM_TILED * 20) {
-                A[r][c] = A_tiled[20 - 1][r - TAM_TILED * 19][c];
-                Q[r][c] = Q_tiled[20 - 1][r - TAM_TILED * 19][c];
-            } else if (r >= TAM_TILED * 20 && r < TAM_TILED * 21) {
-                A[r][c] = A_tiled[21 - 1][r - TAM_TILED * 20][c];
-                Q[r][c] = Q_tiled[21 - 1][r - TAM_TILED * 20][c];
-            } else if (r >= TAM_TILED * 21 && r < TAM_TILED * 22) {
-                A[r][c] = A_tiled[22 - 1][r - TAM_TILED * 21][c];
-                Q[r][c] = Q_tiled[22 - 1][r - TAM_TILED * 21][c];
-            } else if (r >= TAM_TILED * 22 && r < TAM_TILED * 23) {
-                A[r][c] = A_tiled[23 - 1][r - TAM_TILED * 22][c];
-                Q[r][c] = Q_tiled[23 - 1][r - TAM_TILED * 22][c];
-            } else if (r >= TAM_TILED * 23 && r < TAM_TILED * 24) {
-                A[r][c] = A_tiled[24 - 1][r - TAM_TILED * 23][c];
-                Q[r][c] = Q_tiled[24 - 1][r - TAM_TILED * 23][c];
-            } else if (r >= TAM_TILED * 24 && r < TAM_TILED * 25) {
-                A[r][c] = A_tiled[25 - 1][r - TAM_TILED * 24][c];
-                Q[r][c] = Q_tiled[25 - 1][r - TAM_TILED * 24][c];
-            } else if (r >= TAM_TILED * 25 && r < TAM_TILED * 26) {
-                A[r][c] = A_tiled[26 - 1][r - TAM_TILED * 25][c];
-                Q[r][c] = Q_tiled[26 - 1][r - TAM_TILED * 25][c];
-            } else if (r >= TAM_TILED * 26 && r < TAM_TILED * 27) {
-                A[r][c] = A_tiled[27 - 1][r - TAM_TILED * 26][c];
-                Q[r][c] = Q_tiled[27 - 1][r - TAM_TILED * 26][c];
-            } else if (r >= TAM_TILED * 27 && r < TAM_TILED * 28) {
-                A[r][c] = A_tiled[28 - 1][r - TAM_TILED * 27][c];
-                Q[r][c] = Q_tiled[28 - 1][r - TAM_TILED * 27][c];
-            } else if (r >= TAM_TILED * 28 && r < TAM_TILED * 29) {
-                A[r][c] = A_tiled[29 - 1][r - TAM_TILED * 28][c];
-                Q[r][c] = Q_tiled[29 - 1][r - TAM_TILED * 28][c];
-            } else if (r >= TAM_TILED * 29 && r < TAM_TILED * 30) {
-                A[r][c] = A_tiled[30 - 1][r - TAM_TILED * 29][c];
-                Q[r][c] = Q_tiled[30 - 1][r - TAM_TILED * 29][c];
-            } else if (r >= TAM_TILED * 30 && r < TAM_TILED * 31) {
-                A[r][c] = A_tiled[31 - 1][r - TAM_TILED * 30][c];
-                Q[r][c] = Q_tiled[31 - 1][r - TAM_TILED * 30][c];
-            } else /*  if (r >= TAM_TILED * 31 && r < TAM_TILED * 32) */ {
-                A[r][c] = A_tiled[32 - 1][r - TAM_TILED * 31][c];
-                Q[r][c] = Q_tiled[32 - 1][r - TAM_TILED * 31][c];
-            }
+        	A[r][c] = A_tiled[tile_index][tile_offset][c];
+        	Q[r][c] = Q_tiled[tile_index][tile_offset][c];
         }
     }
 
@@ -2166,18 +1980,7 @@ write_sol_to_matrix_row_for:
         std::cout << std::endl;
     }
 
-    std::cout << std::endl;
-
-    // Print Q matrix
-//    std::cout << "Q Matrix: " << std::endl;
-//    for (int i = 0; i < TAM; i++) {
-//        for (int j = 0; j < TAM; j++) {
-//            std::cout << Q[i][j] << "  |  ";
-//        }
-//        std::cout << std::endl;
-//    }
-
-    std::cout << "ECM = " << error(A, out_gold) << std::endl;
+    std::cout << "ECM = " << error(A, out_gold);
 
     return 0;
 }
