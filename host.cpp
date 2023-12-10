@@ -39,7 +39,7 @@ float error(A[TAM][TAM], out_gold[TAM][TAM]) {
         for (index_t c = 0; c < TAM; c++) {
             resA = A[r][c];
             resOut = out_gold[r][c];
-            err += pow(((abs(float)resA) - abs(resOut)), 2);
+            err += pow((abs((float)resA) - abs(resOut)), 2);
         }
     }
     return err/(TAM * TAM);
