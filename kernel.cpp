@@ -11,14 +11,14 @@
 #include "kernel.h"
 
 Rotator::Rotator(int x, int y, int c) {
-    // actually, row_x and row_y are not used, they have an indicative rol
-    // when declaring de rotator objects
+    // actually, row_x and row_y are not used, they have an indicative role
+    // while declaring the rotator objects
     Rotator::row_x = x;
     Rotator::row_y = y;
     Rotator::col = c;
 }
 
-void read_input_rows(data_t Matrix[NUM_TILED][TAM_TILED][TAM],
+void read_input_rows(data_t matrix[NUM_TILED][TAM_TILED][TAM],
                      index_t idx_mat,
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
@@ -34,14 +34,14 @@ void read_input_rows(data_t Matrix[NUM_TILED][TAM_TILED][TAM],
 read_input_rows_for:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
-        row_in_1.write(Matrix[idx_mat][0][j]);
-        row_in_2.write(Matrix[idx_mat][1][j]);
-        row_in_3.write(Matrix[idx_mat][2][j]);
-        row_in_4.write(Matrix[idx_mat][3][j]);
-        row_in_5.write(Matrix[idx_mat][4][j]);
-        row_in_6.write(Matrix[idx_mat][5][j]);
-        row_in_7.write(Matrix[idx_mat][6][j]);
-        row_in_8.write(Matrix[idx_mat][7][j]);
+        row_in_1.write(matrix[idx_mat][0][j]);
+        row_in_2.write(matrix[idx_mat][1][j]);
+        row_in_3.write(matrix[idx_mat][2][j]);
+        row_in_4.write(matrix[idx_mat][3][j]);
+        row_in_5.write(matrix[idx_mat][4][j]);
+        row_in_6.write(matrix[idx_mat][5][j]);
+        row_in_7.write(matrix[idx_mat][6][j]);
+        row_in_8.write(matrix[idx_mat][7][j]);
     }
 }
 
@@ -57,28 +57,22 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
 #pragma HLS INLINE off
     data_t x[TAM] = {0}, y[TAM] = {0};
     data_t u[TAM] = {0}, v[TAM] = {0};
-
     data_t x_aux[TAM] = {0}, u_aux[TAM] = {0};
 
-#pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = x
-#pragma HLS ARRAY_PARTITION dim = 1 factor = 32 type = block variable = y
-    data_t aux = 0;
+#pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = x
+#pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = y
+#pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = u
+#pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = v
+#pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = x_aux
+#pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = u_aux
 
 read_input_data:
     for (index_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
-        // if (!row_x_in.empty() && !row_y_in.empty() && !q_u_in.empty() && !q_v_in.empty()) {
-        //        x[j] = row_x_in.read();
         row_x_in.read(x[j]);
-        //        y[j] = row_y_in.read();
         row_y_in.read(y[j]);
-        //        u[j] = q_u_in.read();
         q_u_in.read(u[j]);
-        //        v[j] = q_v_in.read();
         q_v_in.read(v[j]);
-        // } else {
-        // std::cout << "Empty stream" << std::endl;
-        // }
     }
 
     // Choose the right sign for the rotation, taking into account the quadrants
@@ -87,6 +81,7 @@ read_input_data:
     sign_for:
         for (index_t s = col_rotator; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS UNROLL factor = 4
             /*if (y[s] >= 0) {
                 aux = x[s];
                 x[s] = y[s];
@@ -113,8 +108,11 @@ read_input_data:
 
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
-#pragma HLS LOOP_TRIPCOUNT max = 20 min = 20
+#pragma HLS LOOP_TRIPCOUNT max = 31 min = 31
+aux_var_for:
         for (index_t i = col_rotator; i < TAM; i++) {
+#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS UNROLL factor = 4
             x_aux[i] = x[i];
             u_aux[i] = u[i];
         }
@@ -124,6 +122,7 @@ iterations_for:
         if (y[col_rotator] < 0) {
         column_rotation_pos_for:
             for (index_t j = col_rotator; j < TAM; j++) {
+#pragma HLS PIPELINE off
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
 #pragma HLS UNROLL factor = 4
 
@@ -132,15 +131,11 @@ iterations_for:
 
                 u[j] = u[j] - (v[j] >> k);
                 v[j] = v[j] + (u_aux[j] >> k);
-
-                //            	x[j] -= y[j] / (1 << k);
-                //				u[j] -= v[j] / (1 << k);
-                //				y[j] += x_aux[j] / (1 << k);
-                //				v[j] += u_aux[j] / (1 << k);
             }
         } else {
         column_rotation_neg_for:
             for (index_t j = col_rotator; j < TAM; j++) {
+#pragma HLS PIPELINE off
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
 #pragma HLS UNROLL factor = 4
                 x[j] = x[j] + (y[j] >> k);
@@ -148,11 +143,6 @@ iterations_for:
 
                 u[j] = u[j] + (v[j] >> k);
                 v[j] = v[j] - (u_aux[j] >> k);
-
-                //				x[j] += y[j] / (1 << k);
-                //				u[j] += v[j] / (1 << k);
-                //				y[j] -= x_aux[j] / (1 << k);
-                //				v[j] -= u_aux[j] / (1 << k);
             }
         }
     }
@@ -164,6 +154,7 @@ iterations_for:
 scale_factor_for:
     for (index_t j = col_rotator; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS UNROLL factor = 4
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
 
@@ -187,12 +178,9 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
                           data_t Q_tile[NUM_TILED][TAM_TILED][TAM],
                           index_t type_op, index_t col_offset,
                           index_t idx_mat_1, index_t idx_mat_2) {
-#pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = A_tile
-#pragma HLS ARRAY_PARTITION dim = 2 type = complete variable = A_tile
-#pragma HLS ARRAY_PARTITION dim = 3 factor = 32 type = block variable = A_tile
-#pragma HLS ARRAY_PARTITION dim = 1 type = complete variable = Q_tile
-#pragma HLS ARRAY_PARTITION dim = 2 type = complete variable = Q_tile
-#pragma HLS ARRAY_PARTITION dim = 3 factor = 32 type = block variable = Q_tile
+//#pragma HLS INTERFACE mode=m_axi bundle=amem0 port=A_tile offset=slave
+//#pragma HLS INTERFACE mode=m_axi bundle=qmem1 port=Q_tile offset=slave
+
 #pragma HLS DATAFLOW
 #pragma HLS TOP name = krnl_givens_rotation
 
@@ -399,200 +387,223 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
         read_input_rows(Q_tile, idx_mat_2, Rot1_TT.q_v_in, Rot2_TT.q_v_in,
                         Rot3_TT.q_v_in, Rot4_TT.q_v_in, Rot5_TT.q_v_in,
                         Rot6_TT.q_v_in, Rot7_TT.q_v_in, Rot8_TT.q_v_in);
-//        std::cout << "Entro en TTQRT 1" << std::endl;
+
         Rot1_TT.givens_rotation(Rot1_TT.row_x_in, Rot1_TT.row_y_in,
                                 Rot1_TT.row_x_out, Rot1_TT.row_y_out,
                                 Rot1_TT.q_u_in, Rot1_TT.q_v_in,
                                 Rot1_TT.q_u_out, Rot1_TT.q_v_out,
                                 Rot1_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 2" << std::endl;
+
         Rot2_TT.givens_rotation(Rot2_TT.row_x_in, Rot2_TT.row_y_in,
                                 Rot2_TT.row_x_out, Rot2_TT.row_y_out,
                                 Rot2_TT.q_u_in, Rot2_TT.q_v_in,
                                 Rot2_TT.q_u_out, Rot2_TT.q_v_out,
                                 Rot2_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 3" << std::endl;
+
         Rot3_TT.givens_rotation(Rot3_TT.row_x_in, Rot3_TT.row_y_in,
                                 Rot3_TT.row_x_out, Rot3_TT.row_y_out,
                                 Rot3_TT.q_u_in, Rot3_TT.q_v_in,
                                 Rot3_TT.q_u_out, Rot3_TT.q_v_out,
                                 Rot3_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 4" << std::endl;
+
         Rot4_TT.givens_rotation(Rot4_TT.row_x_in, Rot4_TT.row_y_in,
                                 Rot4_TT.row_x_out, Rot4_TT.row_y_out,
                                 Rot4_TT.q_u_in, Rot4_TT.q_v_in,
                                 Rot4_TT.q_u_out, Rot4_TT.q_v_out,
                                 Rot4_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 5" << std::endl;
+
         Rot5_TT.givens_rotation(Rot5_TT.row_x_in, Rot5_TT.row_y_in,
                                 Rot5_TT.row_x_out, Rot5_TT.row_y_out,
                                 Rot5_TT.q_u_in, Rot5_TT.q_v_in,
                                 Rot5_TT.q_u_out, Rot5_TT.q_v_out,
                                 Rot5_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 6" << std::endl;
+
         Rot6_TT.givens_rotation(Rot6_TT.row_x_in, Rot6_TT.row_y_in,
                                 Rot6_TT.row_x_out, Rot6_TT.row_y_out,
                                 Rot6_TT.q_u_in, Rot6_TT.q_v_in,
                                 Rot6_TT.q_u_out, Rot6_TT.q_v_out,
                                 Rot6_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 7" << std::endl;
+
         Rot7_TT.givens_rotation(Rot7_TT.row_x_in, Rot7_TT.row_y_in,
                                 Rot7_TT.row_x_out, Rot7_TT.row_y_out,
                                 Rot7_TT.q_u_in, Rot7_TT.q_v_in,
                                 Rot7_TT.q_u_out, Rot7_TT.q_v_out,
                                 Rot7_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 8" << std::endl;
+
         Rot8_TT.givens_rotation(Rot8_TT.row_x_in, Rot8_TT.row_y_in,
                                 Rot8_TT.row_x_out, Rot8_TT.row_y_out,
                                 Rot8_TT.q_u_in, Rot8_TT.q_v_in,
                                 Rot8_TT.q_u_out, Rot8_TT.q_v_out,
                                 Rot8_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 9" << std::endl;
+
         Rot9_TT.givens_rotation(Rot2_TT.row_x_out, Rot1_TT.row_y_out,
                                 Rot9_TT.row_x_out, Rot9_TT.row_y_out,
                                 Rot2_TT.q_u_out, Rot1_TT.q_v_out,
                                 Rot9_TT.q_u_out, Rot9_TT.q_v_out,
                                 Rot9_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 10" << std::endl;
+
         Rot10_TT.givens_rotation(Rot3_TT.row_x_out, Rot2_TT.row_y_out,
                                  Rot10_TT.row_x_out, Rot10_TT.row_y_out,
                                  Rot3_TT.q_u_out, Rot2_TT.q_v_out,
                                  Rot10_TT.q_u_out, Rot10_TT.q_v_out,
                                  Rot10_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 11" << std::endl;
+
         Rot11_TT.givens_rotation(Rot4_TT.row_x_out, Rot3_TT.row_y_out,
                                  Rot11_TT.row_x_out, Rot11_TT.row_y_out,
                                  Rot4_TT.q_u_out, Rot3_TT.q_v_out,
                                  Rot11_TT.q_u_out, Rot11_TT.q_v_out,
                                  Rot11_TT.col + col_offset);
-//        std::cout << "Entro en TTQRT 12" << std::endl;
+
         Rot12_TT.givens_rotation(Rot5_TT.row_x_out, Rot4_TT.row_y_out,
                                  Rot12_TT.row_x_out, Rot12_TT.row_y_out,
                                  Rot5_TT.q_u_out, Rot4_TT.q_v_out,
                                  Rot12_TT.q_u_out, Rot12_TT.q_v_out,
                                  Rot12_TT.col + col_offset);
+
         Rot13_TT.givens_rotation(Rot6_TT.row_x_out, Rot5_TT.row_y_out,
                                  Rot13_TT.row_x_out, Rot13_TT.row_y_out,
                                  Rot6_TT.q_u_out, Rot5_TT.q_v_out,
                                  Rot13_TT.q_u_out, Rot13_TT.q_v_out,
                                  Rot13_TT.col + col_offset);
+
         Rot14_TT.givens_rotation(Rot7_TT.row_x_out, Rot6_TT.row_y_out,
                                  Rot14_TT.row_x_out, Rot14_TT.row_y_out,
                                  Rot7_TT.q_u_out, Rot6_TT.q_v_out,
                                  Rot14_TT.q_u_out, Rot14_TT.q_v_out,
                                  Rot14_TT.col + col_offset);
+
         Rot15_TT.givens_rotation(Rot8_TT.row_x_out, Rot7_TT.row_y_out,
                                  Rot15_TT.row_x_out, Rot15_TT.row_y_out,
                                  Rot8_TT.q_u_out, Rot7_TT.q_v_out,
                                  Rot15_TT.q_u_out, Rot15_TT.q_v_out,
                                  Rot15_TT.col + col_offset);
+
         Rot16_TT.givens_rotation(Rot10_TT.row_x_out, Rot9_TT.row_y_out,
                                  Rot16_TT.row_x_out, Rot16_TT.row_y_out,
                                  Rot10_TT.q_u_out, Rot9_TT.q_v_out,
                                  Rot16_TT.q_u_out, Rot16_TT.q_v_out,
                                  Rot16_TT.col + col_offset);
+
         Rot17_TT.givens_rotation(Rot11_TT.row_x_out, Rot10_TT.row_y_out,
                                  Rot17_TT.row_x_out, Rot17_TT.row_y_out,
                                  Rot11_TT.q_u_out, Rot10_TT.q_v_out,
                                  Rot17_TT.q_u_out, Rot17_TT.q_v_out,
                                  Rot17_TT.col + col_offset);
+
         Rot18_TT.givens_rotation(Rot12_TT.row_x_out, Rot11_TT.row_y_out,
                                  Rot18_TT.row_x_out, Rot18_TT.row_y_out,
                                  Rot12_TT.q_u_out, Rot11_TT.q_v_out,
                                  Rot18_TT.q_u_out, Rot18_TT.q_v_out,
                                  Rot18_TT.col + col_offset);
+
         Rot19_TT.givens_rotation(Rot13_TT.row_x_out, Rot12_TT.row_y_out,
                                  Rot19_TT.row_x_out, Rot19_TT.row_y_out,
                                  Rot13_TT.q_u_out, Rot12_TT.q_v_out,
                                  Rot19_TT.q_u_out, Rot19_TT.q_v_out,
                                  Rot19_TT.col + col_offset);
+
         Rot20_TT.givens_rotation(Rot14_TT.row_x_out, Rot13_TT.row_y_out,
                                  Rot20_TT.row_x_out, Rot20_TT.row_y_out,
                                  Rot14_TT.q_u_out, Rot13_TT.q_v_out,
                                  Rot20_TT.q_u_out, Rot20_TT.q_v_out,
                                  Rot20_TT.col + col_offset);
+
         Rot21_TT.givens_rotation(Rot15_TT.row_x_out, Rot14_TT.row_y_out,
                                  Rot21_TT.row_x_out, Rot21_TT.row_y_out,
                                  Rot15_TT.q_u_out, Rot14_TT.q_v_out,
                                  Rot21_TT.q_u_out, Rot21_TT.q_v_out,
                                  Rot21_TT.col + col_offset);
+
         Rot22_TT.givens_rotation(Rot17_TT.row_x_out, Rot16_TT.row_y_out,
                                  Rot22_TT.row_x_out, Rot22_TT.row_y_out,
                                  Rot17_TT.q_u_out, Rot16_TT.q_v_out,
                                  Rot22_TT.q_u_out, Rot22_TT.q_v_out,
                                  Rot22_TT.col + col_offset);
+
         Rot23_TT.givens_rotation(Rot18_TT.row_x_out, Rot17_TT.row_y_out,
                                  Rot23_TT.row_x_out, Rot23_TT.row_y_out,
                                  Rot18_TT.q_u_out, Rot17_TT.q_v_out,
                                  Rot23_TT.q_u_out, Rot23_TT.q_v_out,
                                  Rot23_TT.col + col_offset);
+
         Rot24_TT.givens_rotation(Rot19_TT.row_x_out, Rot18_TT.row_y_out,
                                  Rot24_TT.row_x_out, Rot24_TT.row_y_out,
                                  Rot19_TT.q_u_out, Rot18_TT.q_v_out,
                                  Rot24_TT.q_u_out, Rot24_TT.q_v_out,
                                  Rot24_TT.col + col_offset);
+
         Rot25_TT.givens_rotation(Rot20_TT.row_x_out, Rot19_TT.row_y_out,
                                  Rot25_TT.row_x_out, Rot25_TT.row_y_out,
                                  Rot20_TT.q_u_out, Rot19_TT.q_v_out,
                                  Rot25_TT.q_u_out, Rot25_TT.q_v_out,
                                  Rot25_TT.col + col_offset);
+
         Rot26_TT.givens_rotation(Rot21_TT.row_x_out, Rot20_TT.row_y_out,
                                  Rot26_TT.row_x_out, Rot26_TT.row_y_out,
                                  Rot21_TT.q_u_out, Rot20_TT.q_v_out,
                                  Rot26_TT.q_u_out, Rot26_TT.q_v_out,
                                  Rot26_TT.col + col_offset);
+
         Rot27_TT.givens_rotation(Rot23_TT.row_x_out, Rot22_TT.row_y_out,
                                  Rot27_TT.row_x_out, Rot27_TT.row_y_out,
                                  Rot23_TT.q_u_out, Rot22_TT.q_v_out,
                                  Rot27_TT.q_u_out, Rot27_TT.q_v_out,
                                  Rot27_TT.col + col_offset);
+
         Rot28_TT.givens_rotation(Rot24_TT.row_x_out, Rot23_TT.row_y_out,
                                  Rot28_TT.row_x_out, Rot28_TT.row_y_out,
                                  Rot24_TT.q_u_out, Rot23_TT.q_v_out,
                                  Rot28_TT.q_u_out, Rot28_TT.q_v_out,
                                  Rot28_TT.col + col_offset);
+
         Rot29_TT.givens_rotation(Rot25_TT.row_x_out, Rot24_TT.row_y_out,
                                  Rot29_TT.row_x_out, Rot29_TT.row_y_out,
                                  Rot25_TT.q_u_out, Rot24_TT.q_v_out,
                                  Rot29_TT.q_u_out, Rot29_TT.q_v_out,
                                  Rot29_TT.col + col_offset);
+
         Rot30_TT.givens_rotation(Rot26_TT.row_x_out, Rot25_TT.row_y_out,
                                  Rot30_TT.row_x_out, Rot30_TT.row_y_out,
                                  Rot26_TT.q_u_out, Rot25_TT.q_v_out,
                                  Rot30_TT.q_u_out, Rot30_TT.q_v_out,
                                  Rot30_TT.col + col_offset);
+
         Rot31_TT.givens_rotation(Rot28_TT.row_x_out, Rot27_TT.row_y_out,
                                  Rot31_TT.row_x_out, Rot31_TT.row_y_out,
                                  Rot28_TT.q_u_out, Rot27_TT.q_v_out,
                                  Rot31_TT.q_u_out, Rot31_TT.q_v_out,
                                  Rot31_TT.col + col_offset);
+
         Rot32_TT.givens_rotation(Rot29_TT.row_x_out, Rot28_TT.row_y_out,
                                  Rot32_TT.row_x_out, Rot32_TT.row_y_out,
                                  Rot29_TT.q_u_out, Rot28_TT.q_v_out,
                                  Rot32_TT.q_u_out, Rot32_TT.q_v_out,
                                  Rot32_TT.col + col_offset);
+
         Rot33_TT.givens_rotation(Rot30_TT.row_x_out, Rot29_TT.row_y_out,
                                  Rot33_TT.row_x_out, Rot33_TT.row_y_out,
                                  Rot30_TT.q_u_out, Rot29_TT.q_v_out,
                                  Rot33_TT.q_u_out, Rot33_TT.q_v_out,
                                  Rot33_TT.col + col_offset);
+
         Rot34_TT.givens_rotation(Rot32_TT.row_x_out, Rot31_TT.row_y_out,
                                  Rot34_TT.row_x_out, Rot34_TT.row_y_out,
                                  Rot32_TT.q_u_out, Rot31_TT.q_v_out,
                                  Rot34_TT.q_u_out, Rot34_TT.q_v_out,
                                  Rot34_TT.col + col_offset);
+
         Rot35_TT.givens_rotation(Rot33_TT.row_x_out, Rot32_TT.row_y_out,
                                  Rot35_TT.row_x_out, Rot35_TT.row_y_out,
                                  Rot33_TT.q_u_out, Rot32_TT.q_v_out,
                                  Rot35_TT.q_u_out, Rot35_TT.q_v_out,
                                  Rot35_TT.col + col_offset);
+
         Rot36_TT.givens_rotation(Rot35_TT.row_x_out, Rot34_TT.row_y_out,
                                  Rot36_TT.row_x_out, Rot36_TT.row_y_out,
                                  Rot35_TT.q_u_out, Rot34_TT.q_v_out,
                                  Rot36_TT.q_u_out, Rot36_TT.q_v_out,
                                  Rot36_TT.col + col_offset);
 
-//        std::cout << "Entro en TTQRT lectura resultado" << std::endl;
     // Write output streams to matrix A_tile and 0s to A_tiled_2
     write_output_streams_col_TTQRT_for:
         for (index_t c = 0; c < TAM; c++) {

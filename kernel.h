@@ -19,7 +19,7 @@
 #include <iostream>
 
 /**
- * @brief 24 bits fixed point data, 10 for integer value and 14 for decimals.
+ * @brief 32 bits fixed point data, 6 for integer value and 26 for decimals.
  * The more bits it has, more shifts can be performed later, so the approximation to 0 will be more precise.
  * For bigger matrices, we need bigger data formats to be able to calculate the right result.
  *
@@ -97,7 +97,7 @@ class Rotator {
  * @param row_in_7
  * @param row_in_8
  */
-void read_input_rows(data_t Matrix[NUM_TILED][TAM_TILED][TAM],
+void read_input_rows(data_t matrix[NUM_TILED][TAM_TILED][TAM],
                      index_t idx_mat,
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
