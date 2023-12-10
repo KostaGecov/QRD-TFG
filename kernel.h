@@ -83,13 +83,17 @@ class Rotator {
                          int col_rotator);
 };
 
+void init_matrix(data_t matrix[TAM][TAM], std::fstream *file);
+void init_matrix(float matrix[TAM][TAM], std::fstream *file);
+
 /**
- * @brief calculate mean quadratic error of the result
+ * @brief calculate mean squared error of the result
  * 
  * @param A 
- * @return float 
+ * @param out_gold
+ * @return float error
  */
-float error(data_t A[TAM][TAM]);
+float error(data_t A[TAM][TAM], float out_gold[TAM][TAM]);
 
 /**
  * @brief Read input rows using blocking write to streams

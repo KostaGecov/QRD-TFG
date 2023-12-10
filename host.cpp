@@ -14,8 +14,8 @@
 
 #include "kernel.h"
 
-void init_matrix(data_t matrix[TAM][TAM], fstream *file) {
-    if (!file.is_open()) {
+void init_matrix(data_t matrix[TAM][TAM], std::fstream *file) {
+    if (!file->is_open()) {
         std::cout << "Could not open file" << std::endl;
     } else {
         std::cout << "Opened file data file" << std::endl;
@@ -24,25 +24,44 @@ void init_matrix(data_t matrix[TAM][TAM], fstream *file) {
 initialize_matrix:
     for (index_t r = 0; r < TAM; r++) {
         for (index_t c = 0; c < TAM; c++) {
-            file >> matrix[r][c];
+            *file >> matrix[r][c];
         }
     }
-    file.close();
+    file->close();
 }
 
-float error(A[TAM][TAM], out_gold[TAM][TAM]) {
-    float err = 0.0;
-    float resA = 0.0;
-    float resOut = 0.0;
+void init_matrix(float matrix[TAM][TAM], std::fstream *file) {
+    if (!file->is_open()) {
+        std::cout << "Could not open file" << std::endl;
+    } else {
+        std::cout << "Opened file data file" << std::endl;
+    }
 
+initialize_matrix:
     for (index_t r = 0; r < TAM; r++) {
         for (index_t c = 0; c < TAM; c++) {
+            *file >> matrix[r][c];
+        }
+    }
+    file->close();
+}
+
+float error(data_t A[TAM][TAM], float out_gold[TAM][TAM]) {
+    float err = 0.0;
+    data_t resA = 0.0;
+    float resOut = 0.0;
+
+    // to access just to the non zero elements (upper triangular matrix)
+    for (index_t r = 0; r < TAM; r++) {
+        for (index_t c = r; c < TAM; c++) {
             resA = A[r][c];
             resOut = out_gold[r][c];
             err += pow((abs((float)resA) - abs(resOut)), 2);
         }
     }
-    return err/(TAM * TAM);
+
+    // err / number of elements in the upper triangular matrix (including diagonal)
+    return err / ((TAM * (TAM + 1)) / 2);
 }
 
 int main() {
@@ -63,13 +82,6 @@ int main() {
      */
     static index_t n_iter_TTQRT = 31;
 
-    bool sign[N_ITER];
-
-    /**
-     * @todo: cambiar rango de valores a entre [-1, 1]
-     *
-     */
-
     /**
      * stores all 32 A matrices needed for tiled operations
      *
@@ -85,15 +97,15 @@ int main() {
     data_t Q[TAM][TAM];
 
     /**
-     * @brief To store the output data gold
+     * to store the output data gold
      *
      */
-    data_t out_gold[TAM][TAM];
+    float out_gold[TAM][TAM];
 
-    std::fstream data_in("data_in.dat", ios::in);
+    std::fstream data_in("data_in.dat", std::ios::in);
     init_matrix(A, &data_in);
 
-    std::fstream data_out_gold("data_out_gold.dat", ios::in);
+    std::fstream data_out_gold("data_out_gold.dat", std::ios::in);
     init_matrix(out_gold, &data_out_gold);
 
 initialize_Q:
@@ -2157,15 +2169,15 @@ write_sol_to_matrix_row_for:
     std::cout << std::endl;
 
     // Print Q matrix
-    std::cout << "Q Matrix: " << std::endl;
-    for (int i = 0; i < TAM; i++) {
-        for (int j = 0; j < TAM; j++) {
-            std::cout << Q[i][j] << "  |  ";
-        }
-        std::cout << std::endl;
-    }
+//    std::cout << "Q Matrix: " << std::endl;
+//    for (int i = 0; i < TAM; i++) {
+//        for (int j = 0; j < TAM; j++) {
+//            std::cout << Q[i][j] << "  |  ";
+//        }
+//        std::cout << std::endl;
+//    }
 
-    std::cout << "ECM = " << error(A, out_gold) << std:endl;
+    std::cout << "ECM = " << error(A, out_gold) << std::endl;
 
     return 0;
 }
