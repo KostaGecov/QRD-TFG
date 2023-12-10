@@ -36,7 +36,7 @@ typedef ap_uint<TAM_INDEX> index_t;
  * @brief Scale factor to compensate rotations
  *
  */
-const data_t SCALE_FACTOR = 0.607252935009249;
+const data_t SCALE_FACTOR = 0.607252935008881;
 
 class Rotator {
    public:
@@ -82,6 +82,14 @@ class Rotator {
                          hls::stream<data_t, TAM>& q_v_out,
                          int col_rotator);
 };
+
+/**
+ * @brief calculate mean quadratic error of the result
+ * 
+ * @param A 
+ * @return float 
+ */
+float error(data_t A[TAM][TAM]);
 
 /**
  * @brief Read input rows using blocking write to streams

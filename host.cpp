@@ -14,26 +14,36 @@
 
 #include "kernel.h"
 
-/* void traspose(Q[TAM_TILED][TAM]) {
-}
+void init_matrix(data_t matrix[TAM][TAM], fstream *file) {
+    if (!file.is_open()) {
+        std::cout << "Could not open file" << std::endl;
+    } else {
+        std::cout << "Opened file data file" << std::endl;
+    }
 
-void multiply_matrices(A[TAM_TILED][TAM], Q[TAM_TILED][TAM]) {
-}
-
-void update(A[TAM_TILED][TAM], Q[TAM_TILED][TAM]) {
-    traspose(Q);
-    multiply(A, Q);
-} */
-
-/* void matrix_mul(data_t A[TAM][TAM], data_t Q[TAM][TAM], data_t A_res[TAM][TAM]) {
-    for (index_t i = 0; i < n; i++) {
-        for (index_t j = 0; j < n; j++) {
-            for (index_t k = 0; k < n; k++) {
-                A_res[i][j] += A[i][k] * Q[k][j];
-            }
+initialize_matrix:
+    for (index_t r = 0; r < TAM; r++) {
+        for (index_t c = 0; c < TAM; c++) {
+            file >> matrix[r][c];
         }
     }
-}*/
+    file.close();
+}
+
+float error(A[TAM][TAM], out_gold[TAM][TAM]) {
+    float err = 0.0;
+    float resA = 0.0;
+    float resOut = 0.0;
+
+    for (index_t r = 0; r < TAM; r++) {
+        for (index_t c = 0; c < TAM; c++) {
+            resA = A[r][c];
+            resOut = out_gold[r][c];
+            err += pow(((abs(float)resA) - abs(resOut)), 2);
+        }
+    }
+    return err/(TAM * TAM);
+}
 
 int main() {
     /**
@@ -57,16 +67,15 @@ int main() {
 
     /**
      * @todo: cambiar rango de valores a entre [-1, 1]
-     * 
+     *
      */
-    
+
     /**
      * stores all 32 A matrices needed for tiled operations
      *
      */
     data_t A_tiled[NUM_TILED][TAM_TILED][TAM];
     data_t A[TAM][TAM];
-    data_t A_res[TAM][TAM];
 
     /**
      * stores all 32 Q matrices needed for tiled operations
@@ -75,19 +84,21 @@ int main() {
     data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
     data_t Q[TAM][TAM];
 
-    std::ifstream data_in("data_in2.dat");
+    /**
+     * @brief To store the output data gold
+     *
+     */
+    data_t out_gold[TAM][TAM];
 
-    if (!data_in.is_open()) {
-        std::cout << "Could not open data_in.dat" << std::endl;
-        return -1;
-    } else {
-        std::cout << "Opened input data file" << std::endl;
-    }
+    std::fstream data_in("data_in.dat", ios::in);
+    init_matrix(A, &data_in);
 
-initialize_matrices:
+    std::fstream data_out_gold("data_out_gold.dat", ios::in);
+    init_matrix(out_gold, &data_out_gold);
+
+initialize_Q:
     for (index_t r = 0; r < TAM; r++) {
         for (index_t c = 0; c < TAM; c++) {
-            data_in >> A[r][c];
             if (r == c) {
                 Q[r][c] = 1;
             } else {
@@ -95,7 +106,6 @@ initialize_matrices:
             }
         }
     }
-    data_in.close();
 
 divide_matrices_row_for:
     for (index_t r = 0; r < TAM; r++) {
@@ -2155,34 +2165,7 @@ write_sol_to_matrix_row_for:
         std::cout << std::endl;
     }
 
-    //     matrix_mul(A, Q, A_res);
-
-    // Print A_res matrix
-    /*for (int i = 0; i < TAM; i++) {
-        for (int j = 0; j < TAM; j++) {
-            std::cout << A_res[i][j] << "  |  ";
-        }
-        std::cout << std::endl;
-    }*/
-
-    // Specify the full path for the output file
-    std::string filepath = "/home/kgecov/git/QRD-TFG/data_out.dat";
-    std::ofstream data_out(filepath);
-
-    if (!data_out) {
-        std::cout << "Could not open data_out.dat" << std::endl;
-        return -1;
-    } else {
-        std::cout << "Opened output data file" << std::endl;
-    }
-
-    for (index_t r = 0; r < TAM; r++) {
-        for (index_t c = 0; c < TAM; c++) {
-            data_out << A[r][c] << ' ';
-        }
-        data_out << '\n';
-    }
-    data_out.close();
+    std::cout << "ECM = " << error(A, out_gold) << std:endl;
 
     return 0;
 }
