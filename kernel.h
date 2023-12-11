@@ -6,7 +6,7 @@
 #define TAM 256
 #define NUM_TILED 32
 
-#define N_ITER 31 // word_lenght - 1
+#define N_ITER 31           // word_lenght - 1
 #define NUM_OPERACIONES 65  //(63 + 2(offset))
 
 #define GEQRT 0
@@ -83,13 +83,26 @@ class Rotator {
                          int col_rotator);
 };
 
-void init_matrix(data_t matrix[TAM][TAM], std::fstream *file);
-void init_matrix(float matrix[TAM][TAM], std::fstream *file);
+/**
+ * @brief initialize data_t type matrix with values from input file 
+ * 
+ * @param matrix data_t type values
+ * @param file input file
+ */
+void init_matrix(data_t matrix[TAM][TAM], std::fstream* file);
+
+/**
+ * @brief initialize float type matrix with values from input file
+ * 
+ * @param matrix float type values
+ * @param file input file
+ */
+void init_matrix(float matrix[TAM][TAM], std::fstream* file);
 
 /**
  * @brief calculate mean squared error of the result
- * 
- * @param A 
+ *
+ * @param A
  * @param out_gold
  * @return float error
  */

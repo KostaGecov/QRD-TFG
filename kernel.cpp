@@ -82,23 +82,6 @@ read_input_data:
         for (index_t s = col_rotator; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
 #pragma HLS UNROLL factor = 4
-            /*if (y[s] >= 0) {
-                aux = x[s];
-                x[s] = y[s];
-                y[s] = -aux;
-
-                aux = u[s];
-                u[s] = v[s];
-                v[s] = -aux;
-            } else {
-                aux = x[s];
-                x[s] = -y[s];
-                y[s] = aux;
-
-                aux = u[s];
-                u[s] = -v[s];
-                v[s] = aux;
-            }*/
             x[s] = -x[s];
             y[s] = -y[s];
             u[s] = -u[s];
@@ -109,7 +92,7 @@ read_input_data:
 iterations_for:
     for (index_t k = 0; k < N_ITER; k++) {
 #pragma HLS LOOP_TRIPCOUNT max = 31 min = 31
-aux_var_for:
+    aux_var_for:
         for (index_t i = col_rotator; i < TAM; i++) {
 #pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
 #pragma HLS UNROLL factor = 4
@@ -178,8 +161,8 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
                           data_t Q_tile[NUM_TILED][TAM_TILED][TAM],
                           index_t type_op, index_t col_offset,
                           index_t idx_mat_1, index_t idx_mat_2) {
-//#pragma HLS INTERFACE mode=m_axi bundle=amem0 port=A_tile offset=slave
-//#pragma HLS INTERFACE mode=m_axi bundle=qmem1 port=Q_tile offset=slave
+    // #pragma HLS INTERFACE mode=m_axi bundle=amem0 port=A_tile offset=slave
+    // #pragma HLS INTERFACE mode=m_axi bundle=qmem1 port=Q_tile offset=slave
 
 #pragma HLS DATAFLOW
 #pragma HLS TOP name = krnl_givens_rotation
@@ -233,58 +216,85 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
 
         Rot1_GE.givens_rotation(Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot1_GE.row_x_out,
                                 Rot1_GE.row_y_out, Rot1_GE.q_u_in, Rot1_GE.q_v_in, Rot1_GE.q_u_out, Rot1_GE.q_v_out, Rot1_GE.col + col_offset);
+
         Rot2_GE.givens_rotation(Rot2_GE.row_x_in, Rot2_GE.row_y_in, Rot2_GE.row_x_out,
                                 Rot2_GE.row_y_out, Rot2_GE.q_u_in, Rot2_GE.q_v_in, Rot2_GE.q_u_out, Rot2_GE.q_v_out, Rot2_GE.col + col_offset);
+
         Rot3_GE.givens_rotation(Rot3_GE.row_x_in, Rot3_GE.row_y_in, Rot3_GE.row_x_out,
                                 Rot3_GE.row_y_out, Rot3_GE.q_u_in, Rot3_GE.q_v_in, Rot3_GE.q_u_out, Rot3_GE.q_v_out, Rot3_GE.col + col_offset);
+
         Rot4_GE.givens_rotation(Rot4_GE.row_x_in, Rot4_GE.row_y_in, Rot4_GE.row_x_out,
                                 Rot4_GE.row_y_out, Rot4_GE.q_u_in, Rot4_GE.q_v_in, Rot4_GE.q_u_out, Rot4_GE.q_v_out, Rot4_GE.col + col_offset);
+
         Rot5_GE.givens_rotation(Rot1_GE.row_x_out, Rot2_GE.row_x_out, Rot5_GE.row_x_out,
                                 Rot5_GE.row_y_out, Rot1_GE.q_u_out, Rot2_GE.q_u_out, Rot5_GE.q_u_out, Rot5_GE.q_v_out, Rot5_GE.col + col_offset);
+
         Rot6_GE.givens_rotation(Rot3_GE.row_x_out, Rot4_GE.row_x_out, Rot6_GE.row_x_out,
                                 Rot6_GE.row_y_out, Rot3_GE.q_u_out, Rot4_GE.q_u_out, Rot6_GE.q_u_out, Rot6_GE.q_v_out, Rot6_GE.col + col_offset);
+
         Rot7_GE.givens_rotation(Rot1_GE.row_y_out, Rot2_GE.row_y_out, Rot7_GE.row_x_out,
                                 Rot7_GE.row_y_out, Rot1_GE.q_v_out, Rot2_GE.q_v_out, Rot7_GE.q_u_out, Rot7_GE.q_v_out, Rot7_GE.col + col_offset);
+
         Rot8_GE.givens_rotation(Rot3_GE.row_y_out, Rot4_GE.row_y_out, Rot8_GE.row_x_out,
                                 Rot8_GE.row_y_out, Rot3_GE.q_v_out, Rot4_GE.q_v_out, Rot8_GE.q_u_out, Rot8_GE.q_v_out, Rot8_GE.col + col_offset);
+
         Rot9_GE.givens_rotation(Rot5_GE.row_x_out, Rot6_GE.row_x_out, Rot9_GE.row_x_out,
                                 Rot9_GE.row_y_out, Rot5_GE.q_u_out, Rot6_GE.q_u_out, Rot9_GE.q_u_out, Rot9_GE.q_v_out, Rot9_GE.col + col_offset);
+
         Rot10_GE.givens_rotation(Rot7_GE.row_x_out, Rot5_GE.row_y_out, Rot10_GE.row_x_out,
                                  Rot10_GE.row_y_out, Rot7_GE.q_u_out, Rot5_GE.q_v_out, Rot10_GE.q_u_out, Rot10_GE.q_v_out, Rot10_GE.col + col_offset);
+
         Rot11_GE.givens_rotation(Rot7_GE.row_y_out, Rot8_GE.row_y_out, Rot11_GE.row_x_out,
                                  Rot11_GE.row_y_out, Rot7_GE.q_v_out, Rot8_GE.q_v_out, Rot11_GE.q_u_out, Rot11_GE.q_v_out, Rot11_GE.col + col_offset);
+
         Rot12_GE.givens_rotation(Rot8_GE.row_x_out, Rot6_GE.row_y_out, Rot12_GE.row_x_out,
                                  Rot12_GE.row_y_out, Rot8_GE.q_u_out, Rot6_GE.q_v_out, Rot12_GE.q_u_out, Rot12_GE.q_v_out, Rot12_GE.col + col_offset);
+
         Rot13_GE.givens_rotation(Rot10_GE.row_y_out, Rot11_GE.row_x_out, Rot13_GE.row_x_out,
                                  Rot13_GE.row_y_out, Rot10_GE.q_v_out, Rot11_GE.q_u_out, Rot13_GE.q_u_out, Rot13_GE.q_v_out, Rot13_GE.col + col_offset);
+
         Rot14_GE.givens_rotation(Rot9_GE.row_y_out, Rot12_GE.row_x_out, Rot14_GE.row_x_out,
                                  Rot14_GE.row_y_out, Rot9_GE.q_v_out, Rot12_GE.q_u_out, Rot14_GE.q_u_out, Rot14_GE.q_v_out, Rot14_GE.col + col_offset);
+
         Rot15_GE.givens_rotation(Rot10_GE.row_x_out, Rot14_GE.row_x_out, Rot15_GE.row_x_out,
                                  Rot15_GE.row_y_out, Rot10_GE.q_u_out, Rot14_GE.q_u_out, Rot15_GE.q_u_out, Rot15_GE.q_v_out, Rot15_GE.col + col_offset);
+
         Rot16_GE.givens_rotation(Rot13_GE.row_x_out, Rot14_GE.row_y_out, Rot16_GE.row_x_out,
                                  Rot16_GE.row_y_out, Rot13_GE.q_u_out, Rot14_GE.q_v_out, Rot16_GE.q_u_out, Rot16_GE.q_v_out, Rot16_GE.col + col_offset);
+
         Rot17_GE.givens_rotation(Rot13_GE.row_y_out, Rot11_GE.row_y_out, Rot17_GE.row_x_out,
                                  Rot17_GE.row_y_out, Rot13_GE.q_v_out, Rot11_GE.q_v_out, Rot17_GE.q_u_out, Rot17_GE.q_v_out, Rot17_GE.col + col_offset);
+
         Rot18_GE.givens_rotation(Rot17_GE.row_x_out, Rot16_GE.row_y_out, Rot18_GE.row_x_out,
                                  Rot18_GE.row_y_out, Rot17_GE.q_u_out, Rot16_GE.q_v_out, Rot18_GE.q_u_out, Rot18_GE.q_v_out, Rot18_GE.col + col_offset);
+
         Rot19_GE.givens_rotation(Rot15_GE.row_y_out, Rot12_GE.row_y_out, Rot19_GE.row_x_out,
                                  Rot19_GE.row_y_out, Rot15_GE.q_v_out, Rot12_GE.q_v_out, Rot19_GE.q_u_out, Rot19_GE.q_v_out, Rot19_GE.col + col_offset);
+
         Rot20_GE.givens_rotation(Rot16_GE.row_x_out, Rot19_GE.row_x_out, Rot20_GE.row_x_out,
                                  Rot20_GE.row_y_out, Rot16_GE.q_u_out, Rot19_GE.q_u_out, Rot20_GE.q_u_out, Rot20_GE.q_v_out, Rot20_GE.col + col_offset);
+
         Rot21_GE.givens_rotation(Rot18_GE.row_x_out, Rot19_GE.row_y_out, Rot21_GE.row_x_out,
                                  Rot21_GE.row_y_out, Rot18_GE.q_u_out, Rot19_GE.q_v_out, Rot21_GE.q_u_out, Rot21_GE.q_v_out, Rot21_GE.col + col_offset);
+
         Rot22_GE.givens_rotation(Rot18_GE.row_y_out, Rot17_GE.row_y_out, Rot22_GE.row_x_out,
                                  Rot22_GE.row_y_out, Rot18_GE.q_v_out, Rot17_GE.q_v_out, Rot22_GE.q_u_out, Rot22_GE.q_v_out, Rot22_GE.col + col_offset);
+
         Rot23_GE.givens_rotation(Rot21_GE.row_x_out, Rot20_GE.row_y_out, Rot23_GE.row_x_out,
                                  Rot23_GE.row_y_out, Rot21_GE.q_u_out, Rot20_GE.q_v_out, Rot23_GE.q_u_out, Rot23_GE.q_v_out, Rot23_GE.col + col_offset);
+
         Rot24_GE.givens_rotation(Rot22_GE.row_x_out, Rot21_GE.row_y_out, Rot24_GE.row_x_out,
                                  Rot24_GE.row_y_out, Rot22_GE.q_u_out, Rot21_GE.q_v_out, Rot24_GE.q_u_out, Rot24_GE.q_v_out, Rot24_GE.col + col_offset);
+
         Rot25_GE.givens_rotation(Rot23_GE.row_y_out, Rot24_GE.row_x_out, Rot25_GE.row_x_out,
                                  Rot25_GE.row_y_out, Rot23_GE.q_v_out, Rot24_GE.q_u_out, Rot25_GE.q_u_out, Rot25_GE.q_v_out, Rot25_GE.col + col_offset);
+
         Rot26_GE.givens_rotation(Rot24_GE.row_y_out, Rot22_GE.row_y_out, Rot26_GE.row_x_out,
                                  Rot26_GE.row_y_out, Rot24_GE.q_v_out, Rot22_GE.q_v_out, Rot26_GE.q_u_out, Rot26_GE.q_v_out, Rot26_GE.col + col_offset);
+
         Rot27_GE.givens_rotation(Rot25_GE.row_y_out, Rot26_GE.row_x_out, Rot27_GE.row_x_out,
                                  Rot27_GE.row_y_out, Rot25_GE.q_v_out, Rot26_GE.q_u_out, Rot27_GE.q_u_out, Rot27_GE.q_v_out, Rot27_GE.col + col_offset);
+
         Rot28_GE.givens_rotation(Rot27_GE.row_y_out, Rot26_GE.row_y_out, Rot28_GE.row_x_out,
                                  Rot28_GE.row_y_out, Rot27_GE.q_v_out, Rot26_GE.q_v_out, Rot28_GE.q_u_out, Rot28_GE.q_v_out, Rot28_GE.col + col_offset);
 
@@ -325,7 +335,7 @@ void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
 
     } else if (type_op == TTQRT) {
     TTQRT_OPERATION:
-        // Rotators for GEQRT operation
+        // Rotators for TTQRT operation
         Rotator Rot1_TT(0, 0, 0);
         Rotator Rot2_TT(1, 1, 1);
         Rotator Rot3_TT(2, 2, 2);
