@@ -849,7 +849,7 @@ write_sol_to_matrix_row_for:
         std::cout << std::endl;
     }
 
-    std::cout << "ECM = " << error(A, out_gold);
+    std::cout << "ECM = " << error(A, out_gold) << std::endl;
 
     return 0;
 }
