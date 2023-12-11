@@ -47,15 +47,16 @@ class Rotator {
     hls::stream<data_t, TAM> row_x_out;
     hls::stream<data_t, TAM> row_y_out;
 
+    // Streams for reading/writing Givens rotation factors
     hls::stream<data_t, TAM> q_u_in, q_v_in;
     hls::stream<data_t, TAM> q_u_out, q_v_out;
 
-    int row_x, row_y, col;  // posiciones de las filas a rotar. En teor�a las
-                            // columnas son las mismas en ambas filas
+    // Position of rows to be rotated
+    int row_x, row_y, col;
 
    public:
     /**
-     * @brief Construct a new Rotator object
+     * @brief Constructor to initialize rotator with positions
      *
      * @param x
      * @param y
@@ -84,8 +85,8 @@ class Rotator {
 };
 
 /**
- * @brief initialize data_t type matrix with values from input file 
- * 
+ * @brief initialize data_t type matrix with values from input file
+ *
  * @param matrix data_t type values
  * @param file input file
  */
@@ -93,7 +94,7 @@ void init_matrix(data_t matrix[TAM][TAM], std::fstream* file);
 
 /**
  * @brief initialize float type matrix with values from input file
- * 
+ *
  * @param matrix float type values
  * @param file input file
  */
