@@ -16,9 +16,9 @@
 
 void init_matrix(data_t matrix[TAM][TAM], std::fstream *file) {
     if (!file->is_open()) {
-        std::cout << "Could not open file" << std::endl;
+        std::cerr << "Error opening file" << std::endl;
     } else {
-        std::cout << "Opened file data file" << std::endl;
+        std::cout << "Opened file" << std::endl;
     }
 
 initialize_matrix:
