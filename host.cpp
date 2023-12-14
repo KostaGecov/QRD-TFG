@@ -9,12 +9,48 @@
  *
  */
 
+/* #include <ap_fixed.h>
+#include <ap_int.h>
+#include <hls_stream.h>
+ */
 #include <fstream>
 #include <iostream>
 
-#include "kernel.h"
+// #define TAM_TILED 8
+// #define TAM 256
+// #define NUM_TILED 32
 
-void init_matrix(data_t matrix[TAM][TAM], std::fstream *file) {
+// #define NUM_OPERACIONES 65  //(63 + 2(offset))
+
+// #define GEQRT 0
+// #define TTQRT 1
+
+// /**
+//  * @brief initialize data_t type matrix with values from input file
+//  *
+//  * @param matrix data_t type values
+//  * @param file input file
+//  */
+// void init_matrix(data_t matrix[TAM][TAM], std::fstream* file);
+
+// /**
+//  * @brief initialize float type matrix with values from input file
+//  *
+//  * @param matrix float type values
+//  * @param file input file
+//  */
+// void init_matrix(float matrix[TAM][TAM], std::fstream* file);
+
+// /**
+//  * @brief calculate mean squared error of the result
+//  *
+//  * @param A
+//  * @param out_gold
+//  * @return float error
+//  */
+// float error(data_t A[TAM][TAM], float out_gold[TAM][TAM]);
+
+void init_matrix(data_t matrix[TAM][TAM], std::fstream* file) {
     if (!file->is_open()) {
         std::cerr << "Error opening file" << std::endl;
     } else {
@@ -30,7 +66,7 @@ initialize_matrix:
     file->close();
 }
 
-void init_matrix(float matrix[TAM][TAM], std::fstream *file) {
+void init_matrix(float matrix[TAM][TAM], std::fstream* file) {
     if (!file->is_open()) {
         std::cerr << "Error opening file" << std::endl;
     } else {
@@ -93,8 +129,8 @@ int main() {
      * stores all 32 Q matrices needed for tiled operations
      *
      */
-    data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
-    data_t Q[TAM][TAM];
+    // data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
+    // data_t Q[TAM][TAM];
 
     /**
      * to store the output data gold
@@ -109,7 +145,7 @@ int main() {
     init_matrix(out_gold, &data_out_gold);
 
 initialize_Q:
-    for (uint16_t r = 0; r < TAM; r++) {
+/*     for (uint16_t r = 0; r < TAM; r++) {
         for (uint16_t c = 0; c < TAM; c++) {
             if (r == c) {
                 Q[r][c] = 1;
@@ -117,7 +153,7 @@ initialize_Q:
                 Q[r][c] = 0;
             }
         }
-    }
+    } */
 
 divide_matrices_row_for:
     for (uint16_t r = 0; r < TAM; r++) {
@@ -127,7 +163,7 @@ divide_matrices_row_for:
     divide_matrices_col_for:
         for (uint16_t c = 0; c < TAM; c++) {
             A_tiled[tile_index][tile_offset][c] = A[r][c];
-            Q_tiled[tile_index][tile_offset][c] = Q[r][c];
+            // Q_tiled[tile_index][tile_offset][c] = Q[r][c];
         }
     }
 
@@ -138,192 +174,192 @@ num_operations_for:
             switch (n_iter_GEQRT) {
                 case 32:
                     for (uint16_t idx_mat_1 = 0; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 31:
                     for (uint16_t idx_mat_1 = 1; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 30:
                     for (uint16_t idx_mat_1 = 2; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 29:
                     for (uint16_t idx_mat_1 = 3; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 28:
                     for (uint16_t idx_mat_1 = 4; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 27:
                     for (uint16_t idx_mat_1 = 5; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 26:
                     for (uint16_t idx_mat_1 = 6; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 25:
                     for (uint16_t idx_mat_1 = 7; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 24:
                     for (uint16_t idx_mat_1 = 8; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 23:
                     for (uint16_t idx_mat_1 = 9; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 22:
                     for (uint16_t idx_mat_1 = 10; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 21:
                     for (uint16_t idx_mat_1 = 11; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 20:
                     for (uint16_t idx_mat_1 = 12; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 19:
                     for (uint16_t idx_mat_1 = 13; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 18:
                     for (uint16_t idx_mat_1 = 14; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 17:
                     for (uint16_t idx_mat_1 = 15; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 16:
                     for (uint16_t idx_mat_1 = 16; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 15:
                     for (uint16_t idx_mat_1 = 17; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 14:
                     for (uint16_t idx_mat_1 = 18; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 13:
                     for (uint16_t idx_mat_1 = 19; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 12:
                     for (uint16_t idx_mat_1 = 20; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 11:
                     for (uint16_t idx_mat_1 = 21; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 10:
                     for (uint16_t idx_mat_1 = 22; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 9:
                     for (uint16_t idx_mat_1 = 23; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 8:
                     for (uint16_t idx_mat_1 = 24; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 7:
                     for (uint16_t idx_mat_1 = 25; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 6:
                     for (uint16_t idx_mat_1 = 26; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 5:
                     for (uint16_t idx_mat_1 = 27; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 4:
                     for (uint16_t idx_mat_1 = 28; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 3:
                     for (uint16_t idx_mat_1 = 29; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 2:
                     for (uint16_t idx_mat_1 = 30; idx_mat_1 < 32; idx_mat_1++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, idx_mat_1, 0);
                     }
 
                     break;
                 case 1:
-                    krnl_givens_rotation(A_tiled, Q_tiled, GEQRT, col_offset_geqrt, 31, 0);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */GEQRT, col_offset_geqrt, 31, 0);
 
                     break;
                 default:
@@ -336,489 +372,489 @@ num_operations_for:
             switch (n_iter_TTQRT) {
                 case 31:
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 1; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 2; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 4; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 8; idx_mat_2 < 25; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 0, 16);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 0, 16);
 
                     break;
                 case 30:
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 2; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 3; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 5; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 9; idx_mat_2 < 26; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 1, 17);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 1, 17);
 
                     break;
                 case 29:
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 3; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 4; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 10; idx_mat_2 < 27; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 2, 18);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 2, 18);
 
                     break;
                 case 28:
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 4; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 5; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 11; idx_mat_2 < 28; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 3, 19);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 3, 19);
 
                     break;
                 case 27:
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 5; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 8; idx_mat_2 < 25; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 4, 20);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 4, 20);
 
                     break;
                 case 26:
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 9; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 5, 21);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 5, 21);
 
                     break;
                 case 25:
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 8; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 10; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 6, 22);
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 6, 26);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 6, 22);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 6, 26);
 
                     break;
                 case 24:
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 8; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 9; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 11; idx_mat_2 < 28; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 7, 23);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 7, 23);
 
                     break;
                 case 23:
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 9; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 10; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 16; idx_mat_2 < 25; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 22:
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 10; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 11; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 17; idx_mat_2 < 26; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 21:
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 11; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 18; idx_mat_2 < 27; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 20:
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 12; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 19; idx_mat_2 < 28; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 19:
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 13; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 16; idx_mat_2 < 25; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 18:
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 17; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 17:
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 16; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 18; idx_mat_2 < 27; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 16:
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 16; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 17; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 19; idx_mat_2 < 28; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 15:
                     for (uint16_t idx_mat_1 = 16, idx_mat_2 = 17; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 16, idx_mat_2 = 18; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 16, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 16, 24);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 16, 24);
 
                     break;
                 case 14:
                     for (uint16_t idx_mat_1 = 17, idx_mat_2 = 18; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 17, idx_mat_2 = 19; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 17, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 17, 25);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 17, 25);
 
                     break;
                 case 13:
                     for (uint16_t idx_mat_1 = 18, idx_mat_2 = 19; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 18, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 18, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 18, 26);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 18, 26);
 
                     break;
                 case 12:
                     for (uint16_t idx_mat_1 = 19, idx_mat_2 = 20; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 19, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 19, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 19, 27);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 19, 27);
 
                     break;
                 case 11:
                     for (uint16_t idx_mat_1 = 20, idx_mat_2 = 21; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 20, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 20, idx_mat_2 = 24; idx_mat_2 < 29; idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 10:
                     for (uint16_t idx_mat_1 = 21, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 21, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 21, idx_mat_2 = 25; idx_mat_2 < 30; idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 9:
                     for (uint16_t idx_mat_1 = 22, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 22, idx_mat_2 = 24; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 22, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 8:
                     for (uint16_t idx_mat_1 = 23, idx_mat_2 = 24; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 23, idx_mat_2 = 25; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 23, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 7:
                     for (uint16_t idx_mat_1 = 24, idx_mat_2 = 25; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 24, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 24, 28);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 24, 28);
 
                     break;
                 case 6:
                     for (uint16_t idx_mat_1 = 25, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 25, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 25, 29);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 25, 29);
 
                     break;
                 case 5:
                     for (uint16_t idx_mat_1 = 26, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 26, idx_mat_2 = 28; idx_mat_2 < 31; idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 4:
                     for (uint16_t idx_mat_1 = 27, idx_mat_2 = 28; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     for (uint16_t idx_mat_1 = 27, idx_mat_2 = 29; idx_mat_2 < 32; idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 3:
                     for (uint16_t idx_mat_1 = 28, idx_mat_2 = 29; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 28, 30);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 28, 30);
 
                     break;
                 case 2:
                     for (uint16_t idx_mat_1 = 29, idx_mat_2 = 30; idx_mat_2 < 32; idx_mat_2++) {
-                        krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
+                        krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2);
                     }
 
                     break;
                 case 1:
-                    krnl_givens_rotation(A_tiled, Q_tiled, TTQRT, col_offset_ttqrt, 30, 31);
+                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */TTQRT, col_offset_ttqrt, 30, 31);
 
                     break;
                 default:
@@ -836,7 +872,7 @@ write_sol_to_matrix_row_for:
     write_sol_to_matrix_col_for:
         for (uint16_t c = 0; c < TAM; c++) {
             A[r][c] = A_tiled[tile_index][tile_offset][c];
-            Q[r][c] = Q_tiled[tile_index][tile_offset][c];
+            // Q[r][c] = Q_tiled[tile_index][tile_offset][c];
         }
     }
 
