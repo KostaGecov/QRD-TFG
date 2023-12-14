@@ -77,10 +77,10 @@ class Rotator {
                          hls::stream<data_t, TAM>& row_y_in,
                          hls::stream<data_t, TAM>& row_x_out,
                          hls::stream<data_t, TAM>& row_y_out,
-                         hls::stream<data_t, TAM>& q_u_in,
-                         hls::stream<data_t, TAM>& q_v_in,
-                         hls::stream<data_t, TAM>& q_u_out,
-                         hls::stream<data_t, TAM>& q_v_out,
+//                         hls::stream<data_t, TAM>& q_u_in,
+//                         hls::stream<data_t, TAM>& q_v_in,
+//                         hls::stream<data_t, TAM>& q_u_out,
+//                         hls::stream<data_t, TAM>& q_v_out,
                          int col_rotator);
 };
 
@@ -146,7 +146,7 @@ extern "C" {
  * @param idx_mat_2 To access the right A and Q matrices. In case the operation is GEQRT, this value is 0
  */
 void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
-                          data_t Q_tile[NUM_TILED][TAM_TILED][TAM],
+//                          data_t Q_tile[NUM_TILED][TAM_TILED][TAM],
                           index_t type_op, index_t col_offset,
                           index_t idx_mat_1, index_t idx_mat_2);
 }

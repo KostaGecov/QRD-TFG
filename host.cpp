@@ -15,6 +15,7 @@
  */
 #include <fstream>
 #include <iostream>
+#include "kernel.h"
 
 // #define TAM_TILED 8
 // #define TAM 256

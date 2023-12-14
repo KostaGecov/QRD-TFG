@@ -136,6 +136,8 @@
 //                           index_t idx_mat_1, index_t idx_mat_2);
 // }
 
+#include "kernel.h"
+
 Rotator::Rotator(int x, int y, int c) {
     // actually, row_x and row_y are not used, they have an indicative role
     // while declaring the rotator objects
