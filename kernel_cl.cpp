@@ -28,6 +28,8 @@
 #define GEQRT 0
 #define TTQRT 1
 
+
+
 /**
  * @brief 32 bits fixed point data, 6 for integer value and 26 for decimals.
  * The more bits it has, more shifts can be performed later, so the approximation to 0 will be more precise.
@@ -47,6 +49,12 @@ typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;
  *
  */
 const data_t SCALE_FACTOR = 0.607252935008881;
+
+// TRIPCOUNT identifiers
+const unsigned int N_ELEM_ROW = TAM;
+const unsigned int TILED_COUNT = NUM_TILED;
+const unsigned int ITER = N_ITER;
+const unsigned int TILED_SIZE = TAM_TILED;
 
 class Rotator {
    public:
@@ -156,8 +164,8 @@ void read_input_rows(data_t* input,
 read_input_rows_for:
     // for (uint16_t j = 0; j < TAM; j++) {
     for (uint16_t j = 0; j < (TAM / 8); j++) {
-// #pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
-#pragma HLS LOOP_TRIPCOUNT avg = 32 max = 32 min = 32
+// #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
+#pragma HLS LOOP_TRIPCOUNT avg = TILED_COUNT max = TILED_COUNT min = TILED_COUNT
         row_in_1.write(input[j]);
         row_in_2.write(input[j + 32]);
         row_in_3.write(input[j + 32 * 2]);
@@ -184,7 +192,7 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
 
 read_input_data:
     for (uint16_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg = 256 max = 256 min = 256
+#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
         row_x_in.read(x[j]);
         row_y_in.read(y[j]);
     }
@@ -194,7 +202,7 @@ read_input_data:
     if (x[col_rotator] < 0) {
     sign_for:
         for (uint16_t s = col_rotator; s < TAM; s++) {
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
 #pragma HLS UNROLL factor = 4
             x[s] = -x[s];
             y[s] = -y[s];
@@ -203,10 +211,10 @@ read_input_data:
 
 iterations_for:
     for (uint8_t k = 0; k < N_ITER; k++) {
-#pragma HLS LOOP_TRIPCOUNT max = 31 min = 31
+#pragma HLS LOOP_TRIPCOUNT max = ITER min = ITER
     aux_var_for:
         for (uint16_t i = col_rotator; i < TAM; i++) {
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
 #pragma HLS UNROLL factor = 4
             x_aux[i] = x[i];
         }
@@ -217,7 +225,7 @@ iterations_for:
         column_rotation_pos_for:
             for (uint16_t j = col_rotator; j < TAM; j++) {
 #pragma HLS PIPELINE off
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
 #pragma HLS UNROLL factor = 4
 
                 x[j] = x[j] - (y[j] >> k);
@@ -227,7 +235,7 @@ iterations_for:
         column_rotation_neg_for:
             for (uint16_t j = col_rotator; j < TAM; j++) {
 #pragma HLS PIPELINE off
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
 #pragma HLS UNROLL factor = 4
                 x[j] = x[j] + (y[j] >> k);
                 y[j] = y[j] - (x_aux[j] >> k);
@@ -242,7 +250,7 @@ iterations_for:
 
 scale_factor_for:
     for (uint16_t j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 8
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
 #pragma HLS UNROLL factor = 4
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
@@ -250,7 +258,7 @@ scale_factor_for:
 
 write_output_data:
     for (uint16_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 256 min = 256
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
         row_x_out.write(x[j]);
         row_y_out.write(y[j]);
     }
@@ -395,7 +403,7 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
                                  Rot28_GE.row_y_out, Rot28_GE.col + col_offset);
 
         for (uint16_t j = 0; j < (TAM / 8); j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 32 min = 32
+#pragma HLS LOOP_TRIPCOUNT max = TILED_COUNT min = TILED_COUNT
             Rot9_GE.row_x_out.read(output_tile_1[j]);
             Rot15_GE.row_x_out.read(output_tile_1[j + 32]);
             Rot20_GE.row_x_out.read(output_tile_1[j + 32 * 2]);
@@ -608,7 +616,7 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
 
     write_output_streams_col_TTQRT_for:
         for (uint16_t j = 0; j < (TAM / 8); j++) {
-#pragma HLS LOOP_TRIPCOUNT max = 32 min = 32
+#pragma HLS LOOP_TRIPCOUNT max = TILED_COUNT min = TILED_COUNT
             Rot1_TT.row_x_out.read(output_tile_1[j]);
             Rot36_TT.row_y_out.read(output_tile_2[j]);
 
