@@ -1,11 +1,17 @@
+
 #include <ap_fixed.h>
 #include <ap_int.h>
 #include <hls_stream.h>
 
 #include <fstream>
 #include <iostream>
+#include <chrono>
+#include <vector>
 
 #include "xcl2.hpp"
+
+#define FIXED_POINT 32
+#define FX_POINT_INT 6
 
 #define TAM_TILED 8
 #define TAM 256
@@ -48,7 +54,7 @@ void init_matrix(float matrix[TAM][TAM], std::fstream *file);
  * @param out_gold
  * @return float error
  */
-float error(data_t A[TAM][TAM], float out_gold[TAM][TAM]);
+float mse(data_t A[TAM][TAM], float out_gold[TAM][TAM]);
 
 /**
  * @brief prior to kernel execution
@@ -72,6 +78,36 @@ void flatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[F
 
 void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[FLATTEN_SIZE], uint8_t idx_mat);
 
+/**
+ * offset to access the right column for GEQRT operation
+ */
+static uint16_t col_offset_geqrt = 0;
+/**
+ * offset to access the right column for TTQRT operation
+ */
+static uint16_t col_offset_ttqrt = 0;
+/**
+ * to control the GEQRT operations in each step
+ */
+static uint16_t n_iter_GEQRT = 32;
+/**
+ * to control the TTQRT operations in each step
+ */
+static uint16_t n_iter_TTQRT = 31;
+
+/**
+ * stores all 32 A matrices needed for tiled operations
+ *
+ */
+data_t A_tiled[NUM_TILED][TAM_TILED][TAM];
+data_t A[TAM][TAM];
+
+/**
+ * to store the output data gold
+ *
+ */
+float out_gold[TAM][TAM];
+
 int main(int argc, char **argv) {
     // Implementation remains the same until the OpenCL setup
 
@@ -80,48 +116,12 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    /**
-     * offset to access the right column for GEQRT operation
-     */
-    static uint16_t col_offset_geqrt = 0;
-    /**
-     * offset to access the right column for TTQRT operation
-     */
-    static uint16_t col_offset_ttqrt = 0;
-    /**
-     * to control the GEQRT operations in each step
-     */
-    static uint16_t n_iter_GEQRT = 32;
-    /**
-     * to control the TTQRT operations in each step
-     */
-    static uint16_t n_iter_TTQRT = 31;
-
-    /**
-     * stores all 32 A matrices needed for tiled operations
-     *
-     */
-    data_t A_tiled[NUM_TILED][TAM_TILED][TAM];
-    data_t A[TAM][TAM];
-
-    /**
-     * stores all 32 Q matrices needed for tiled operations
-     *
-     */
-    // data_t Q_tiled[NUM_TILED][TAM_TILED][TAM];
-    // data_t Q[TAM][TAM];
-
-    /**
-     * to store the output data gold
-     *
-     */
-    float out_gold[TAM][TAM];
-
     // XCLBIN file to program the FPGA
     std::string binaryFile = argv[1];
     cl_int err;
     cl::Context context;
     cl::CommandQueue q;
+    cl::Program program;
     cl::Kernel qrd_kernel;
     // std::vector<int, aligned_allocator<int> > host_memory(elements, 42);
     // std::vector<int, aligned_allocator<int> > host_memory2(elements, 15);
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
     // size_t size_in_bytes = host_memory.size() * sizeof(int);
 
     // OPENCL HOST CODE AREA START
-    auto start1 = chrono::high_resolution_clock::now();
+    auto start1 = std::chrono::high_resolution_clock::now();
 
     // get_xil_devices() is a utility API which will find the xilinx
     // platforms and will return list of devices connected to Xilinx platform
@@ -137,6 +137,7 @@ int main(int argc, char **argv) {
 
     // read_binary_file() is a utility API which will load the binaryFile
     // and will return the pointer to file buffer.
+//    unsigned fileBufSize = 0;
     auto fileBuf = xcl::read_binary_file(binaryFile);
 
     cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};
@@ -167,16 +168,16 @@ int main(int argc, char **argv) {
     }
 
     // Finished creating context, command queue and kernel
-    auto end1 = chrono::high_resolution_clock::now();
+    auto end1 = std::chrono::high_resolution_clock::now();
     auto diff1 = end1 - start1;
-    std::cout << "FPGA programming time: " << chrono::duration<double, milli>(diff1).count() << std::endl;
+    std::cout << "FPGA programming time: " << std::chrono::duration<double, std::milli>(diff1).count() << std::endl;
 
     // Now, we start to execute the kernel
-    auto start = chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
     tiled_qr_decomposition(qrd_kernel, q, context);
-    auto end = chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
     auto diff = end - start;
-    std::cout << "Execution time: " << chrono::duration<double, milli>(diff).count();
+    std::cout << "Execution time: " << std::chrono::duration<double, std::milli>(diff).count();
 
     return 0;
 }
@@ -783,7 +784,6 @@ num_operations_for:
                         kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q);
                     }
 
-                    krnl_givens_rotation(A_tiled, /* Q_tiled,  */ TTQRT, col_offset_ttqrt, 19, 27);
                     kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 19, 27, qrd_kernel, q);
 
                     break;
@@ -902,7 +902,7 @@ num_operations_for:
 
                     break;
                 case 1:
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 30, 31, qrd_kernel, q);
 
                     break;
                 default:
@@ -933,9 +933,12 @@ write_sol_to_matrix_row_for:
         std::cout << std::endl;
     }
 
-    std::cout << "ECM = " << error(A, out_gold) << std::endl;
+    std::cout << "ECM = " << mse(A, out_gold) << std::endl;
 }
 
+/**
+ * todo: add context as argument
+ */
 void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q) {
     cl_int error;
     data_t flattened_matrix[FLATTEN_SIZE];
@@ -945,9 +948,9 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         flatten_matrix(A_tiled, flattened_matrix, idx_mat_1);
 
         // Create one kernel input buffer and one output buffer
-        OCL_CHECK(error, cl::Buffer geqrt_input_matrix_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, flattened_size * sizeof(data_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer geqrt_input_matrix_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer geqrt_input_unused_ptr(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));  // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 input buffers
-        OCL_CHECK(error, cl::Buffer geqrt_output_matrix_ptr(context, CL_MEM_WRITE_ONLY, flattened_size * sizeof(data_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer geqrt_output_matrix_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer geqrt_output_unused_ptr(context, CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));  // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 output buffers
 
         // Set kernel arguments
@@ -985,8 +988,8 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         flatten_matrix(A_tiled, flattened_matrix, idx_mat_2);
 
         // Create two kernel input buffers and two output buffer
-        OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, flattened_size * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, flattened_size * sizeof(data_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_1_ptr(context, CL_MEM_WRITE_ONLY, flattened_size * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, flattened_size * sizeof(data_t), NULL, &error));
 
@@ -1085,9 +1088,9 @@ void flatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[F
 
 void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[FLATTEN_SIZE], uint8_t idx_mat) {
     // Unflatten the 1D array into 3D matrix
-    for (int j = 0; j < TAM; j++) {
-        for (int k = 0; k < TAM_TILED; k++) {
-            data[idx_mat][j][k] = fl_matrix[j * depth + k];
+    for (int j = 0; j < TAM_TILED; j++) {
+        for (int k = 0; k < TAM; k++) {
+        	matrix[idx_mat][j][k] = fl_matrix[j * TAM_TILED + k];
         }
     }
 }
