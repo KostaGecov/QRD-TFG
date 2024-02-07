@@ -1,4 +1,3 @@
-
 #include <ap_fixed.h>
 #include <ap_int.h>
 #include <hls_stream.h>
@@ -37,7 +36,7 @@ typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;
  * @param matrix data_t type values
  * @param file input file
  */
-void init_matrix(data_t matrix[TAM][TAM], std::fstream *file);
+bool init_matrix(data_t matrix[TAM][TAM], std::fstream *file);
 
 /**
  * @brief initialize float type matrix with values from input file
@@ -45,7 +44,7 @@ void init_matrix(data_t matrix[TAM][TAM], std::fstream *file);
  * @param matrix float type values
  * @param file input file
  */
-void init_matrix(float matrix[TAM][TAM], std::fstream *file);
+bool init_matrix(float matrix[TAM][TAM], std::fstream *file);
 
 /**
  * @brief calculate mean squared error of the result
@@ -63,7 +62,7 @@ float mse(data_t A[TAM][TAM], float out_gold[TAM][TAM]);
  * @param q command queue for the device
  * @param context context of the device
  */
-void tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context);
+bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context);
 
 /**
  * @brief executes kernel
@@ -72,7 +71,7 @@ void tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Conte
  * @param qrd_kernel
  * @param q
  */
-void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q);
+void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context);
 
 void flatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[FLATTEN_SIZE], uint8_t idx_mat);
 
@@ -109,8 +108,6 @@ data_t A[TAM][TAM];
 float out_gold[TAM][TAM];
 
 int main(int argc, char **argv) {
-    // Implementation remains the same until the OpenCL setup
-
     if (argc != 2) {
         std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
         return EXIT_FAILURE;
@@ -123,21 +120,16 @@ int main(int argc, char **argv) {
     cl::CommandQueue q;
     cl::Program program;
     cl::Kernel qrd_kernel;
-    // std::vector<int, aligned_allocator<int> > host_memory(elements, 42);
-    // std::vector<int, aligned_allocator<int> > host_memory2(elements, 15);
-
-    // size_t size_in_bytes = host_memory.size() * sizeof(int);
 
     // OPENCL HOST CODE AREA START
     auto start1 = std::chrono::high_resolution_clock::now();
 
-    // get_xil_devices() is a utility API which will find the xilinx
+    // get_xil_devices() is a utility API which will find the Xilinx
     // platforms and will return list of devices connected to Xilinx platform
     auto devices = xcl::get_xil_devices();
 
     // read_binary_file() is a utility API which will load the binaryFile
     // and will return the pointer to file buffer.
-//    unsigned fileBufSize = 0;
     auto fileBuf = xcl::read_binary_file(binaryFile);
 
     cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};
@@ -157,7 +149,7 @@ int main(int argc, char **argv) {
             std::cout << "Failed to program device[" << i << "] with xclbin file!\n";
         } else {
             std::cout << "Device[" << i << "]: program successful!\n";
-            OCL_CHECK(err, qrd_kernel = cl::Kernel(program, "krnl_givens_rotation", &err));
+            OCL_CHECK(err, qrd_kernel = cl::Kernel(program, "kernel_givens_rotation", &err));
             valid_device = true;
             break;  // we break because we found a valid device
         }
@@ -174,7 +166,8 @@ int main(int argc, char **argv) {
 
     // Now, we start to execute the kernel
     auto start = std::chrono::high_resolution_clock::now();
-    tiled_qr_decomposition(qrd_kernel, q, context);
+    if(!tiled_qr_decomposition(qrd_kernel, q, context))
+		return -1;
     auto end = std::chrono::high_resolution_clock::now();
     auto diff = end - start;
     std::cout << "Execution time: " << std::chrono::duration<double, std::milli>(diff).count();
@@ -182,14 +175,15 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context) {
-    cl_int error;
+bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context) {
+	// TODO: pasar path ficheros .dat como argumento entrada
+    std::fstream data_in("/home/kgecov/workspace_vitis/qrd_system/data_in.dat", std::ios::in);
+	if(!init_matrix(A, &data_in))
+	        	return false;
 
-    std::fstream data_in("data_in.dat", std::ios::in);
-    init_matrix(A, &data_in);
-
-    std::fstream data_out_gold("data_out_gold.dat", std::ios::in);
-    init_matrix(out_gold, &data_out_gold);
+    std::fstream data_out_gold("/home/kgecov/workspace_vitis/qrd_system/data_out_gold.dat", std::ios::in);
+    if(!init_matrix(out_gold, &data_out_gold))
+    	return false;
 
 divide_matrices_row_for:
     for (uint16_t r = 0; r < TAM; r++) {
@@ -908,7 +902,6 @@ write_sol_to_matrix_row_for:
     write_sol_to_matrix_col_for:
         for (uint16_t c = 0; c < TAM; c++) {
             A[r][c] = A_tiled[tile_index][tile_offset][c];
-            // Q[r][c] = Q_tiled[tile_index][tile_offset][c];
         }
     }
 
@@ -922,36 +915,53 @@ write_sol_to_matrix_row_for:
     }
 
     std::cout << "ECM = " << mse(A, out_gold) << std::endl;
+    return true;
 }
 
-/**
- * @todo: add context as argument
- */
 void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context) {
     cl_int error;
-    data_t flattened_matrix[FLATTEN_SIZE];
+    uint8_t aux;
+    data_t flattened_matrix_1[FLATTEN_SIZE];
+    data_t flattened_matrix_2[FLATTEN_SIZE];
 
     if (type_op == GEQRT) {
         // Flatten input matrix
-        flatten_matrix(A_tiled, flattened_matrix, idx_mat_1);
+        flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
 
-        // Create one kernel input buffer and one output buffer
+        // Read and write pointers from kernel to host
         OCL_CHECK(error, cl::Buffer geqrt_input_matrix_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer geqrt_input_unused_ptr(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));  // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 input buffers
+        OCL_CHECK(error, cl::Buffer geqrt_input_unused_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));  // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 input buffers
         OCL_CHECK(error, cl::Buffer geqrt_output_matrix_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer geqrt_output_unused_ptr(context, CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));  // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 output buffers
 
         // Set kernel arguments
-        OCL_CHECK(error, error = qrd_kernel.setArg(0, &geqrt_input_matrix_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(1, &geqrt_input_unused_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(2, &geqrt_output_matrix_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(3, &geqrt_output_unused_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &geqrt_input_matrix_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &geqrt_input_unused_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &geqrt_output_matrix_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &geqrt_output_unused_ptr));
         OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
         OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
 
+        // Read and write pointers from host to kernel
+//        data_t* write_data_to_host = (data_t*)q.enqueueMapBuffer(geqrt_input_matrix_ptr, true,
+//        		CL_MAP_WRITE, 0, FLATTEN_SIZE * sizeof(data_t), nullptr, nullptr, &error);
+//
+//        data_t* read_data_to_host = (data_t*)q.enqueueMapBuffer(geqrt_output_matrix_ptr, true,
+//                		CL_MAP_WRITE, 0, FLATTEN_SIZE * sizeof(data_t), nullptr, nullptr, &error);
+
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({geqrt_input_matrix_ptr}, 0));
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({geqrt_input_unused_ptr}, 0));
+        OCL_CHECK(error, error = q.enqueueWriteBuffer({geqrt_input_matrix_ptr},
+        												CL_FALSE,
+														0,
+														FLATTEN_SIZE * sizeof(data_t),
+														flattened_matrix_1,
+														nullptr, nullptr));
+//        OCL_CHECK(error, error = q.enqueueWriteBuffer({geqrt_input_unused_ptr},
+//        												CL_FALSE,
+//														0,
+//														sizeof(uint8_t),
+//														aux,
+//														nullptr, nullptr));
 
         // Execute kernel
         OCL_CHECK(error, error = q.enqueueTask(qrd_kernel));
@@ -960,38 +970,58 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         OCL_CHECK(error, error = q.finish());
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({geqrt_output_matrix_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({geqrt_output_unused_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+        OCL_CHECK(error, error = q.enqueueReadBuffer({geqrt_output_matrix_ptr},
+        												CL_TRUE,
+														0,
+														FLATTEN_SIZE * sizeof(data_t),
+														flattened_matrix_1,
+														nullptr, nullptr));
+
+//        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({geqrt_output_unused_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
 
         // Wait for it to finish
-        OCL_CHECK(error, error = q.finish());
-
-        // Read data from buffer to array and unflatten buffer
-        OCL_CHECK(error, error = q.enqueueReadBuffer({geqrt_output_matrix_ptr}, CL_TRUE, 0, FLATTEN_SIZE * sizeof(data_t), flattened_matrix));
-        unflatten_matrix(A_tiled, flattened_matrix, idx_mat_1);
+//        OCL_CHECK(error, error = q.finish());
+//
+//        // Read data from buffer to array and unflatten buffer
+//        OCL_CHECK(error, error = q.enqueueReadBuffer({geqrt_output_matrix_ptr}, CL_TRUE, 0, FLATTEN_SIZE * sizeof(data_t), flattened_matrix));
+        unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
 
     } else if (type_op == TTQRT) {
         // Flatten input matrices
-        flatten_matrix(A_tiled, flattened_matrix, idx_mat_1);
-        flatten_matrix(A_tiled, flattened_matrix, idx_mat_2);
+        flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
+        flatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
 
         // Create two kernel input buffers and two output buffer
         OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_1_ptr(context, CL_MEM_WRITE_ONLY, flattened_size * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, flattened_size * sizeof(data_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_1_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
 
         // Set kernel arguments
-        OCL_CHECK(error, error = qrd_kernel.setArg(0, &ttqrt_input_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(1, &ttqrt_input_matrix_2_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(2, &ttqrt_output_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(3, &ttqrt_output_matrix_2_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &ttqrt_input_matrix_1_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &ttqrt_input_matrix_2_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &ttqrt_output_matrix_1_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &ttqrt_output_matrix_2_ptr));
         OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
         OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_input_matrix_1_ptr}, 0));
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_input_matrix_2_ptr}, 0));
+//        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_input_matrix_1_ptr}, 0));
+//        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_input_matrix_2_ptr}, 0));
+        // Send input buffer to kernel
+		OCL_CHECK(error, error = q.enqueueWriteBuffer({ttqrt_input_matrix_1_ptr},
+														CL_FALSE,
+														0,
+														FLATTEN_SIZE * sizeof(data_t),
+														flattened_matrix_1,
+														nullptr, nullptr));
+
+		OCL_CHECK(error, error = q.enqueueWriteBuffer({ttqrt_input_matrix_2_ptr},
+														CL_FALSE,
+														0,
+														FLATTEN_SIZE * sizeof(data_t),
+														flattened_matrix_2,
+														nullptr, nullptr));
 
         // Execute kernel
         OCL_CHECK(error, error = q.enqueueTask(qrd_kernel));
@@ -1000,24 +1030,55 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         OCL_CHECK(error, error = q.finish());
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+//        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+//        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({ttqrt_output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_1_ptr},
+														CL_TRUE,
+														0,
+														FLATTEN_SIZE * sizeof(data_t),
+														flattened_matrix_1,
+														nullptr, nullptr));
+        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_2_ptr},
+														CL_TRUE,
+														0,
+														FLATTEN_SIZE * sizeof(data_t),
+														flattened_matrix_2,
+														nullptr, nullptr));
 
         // Wait for it to finish
-        OCL_CHECK(error, error = q.finish());
-
-        // Read data from buffer to array and unflatten array
-        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_1_ptr}, CL_TRUE, 0, FLATTEN_SIZE * sizeof(data_t), flattened_matrix));
-        unflatten_matrix(A_tiled, flattened_matrix, idx_mat_1);
-
-        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_2_ptr}, CL_TRUE, 0, FLATTEN_SIZE * sizeof(data_t), flattened_matrix));
-        unflatten_matrix(A_tiled, flattened_matrix, idx_mat_2);
+//        OCL_CHECK(error, error = q.finish());
+//
+//        // Read data from buffer to array and unflatten array
+//        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_1_ptr}, CL_TRUE, 0, FLATTEN_SIZE * sizeof(data_t), flattened_matrix));
+        unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
+//
+//        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_2_ptr}, CL_TRUE, 0, FLATTEN_SIZE * sizeof(data_t), flattened_matrix));
+        unflatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
     }
 }
 
-void init_matrix(data_t matrix[TAM][TAM], std::fstream *file) {
+bool init_matrix(data_t matrix[TAM][TAM], std::fstream *file) {
     if (!file->is_open()) {
         std::cerr << "Error opening file" << std::endl;
+        return false;
+    } else {
+        std::cout << "Opened file" << std::endl;
+    }
+
+initialize_matrix:
+    for (uint16_t r = 0; r < TAM; r++) {
+        for (uint16_t c = 0; c < TAM; c++) {
+        	*file >> matrix[r][c];
+        }
+    }
+    file->close();
+    return true;
+}
+
+bool init_matrix(float matrix[TAM][TAM], std::fstream *file) {
+    if (!file->is_open()) {
+        std::cerr << "Error opening file" << std::endl;
+        return false;
     } else {
         std::cout << "Opened file" << std::endl;
     }
@@ -1029,22 +1090,7 @@ initialize_matrix:
         }
     }
     file->close();
-}
-
-void init_matrix(float matrix[TAM][TAM], std::fstream *file) {
-    if (!file->is_open()) {
-        std::cerr << "Error opening file" << std::endl;
-    } else {
-        std::cout << "Opened file" << std::endl;
-    }
-
-initialize_matrix:
-    for (uint16_t r = 0; r < TAM; r++) {
-        for (uint16_t c = 0; c < TAM; c++) {
-            *file >> matrix[r][c];
-        }
-    }
-    file->close();
+    return true;
 }
 
 float mse(data_t A[TAM][TAM], float out_gold[TAM][TAM]) {
@@ -1069,7 +1115,7 @@ void flatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[F
     // Flatten the 3D array into 1D array
     for (int j = 0; j < TAM_TILED; j++) {
         for (int k = 0; k < TAM; k++) {
-            fl_matrix[j * TAM_TILED + k] = matrix[idx_mat][j][k];
+            fl_matrix[j * TAM + k] = matrix[idx_mat][j][k];
         }
     }
 }
@@ -1078,7 +1124,8 @@ void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix
     // Unflatten the 1D array into 3D matrix
     for (int j = 0; j < TAM_TILED; j++) {
         for (int k = 0; k < TAM; k++) {
-        	matrix[idx_mat][j][k] = fl_matrix[j * TAM_TILED + k];
+        	matrix[idx_mat][j][k] = fl_matrix[j * TAM + k];
         }
     }
 }
+

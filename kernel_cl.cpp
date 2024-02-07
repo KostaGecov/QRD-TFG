@@ -28,8 +28,6 @@
 #define GEQRT 0
 #define TTQRT 1
 
-
-
 /**
  * @brief 32 bits fixed point data, 6 for integer value and 26 for decimals.
  * The more bits it has, more shifts can be performed later, so the approximation to 0 will be more precise.
@@ -39,12 +37,6 @@
 typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;
 
 /**
- * @brief data type used for indexes variables in for loops
- *
- */
-// typedef ap_uint<TAM_INDEX> index_t;
-
-/**
  * @brief Scale factor to compensate rotations
  *
  */
@@ -52,7 +44,6 @@ const data_t SCALE_FACTOR = 0.607252935008881;
 
 // TRIPCOUNT identifiers
 const unsigned int N_ELEM_ROW = TAM;
-const unsigned int TILED_COUNT = NUM_TILED;
 const unsigned int ITER = N_ITER;
 const unsigned int TILED_SIZE = TAM_TILED;
 
@@ -132,10 +123,6 @@ extern "C" {
  * @param idx_mat_1 To access the right A and Q matrices
  * @param idx_mat_2 To access the right A and Q matrices. In case the operation is GEQRT, this value is 0
  */
-void krnl_givens_rotation(data_t A_tile[NUM_TILED][TAM_TILED][TAM],
-                          uint8_t type_op, uint8_t col_offset,
-                          uint8_t idx_mat_1, uint8_t idx_mat_2);
-
 void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
                             data_t* output_tile_1, data_t* output_tile_2,
                             uint8_t type_op, uint8_t col_offset);
@@ -143,7 +130,7 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
 
 Rotator::Rotator(int x, int y, int c) {
     // actually, row_x and row_y are not used, they have an indicative role
-    // while declaring the rotator objects
+    // while declaring rotators objects
     Rotator::row_x = x;
     Rotator::row_y = y;
     Rotator::col = c;
@@ -162,18 +149,16 @@ void read_input_rows(data_t* input,
 
 // Read the rows from the input array and write them to the streams
 read_input_rows_for:
-    // for (uint16_t j = 0; j < TAM; j++) {
-    for (uint16_t j = 0; j < (TAM / 8); j++) {
-// #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-#pragma HLS LOOP_TRIPCOUNT avg = TILED_COUNT max = TILED_COUNT min = TILED_COUNT
+     for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
         row_in_1.write(input[j]);
-        row_in_2.write(input[j + 32]);
-        row_in_3.write(input[j + 32 * 2]);
-        row_in_4.write(input[j + 32 * 3]);
-        row_in_5.write(input[j + 32 * 4]);
-        row_in_6.write(input[j + 32 * 5]);
-        row_in_7.write(input[j + 32 * 6]);
-        row_in_8.write(input[j + 32 * 7]);
+        row_in_2.write(input[j + 256]);
+        row_in_3.write(input[j + 256 * 2]);
+        row_in_4.write(input[j + 256 * 3]);
+        row_in_5.write(input[j + 256 * 4]);
+        row_in_6.write(input[j + 256 * 5]);
+        row_in_7.write(input[j + 256 * 6]);
+        row_in_8.write(input[j + 256 * 7]);
     }
 }
 
@@ -183,8 +168,7 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& row_y_out,
                               int col_rotator) {
 #pragma HLS INLINE off
-    data_t x[TAM] = {0}, y[TAM] = {0};
-    data_t x_aux[TAM] = {0}, u_aux[TAM] = {0};
+    data_t x[TAM] = {0}, y[TAM] = {0}, x_aux[TAM] = {0};
 
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = x
 #pragma HLS ARRAY_PARTITION dim = 1 factor = 4 type = block variable = y
@@ -197,8 +181,8 @@ read_input_data:
         row_y_in.read(y[j]);
     }
 
-    // Choose the right sign for the rotation, taking into account the quadrants
-    // of the coordinates
+    // Choose the right sign for the rotation,
+    // taking into account the coordinates' quadrants
     if (x[col_rotator] < 0) {
     sign_for:
         for (uint16_t s = col_rotator; s < TAM; s++) {
@@ -243,8 +227,7 @@ iterations_for:
         }
     }
 
-    // if ((y[col_rotator] < 0.001) && (y[col_rotator] > -0.001)) {
-    if (abs(y[col_rotator]) < 0.001) {
+    if (abs((float)(y[col_rotator])) < 0.001) {
         y[col_rotator] = 0;
     }
 
@@ -315,7 +298,7 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
         Rotator Rot27_GE(5, 6, 5);
         Rotator Rot28_GE(6, 7, 6);
 
-        read_input_rows(input_tile_1, idx_mat_1, Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot2_GE.row_x_in,
+        read_input_rows(input_tile_1, Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot2_GE.row_x_in,
                         Rot2_GE.row_y_in, Rot3_GE.row_x_in, Rot3_GE.row_y_in, Rot4_GE.row_x_in, Rot4_GE.row_y_in);
 
         Rot1_GE.givens_rotation(Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot1_GE.row_x_out,
@@ -402,16 +385,16 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
         Rot28_GE.givens_rotation(Rot27_GE.row_y_out, Rot26_GE.row_y_out, Rot28_GE.row_x_out,
                                  Rot28_GE.row_y_out, Rot28_GE.col + col_offset);
 
-        for (uint16_t j = 0; j < (TAM / 8); j++) {
-#pragma HLS LOOP_TRIPCOUNT max = TILED_COUNT min = TILED_COUNT
+        for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
             Rot9_GE.row_x_out.read(output_tile_1[j]);
-            Rot15_GE.row_x_out.read(output_tile_1[j + 32]);
-            Rot20_GE.row_x_out.read(output_tile_1[j + 32 * 2]);
-            Rot23_GE.row_x_out.read(output_tile_1[j + 32 * 3]);
-            Rot25_GE.row_x_out.read(output_tile_1[j + 32 * 4]);
-            Rot27_GE.row_x_out.read(output_tile_1[j + 32 * 5]);
-            Rot28_GE.row_x_out.read(output_tile_1[j + 32 * 6]);
-            Rot28_GE.row_y_out.read(output_tile_1[j + 32 * 7]);
+            Rot15_GE.row_x_out.read(output_tile_1[j + 256]);
+            Rot20_GE.row_x_out.read(output_tile_1[j + 256 * 2]);
+            Rot23_GE.row_x_out.read(output_tile_1[j + 256 * 3]);
+            Rot25_GE.row_x_out.read(output_tile_1[j + 256 * 4]);
+            Rot27_GE.row_x_out.read(output_tile_1[j + 256 * 5]);
+            Rot28_GE.row_x_out.read(output_tile_1[j + 256 * 6]);
+            Rot28_GE.row_y_out.read(output_tile_1[j + 256 * 7]);
         }
     } else if (type_op == TTQRT) {
     TTQRT_OPERATION:
@@ -461,12 +444,12 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
         Rotator Rot36_TT(7, 0, 7);
 
         // Read X coordinates rows from first matrix
-        read_input_rows(input_tile_1, idx_mat_1, Rot1_TT.row_x_in, Rot2_TT.row_x_in,
+        read_input_rows(input_tile_1, Rot1_TT.row_x_in, Rot2_TT.row_x_in,
                         Rot3_TT.row_x_in, Rot4_TT.row_x_in, Rot5_TT.row_x_in,
                         Rot6_TT.row_x_in, Rot7_TT.row_x_in, Rot8_TT.row_x_in);
 
         // Read Y coordinates rows from second matrix
-        read_input_rows(input_tile_2, idx_mat_2, Rot1_TT.row_y_in, Rot2_TT.row_y_in,
+        read_input_rows(input_tile_2, Rot1_TT.row_y_in, Rot2_TT.row_y_in,
                         Rot3_TT.row_y_in, Rot4_TT.row_y_in, Rot5_TT.row_y_in,
                         Rot6_TT.row_y_in, Rot7_TT.row_y_in, Rot8_TT.row_y_in);
 
@@ -615,32 +598,33 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
                                  Rot36_TT.col + col_offset);
 
     write_output_streams_col_TTQRT_for:
-        for (uint16_t j = 0; j < (TAM / 8); j++) {
-#pragma HLS LOOP_TRIPCOUNT max = TILED_COUNT min = TILED_COUNT
+        for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
             Rot1_TT.row_x_out.read(output_tile_1[j]);
             Rot36_TT.row_y_out.read(output_tile_2[j]);
 
-            Rot9_TT.row_x_out.read(output_tile_1[j + 32]);
-            Rot35_TT.row_y_out.read(output_tile_2[j + 32]);
+            Rot9_TT.row_x_out.read(output_tile_1[j + 256]);
+            Rot35_TT.row_y_out.read(output_tile_2[j + 256]);
 
-            Rot16_TT.row_x_out.read(output_tile_1[j + 32 * 2]);
-            Rot33_TT.row_y_out.read(output_tile_2[j + 32 * 2]);
+            Rot16_TT.row_x_out.read(output_tile_1[j + 256 * 2]);
+            Rot33_TT.row_y_out.read(output_tile_2[j + 256 * 2]);
 
-            Rot22_TT.row_x_out.read(output_tile_1[j + 32 * 3]);
-            Rot30_TT.row_y_out.read(output_tile_2[j + 32 * 3]);
+            Rot22_TT.row_x_out.read(output_tile_1[j + 256 * 3]);
+            Rot30_TT.row_y_out.read(output_tile_2[j + 256 * 3]);
 
-            Rot27_TT.row_x_out.read(output_tile_1[j + 32 * 4]);
-            Rot26_TT.row_y_out.read(output_tile_2[j + 32 * 4]);
+            Rot27_TT.row_x_out.read(output_tile_1[j + 256 * 4]);
+            Rot26_TT.row_y_out.read(output_tile_2[j + 256 * 4]);
 
-            Rot31_TT.row_x_out.read(output_tile_1[j + 32 * 5]);
-            Rot21_TT.row_y_out.read(output_tile_2[j + 32 * 5]);
+            Rot31_TT.row_x_out.read(output_tile_1[j + 256 * 5]);
+            Rot21_TT.row_y_out.read(output_tile_2[j + 256 * 5]);
 
-            Rot34_TT.row_x_out.read(output_tile_1[j + 32 * 6]);
-            Rot15_TT.row_y_out.read(output_tile_2[j + 32 * 6]);
+            Rot34_TT.row_x_out.read(output_tile_1[j + 256 * 6]);
+            Rot15_TT.row_y_out.read(output_tile_2[j + 256 * 6]);
 
-            Rot36_TT.row_x_out.read(output_tile_1[j + 32 * 7]);
-            Rot8_TT.row_y_out.read(output_tile_2[j + 32 * 7]);
+            Rot36_TT.row_x_out.read(output_tile_1[j + 256 * 7]);
+            Rot8_TT.row_y_out.read(output_tile_2[j + 256 * 7]);
         }
     }
 }
 }
+
