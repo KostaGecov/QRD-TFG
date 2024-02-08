@@ -149,7 +149,7 @@ void read_input_rows(data_t* input,
 
 // Read the rows from the input array and write them to the streams
 read_input_rows_for:
-     for (uint16_t j = 0; j < TAM; j++) {
+    for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
         row_in_1.write(input[j]);
         row_in_2.write(input[j + 256]);
@@ -227,7 +227,7 @@ iterations_for:
         }
     }
 
-    if (abs((float)(y[col_rotator])) < 0.001) {
+    if (abs(static_cast<float>(y[col_rotator])) < 0.001) {
         y[col_rotator] = 0;
     }
 
@@ -627,4 +627,3 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
     }
 }
 }
-
