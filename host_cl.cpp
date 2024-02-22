@@ -197,6 +197,13 @@ divide_matrices_row_for:
         }
     }
 
+    // Create two kernel input buffers and two output buffer
+	OCL_CHECK(error, cl::Buffer input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+	OCL_CHECK(error, cl::Buffer input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+	OCL_CHECK(error, cl::Buffer output_matrix_1_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+	OCL_CHECK(error, cl::Buffer output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+
+	// TODO: pasar buffers como argumentos a kernel_execute
 num_operations_for:
     for (uint16_t i = 2; i < NUM_OPERACIONES; i++) {
         // GEQRT operation
@@ -1099,3 +1106,4 @@ void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix
         }
     }
 }
+
