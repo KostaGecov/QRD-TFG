@@ -15,13 +15,11 @@
 
 #include <iostream>
 
-#define TAM_INDEX 9
 #define FIXED_POINT 32
 #define FX_POINT_INT 6
 
 #define TAM_TILED 8
 #define TAM 256
-#define NUM_TILED 32
 
 #define N_ITER 31  // word_lenght - 1
 
@@ -55,10 +53,6 @@ class Rotator {
     hls::stream<data_t, TAM> row_y_in;
     hls::stream<data_t, TAM> row_x_out;
     hls::stream<data_t, TAM> row_y_out;
-
-    // Streams for reading/writing Givens rotation factors
-    hls::stream<data_t, TAM> q_u_in, q_v_in;
-    hls::stream<data_t, TAM> q_u_out, q_v_out;
 
     // Position of rows to be rotated
     int row_x, row_y, col;
@@ -152,7 +146,7 @@ void read_input_rows(data_t* input,
 read_input_rows_for:
     for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-//#pragma HLS PIPELINE
+        // #pragma HLS PIPELINE
         row_in_1.write(input[j]);
         row_in_2.write(input[j + 256]);
         row_in_3.write(input[j + 256 * 2]);
@@ -170,21 +164,21 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& row_y_out,
                               int col_rotator) {
 #pragma HLS INLINE off
-	uint16_t i = 0, j = 0, k = 0, s = 0;
+    uint16_t i = 0, j = 0, k = 0, s = 0;
     data_t x[TAM] = {0}, y[TAM] = {0}, x_aux[TAM] = {0};
 
-//#pragma HLS ARRAY_PARTITION dim = 1 factor = 2 type = block variable = x
+// #pragma HLS ARRAY_PARTITION dim = 1 factor = 2 type = block variable = x
 #pragma HLS ARRAY_PARTITION dim = 1 variable = x complete
-//#pragma HLS ARRAY_PARTITION dim = 1 factor = 2 type = block variable = y
+// #pragma HLS ARRAY_PARTITION dim = 1 factor = 2 type = block variable = y
 #pragma HLS ARRAY_PARTITION dim = 1 variable = y complete
-//#pragma HLS ARRAY_PARTITION dim = 1 factor = 2 type = block variable = x_aux
+// #pragma HLS ARRAY_PARTITION dim = 1 factor = 2 type = block variable = x_aux
 #pragma HLS ARRAY_PARTITION dim = 1 variable = x_aux complete
 
 read_input_data:
     for (j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
 #pragma HLS PIPELINE off
-//#pragma HLS UNROLL
+        // #pragma HLS UNROLL
         row_x_in.read(x[j]);
         row_y_in.read(y[j]);
     }
@@ -210,7 +204,7 @@ iterations_for:
         for (i = 0; i < TAM; i++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
 #pragma HLS PIPELINE off
-//#pragma HLS UNROLL factor = 128 skip_exit_check
+            // #pragma HLS UNROLL factor = 128 skip_exit_check
             x_aux[i] = x[i];
         }
 
@@ -221,7 +215,7 @@ iterations_for:
             for (j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
 #pragma HLS PIPELINE off
-//#pragma HLS UNROLL factor = 128 skip_exit_check
+                // #pragma HLS UNROLL factor = 128 skip_exit_check
                 x[j] = x[j] - (y[j] >> k);
                 y[j] = y[j] + (x_aux[j] >> k);
             }
@@ -230,14 +224,14 @@ iterations_for:
             for (j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
 #pragma HLS PIPELINE off
-//#pragma HLS UNROLL factor = 128 skip_exit_check
-            	x[j] = x[j] + (y[j] >> k);
+                // #pragma HLS UNROLL factor = 128 skip_exit_check
+                x[j] = x[j] + (y[j] >> k);
                 y[j] = y[j] - (x_aux[j] >> k);
             }
         }
     }
 
-//    if (std::abs(static_cast<float>(y[col_rotator])) < 0.001) {
+    //    if (std::abs(static_cast<float>(y[col_rotator])) < 0.001) {
     if ((y[col_rotator] < 0.001) && (y[col_rotator] > -0.001)) {
         y[col_rotator] = 0;
     }
@@ -254,7 +248,7 @@ write_output_data:
     for (j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
 #pragma HLS PIPELINE off
-//#pragma HLS UNROLL
+        // #pragma HLS UNROLL
         row_x_out.write(x[j]);
         row_y_out.write(y[j]);
     }
@@ -642,4 +636,3 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
     }
 }
 }
-

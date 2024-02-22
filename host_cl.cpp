@@ -71,8 +71,8 @@ bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Conte
  * @param qrd_kernel
  * @param q
  */
-void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset,
-                    uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context);
+void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context,
+                    cl::Buffer input_matrix_1_ptr, cl::Buffer input_matrix_2_ptr, cl::Buffer output_matrix_1_ptr, cl::Buffer output_matrix_2_ptr);
 
 void flatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[FLATTEN_SIZE], uint8_t idx_mat);
 
@@ -198,12 +198,12 @@ divide_matrices_row_for:
     }
 
     // Create two kernel input buffers and two output buffer
-	OCL_CHECK(error, cl::Buffer input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-	OCL_CHECK(error, cl::Buffer input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-	OCL_CHECK(error, cl::Buffer output_matrix_1_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-	OCL_CHECK(error, cl::Buffer output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer input_matrix_1_ptr, (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer input_matrix_2_ptr, (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer output_matrix_1_ptr, (context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer output_matrix_2_ptr, (context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
 
-	// TODO: pasar buffers como argumentos a kernel_execute
+    // TODO: pasar buffers como argumentos a kernel_execute
 num_operations_for:
     for (uint16_t i = 2; i < NUM_OPERACIONES; i++) {
         // GEQRT operation
@@ -211,192 +211,224 @@ num_operations_for:
             switch (n_iter_GEQRT) {
                 case 32:
                     for (uint16_t idx_mat_1 = 0; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 31:
                     for (uint16_t idx_mat_1 = 1; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 30:
                     for (uint16_t idx_mat_1 = 2; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 29:
                     for (uint16_t idx_mat_1 = 3; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 28:
                     for (uint16_t idx_mat_1 = 4; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 27:
                     for (uint16_t idx_mat_1 = 5; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 26:
                     for (uint16_t idx_mat_1 = 6; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 25:
                     for (uint16_t idx_mat_1 = 7; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 24:
                     for (uint16_t idx_mat_1 = 8; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 23:
                     for (uint16_t idx_mat_1 = 9; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 22:
                     for (uint16_t idx_mat_1 = 10; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 21:
                     for (uint16_t idx_mat_1 = 11; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 20:
                     for (uint16_t idx_mat_1 = 12; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 19:
                     for (uint16_t idx_mat_1 = 13; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 18:
                     for (uint16_t idx_mat_1 = 14; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 17:
                     for (uint16_t idx_mat_1 = 15; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 16:
                     for (uint16_t idx_mat_1 = 16; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 15:
                     for (uint16_t idx_mat_1 = 17; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 14:
                     for (uint16_t idx_mat_1 = 18; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 13:
                     for (uint16_t idx_mat_1 = 19; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 12:
                     for (uint16_t idx_mat_1 = 20; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 11:
                     for (uint16_t idx_mat_1 = 21; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 10:
                     for (uint16_t idx_mat_1 = 22; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 9:
                     for (uint16_t idx_mat_1 = 23; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 8:
                     for (uint16_t idx_mat_1 = 24; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 7:
                     for (uint16_t idx_mat_1 = 25; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 6:
                     for (uint16_t idx_mat_1 = 26; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 5:
                     for (uint16_t idx_mat_1 = 27; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 4:
                     for (uint16_t idx_mat_1 = 28; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 3:
                     for (uint16_t idx_mat_1 = 29; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 2:
                     for (uint16_t idx_mat_1 = 30; idx_mat_1 < 32; idx_mat_1++) {
-                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 1:
-                    kernel_execute(A_tiled, GEQRT, col_offset_geqrt, 31, 0, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, GEQRT, col_offset_geqrt, 31, 0, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 default:
@@ -409,490 +441,605 @@ num_operations_for:
             switch (n_iter_TTQRT) {
                 case 31:
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 1; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 2; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 4; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 0, idx_mat_2 = 8; idx_mat_2 < 25; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 0, 16, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 0, 16, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 30:
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 2; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 3; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 5; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 1, idx_mat_2 = 9; idx_mat_2 < 26; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 1, 17, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 1, 17, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 29:
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 3; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 4; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 2, idx_mat_2 = 10; idx_mat_2 < 27; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 2, 18, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 2, 18, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 28:
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 4; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 5; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 3, idx_mat_2 = 11; idx_mat_2 < 28; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 3, 19, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 3, 19, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 27:
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 5; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 8; idx_mat_2 < 25; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 4, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 4, 20, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 4, 20, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 26:
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 6; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 9; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 5, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 5, 21, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 5, 21, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 25:
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 7; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 8; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 10; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 6, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 6, 22, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 6, 22, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 6, 26, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 6, 26, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 24:
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 8; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 9; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 11; idx_mat_2 < 28; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 7, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 16, idx_mat_2 += 16) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 7, 23, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 7, 23, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 23:
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 9; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 10; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 8, idx_mat_2 = 16; idx_mat_2 < 25; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 22:
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 10; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 11; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 9, idx_mat_2 = 17; idx_mat_2 < 26; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 21:
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 11; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 12; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 10, idx_mat_2 = 18; idx_mat_2 < 27; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 20:
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 12; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 13; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 11, idx_mat_2 = 19; idx_mat_2 < 28; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 19:
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 13; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 16; idx_mat_2 < 25; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 12, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 18:
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 14; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 17; idx_mat_2 < 26; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 13, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 17:
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 15; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 16; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 18; idx_mat_2 < 27; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 14, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 16:
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 16; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 17; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 19; idx_mat_2 < 28; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 15, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 15:
                     for (uint16_t idx_mat_1 = 16, idx_mat_2 = 17; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 16, idx_mat_2 = 18; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 16, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 16, 24, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 16, 24, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 14:
                     for (uint16_t idx_mat_1 = 17, idx_mat_2 = 18; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 17, idx_mat_2 = 19; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 17, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 17, 25, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 17, 25, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 13:
                     for (uint16_t idx_mat_1 = 18, idx_mat_2 = 19; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 18, idx_mat_2 = 20; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 18, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 18, 26, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 18, 26, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 12:
                     for (uint16_t idx_mat_1 = 19, idx_mat_2 = 20; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 19, idx_mat_2 = 21; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 19, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 8, idx_mat_2 += 8) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 19, 27, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 19, 27, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 11:
                     for (uint16_t idx_mat_1 = 20, idx_mat_2 = 21; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 20, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 20, idx_mat_2 = 24; idx_mat_2 < 29; idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 10:
                     for (uint16_t idx_mat_1 = 21, idx_mat_2 = 22; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 21, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 21, idx_mat_2 = 25; idx_mat_2 < 30; idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 9:
                     for (uint16_t idx_mat_1 = 22, idx_mat_2 = 23; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 22, idx_mat_2 = 24; idx_mat_2 < 29; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 22, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 8:
                     for (uint16_t idx_mat_1 = 23, idx_mat_2 = 24; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 23, idx_mat_2 = 25; idx_mat_2 < 30; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 23, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 7:
                     for (uint16_t idx_mat_1 = 24, idx_mat_2 = 25; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 24, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 24, 28, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 24, 28, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 6:
                     for (uint16_t idx_mat_1 = 25, idx_mat_2 = 26; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 25, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_1 += 4, idx_mat_2 += 4) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 25, 29, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 25, 29, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 5:
                     for (uint16_t idx_mat_1 = 26, idx_mat_2 = 27; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 26, idx_mat_2 = 28; idx_mat_2 < 31; idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 4:
                     for (uint16_t idx_mat_1 = 27, idx_mat_2 = 28; idx_mat_2 < 31; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     for (uint16_t idx_mat_1 = 27, idx_mat_2 = 29; idx_mat_2 < 32; idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 3:
                     for (uint16_t idx_mat_1 = 28, idx_mat_2 = 29; idx_mat_2 < 32; idx_mat_1 += 2, idx_mat_2 += 2) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 28, 30, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 28, 30, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 case 2:
                     for (uint16_t idx_mat_1 = 29, idx_mat_2 = 30; idx_mat_2 < 32; idx_mat_2++) {
-                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context);
+                        kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
+                                       input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
                     }
 
                     break;
                 case 1:
-                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 30, 31, qrd_kernel, q, context);
+                    kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, 30, 31, qrd_kernel, q, context,
+                                   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr);
 
                     break;
                 default:
@@ -926,7 +1073,8 @@ write_sol_to_matrix_row_for:
     return true;
 }
 
-void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context) {
+void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context,
+                    cl::Buffer input_matrix_1_ptr, cl::Buffer input_matrix_2_ptr, cl::Buffer output_matrix_1_ptr, cl::Buffer output_matrix_2_ptr) {
     cl_int error;
     uint8_t aux;
     data_t flattened_matrix_1[FLATTEN_SIZE];
@@ -937,23 +1085,23 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
 
         // Read and write pointers from kernel to host
-        OCL_CHECK(error, cl::Buffer geqrt_input_matrix_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+        /* OCL_CHECK(error, cl::Buffer geqrt_input_matrix_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 input buffers
         OCL_CHECK(error, cl::Buffer geqrt_input_unused_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer geqrt_output_matrix_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 output buffers
-        OCL_CHECK(error, cl::Buffer geqrt_output_unused_ptr(context, CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer geqrt_output_unused_ptr(context, CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error)); */
 
         // Set kernel arguments
-        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &geqrt_input_matrix_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &geqrt_input_unused_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &geqrt_output_matrix_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &geqrt_output_unused_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &input_matrix_1_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &input_matrix_2_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &output_matrix_1_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &output_matrix_2_ptr));
         OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
         OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueWriteBuffer({geqrt_input_matrix_ptr},
+        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_1_ptr},
                                                       CL_FALSE,
                                                       0,
                                                       FLATTEN_SIZE * sizeof(data_t),
@@ -967,7 +1115,7 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         OCL_CHECK(error, error = q.finish());
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueReadBuffer({geqrt_output_matrix_ptr},
+        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_1_ptr},
                                                      CL_TRUE,
                                                      0,
                                                      FLATTEN_SIZE * sizeof(data_t),
@@ -981,29 +1129,29 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
         flatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
 
-        // Create two kernel input buffers and two output buffer
+        /* // Create two kernel input buffers and two output buffer
         OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
         OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_1_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error)); */
 
         // Set kernel arguments
-        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &ttqrt_input_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &ttqrt_input_matrix_2_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &ttqrt_output_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &ttqrt_output_matrix_2_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &input_matrix_1_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &input_matrix_2_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &output_matrix_1_ptr));
+        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &output_matrix_2_ptr));
         OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
         OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueWriteBuffer({ttqrt_input_matrix_1_ptr},
+        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_1_ptr},
                                                       CL_FALSE,
                                                       0,
                                                       FLATTEN_SIZE * sizeof(data_t),
                                                       flattened_matrix_1,
                                                       nullptr, nullptr));
 
-        OCL_CHECK(error, error = q.enqueueWriteBuffer({ttqrt_input_matrix_2_ptr},
+        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_2_ptr},
                                                       CL_FALSE,
                                                       0,
                                                       FLATTEN_SIZE * sizeof(data_t),
@@ -1017,13 +1165,13 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         OCL_CHECK(error, error = q.finish());
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_1_ptr},
+        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_1_ptr},
                                                      CL_TRUE,
                                                      0,
                                                      FLATTEN_SIZE * sizeof(data_t),
                                                      flattened_matrix_1,
                                                      nullptr, nullptr));
-        OCL_CHECK(error, error = q.enqueueReadBuffer({ttqrt_output_matrix_2_ptr},
+        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_2_ptr},
                                                      CL_TRUE,
                                                      0,
                                                      FLATTEN_SIZE * sizeof(data_t),
@@ -1106,4 +1254,3 @@ void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix
         }
     }
 }
-
