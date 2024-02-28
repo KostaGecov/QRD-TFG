@@ -172,7 +172,7 @@ bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Conte
     unsigned int tile_index = 0;
     unsigned int tile_offset = 0;
 
-	// TODO: pasar path ficheros .dat como argumento entrada
+    // TODO: pasar path ficheros .dat como argumento entrada
     std::fstream data_in("/home/kgecov/workspace_vitis/qrd_system/data_in.dat", std::ios::in);
     if (!init_matrix(A, &data_in))
         return false;
@@ -181,10 +181,9 @@ bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Conte
     if (!init_matrix(out_gold, &data_out_gold))
         return false;
 
-
     for (uint16_t r = 0; r < TAM; r++) {
-    	tile_index = r / TAM_TILED;
-    	tile_offset = r % TAM_TILED;
+        tile_index = r / TAM_TILED;
+        tile_offset = r % TAM_TILED;
 
         for (uint16_t c = 0; c < TAM; c++) {
             A_tiled[tile_index][tile_offset][c] = A[r][c];
@@ -192,10 +191,10 @@ bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Conte
     }
 
     // Create two kernel input buffers and two output buffer
-    OCL_CHECK(error, cl::Buffer input_matrix_1_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-    OCL_CHECK(error, cl::Buffer input_matrix_2_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-    OCL_CHECK(error, cl::Buffer output_matrix_1_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-    OCL_CHECK(error, cl::Buffer output_matrix_2_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer output_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer output_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
 
     for (uint16_t i = 0; i < NUM_OPERATIONS; i++) {
         // GEQRT operation
@@ -1090,7 +1089,6 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                       flattened_matrix_1,
                                                       nullptr, nullptr));
 
-
         // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
 
         // Execute kernel
@@ -1107,11 +1105,10 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                      flattened_matrix_1,
                                                      nullptr, nullptr));
 
-
         // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
 
         // Wait for kernel to finish
-		// OCL_CHECK(error, error = q.finish());
+        // OCL_CHECK(error, error = q.finish());
 
         unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
 
@@ -1143,7 +1140,6 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                       flattened_matrix_2,
                                                       nullptr, nullptr));
 
-
         // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
         // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_2_ptr}, 0));
 
@@ -1167,12 +1163,11 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                      flattened_matrix_2,
                                                      nullptr, nullptr));
 
-
         // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
-		// OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
 
-		// Wait for kernel to finish
-		// OCL_CHECK(error, error = q.finish());
+        // Wait for kernel to finish
+        // OCL_CHECK(error, error = q.finish());
 
         unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
         unflatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
@@ -1248,4 +1243,3 @@ void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix
         }
     }
 }
-
