@@ -14,10 +14,10 @@
 
 #define TAM_TILED 8
 #define TAM 256
-#define NUM_TILED 32
-#define FLATTEN_SIZE TAM *TAM_TILED
+#define NUM_TILED (TAM / TAM_TILED)
+#define FLATTEN_SIZE (TAM * TAM_TILED)
 
-#define NUM_OPERACIONES 65  // (63 + 2(offset))
+#define NUM_OPERATIONS 63
 
 #define GEQRT 0
 #define TTQRT 1
@@ -78,34 +78,25 @@ void flatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[F
 
 void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix[FLATTEN_SIZE], uint8_t idx_mat);
 
-/**
- * offset to access the right column for GEQRT operation
- */
+// Offset to access the right column for GEQRT operation
 static uint16_t col_offset_geqrt = 0;
-/**
- * offset to access the right column for TTQRT operation
- */
+
+// Offset to access the right column for TTQRT operation
 static uint16_t col_offset_ttqrt = 0;
-/**
- * to control the GEQRT operations in each step
- */
+
+// To control the GEQRT operations in each step
 static uint16_t n_iter_GEQRT = 32;
-/**
- * to control the TTQRT operations in each step
- */
+
+// To control the TTQRT operations in each step
 static uint16_t n_iter_TTQRT = 31;
 
-/**
- * stores all 32 A matrices needed for tiled operations
- *
- */
+// Stores all 32 A matrices needed for tiled operations
 data_t A_tiled[NUM_TILED][TAM_TILED][TAM];
+
+// Stores input matrix
 data_t A[TAM][TAM];
 
-/**
- * to store the output data gold
- *
- */
+// Stores output data gold matrix
 float out_gold[TAM][TAM];
 
 int main(int argc, char **argv) {
@@ -177,7 +168,11 @@ int main(int argc, char **argv) {
 }
 
 bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context) {
-    // TODO: pasar path ficheros .dat como argumento entrada
+    cl_int error = 0;
+    unsigned int tile_index = 0;
+    unsigned int tile_offset = 0;
+
+	// TODO: pasar path ficheros .dat como argumento entrada
     std::fstream data_in("/home/kgecov/workspace_vitis/qrd_system/data_in.dat", std::ios::in);
     if (!init_matrix(A, &data_in))
         return false;
@@ -186,26 +181,23 @@ bool tiled_qr_decomposition(cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Conte
     if (!init_matrix(out_gold, &data_out_gold))
         return false;
 
-divide_matrices_row_for:
-    for (uint16_t r = 0; r < TAM; r++) {
-        int tile_index = r / TAM_TILED;
-        int tile_offset = r % TAM_TILED;
 
-    divide_matrices_col_for:
+    for (uint16_t r = 0; r < TAM; r++) {
+    	tile_index = r / TAM_TILED;
+    	tile_offset = r % TAM_TILED;
+
         for (uint16_t c = 0; c < TAM; c++) {
             A_tiled[tile_index][tile_offset][c] = A[r][c];
         }
     }
 
     // Create two kernel input buffers and two output buffer
-    OCL_CHECK(error, cl::Buffer input_matrix_1_ptr, (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-    OCL_CHECK(error, cl::Buffer input_matrix_2_ptr, (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-    OCL_CHECK(error, cl::Buffer output_matrix_1_ptr, (context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-    OCL_CHECK(error, cl::Buffer output_matrix_2_ptr, (context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer input_matrix_1_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer input_matrix_2_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer output_matrix_1_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+    OCL_CHECK(error, cl::Buffer output_matrix_2_ptr (context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
 
-    // TODO: pasar buffers como argumentos a kernel_execute
-num_operations_for:
-    for (uint16_t i = 2; i < NUM_OPERACIONES; i++) {
+    for (uint16_t i = 0; i < NUM_OPERATIONS; i++) {
         // GEQRT operation
         if (i % 2 == 0) {
             switch (n_iter_GEQRT) {
@@ -1050,11 +1042,10 @@ num_operations_for:
         }
     }
 
-write_sol_to_matrix_row_for:
     for (uint16_t r = 0; r < TAM; r++) {
-        int tile_index = r / TAM_TILED;
-        int tile_offset = r % TAM_TILED;
-    write_sol_to_matrix_col_for:
+        tile_index = r / TAM_TILED;
+        tile_offset = r % TAM_TILED;
+
         for (uint16_t c = 0; c < TAM; c++) {
             A[r][c] = A_tiled[tile_index][tile_offset][c];
         }
@@ -1076,21 +1067,12 @@ write_sol_to_matrix_row_for:
 void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context,
                     cl::Buffer input_matrix_1_ptr, cl::Buffer input_matrix_2_ptr, cl::Buffer output_matrix_1_ptr, cl::Buffer output_matrix_2_ptr) {
     cl_int error;
-    uint8_t aux;
     data_t flattened_matrix_1[FLATTEN_SIZE];
     data_t flattened_matrix_2[FLATTEN_SIZE];
 
     if (type_op == GEQRT) {
         // Flatten input matrix
         flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
-
-        // Read and write pointers from kernel to host
-        /* OCL_CHECK(error, cl::Buffer geqrt_input_matrix_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 input buffers
-        OCL_CHECK(error, cl::Buffer geqrt_input_unused_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer geqrt_output_matrix_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        // need to create unused buffer to pass it to kernel as argument because ttqrt uses 2 output buffers
-        OCL_CHECK(error, cl::Buffer geqrt_output_unused_ptr(context, CL_MEM_READ_ONLY, sizeof(uint8_t), NULL, &error)); */
 
         // Set kernel arguments
         OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &input_matrix_1_ptr));
@@ -1108,6 +1090,9 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                       flattened_matrix_1,
                                                       nullptr, nullptr));
 
+
+        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
+
         // Execute kernel
         OCL_CHECK(error, error = q.enqueueTask(qrd_kernel));
 
@@ -1122,18 +1107,18 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                      flattened_matrix_1,
                                                      nullptr, nullptr));
 
+
+        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+
+        // Wait for kernel to finish
+		// OCL_CHECK(error, error = q.finish());
+
         unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
 
     } else if (type_op == TTQRT) {
         // Flatten input matrices
         flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
         flatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
-
-        /* // Create two kernel input buffers and two output buffer
-        OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer ttqrt_input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_1_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
-        OCL_CHECK(error, cl::Buffer ttqrt_output_matrix_2_ptr(context, CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error)); */
 
         // Set kernel arguments
         OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &input_matrix_1_ptr));
@@ -1158,6 +1143,10 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                       flattened_matrix_2,
                                                       nullptr, nullptr));
 
+
+        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
+        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_2_ptr}, 0));
+
         // Execute kernel
         OCL_CHECK(error, error = q.enqueueTask(qrd_kernel));
 
@@ -1178,6 +1167,13 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                                                      flattened_matrix_2,
                                                      nullptr, nullptr));
 
+
+        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+		// OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+
+		// Wait for kernel to finish
+		// OCL_CHECK(error, error = q.finish());
+
         unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
         unflatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
     }
@@ -1191,7 +1187,6 @@ bool init_matrix(data_t matrix[TAM][TAM], std::fstream *file) {
         std::cout << "Opened file" << std::endl;
     }
 
-initialize_matrix:
     for (uint16_t r = 0; r < TAM; r++) {
         for (uint16_t c = 0; c < TAM; c++) {
             *file >> matrix[r][c];
@@ -1209,7 +1204,6 @@ bool init_matrix(float matrix[TAM][TAM], std::fstream *file) {
         std::cout << "Opened file" << std::endl;
     }
 
-initialize_matrix:
     for (uint16_t r = 0; r < TAM; r++) {
         for (uint16_t c = 0; c < TAM; c++) {
             *file >> matrix[r][c];
@@ -1254,3 +1248,4 @@ void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix
         }
     }
 }
+
