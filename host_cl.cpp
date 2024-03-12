@@ -9,7 +9,7 @@
 
 #include "xcl2.hpp"
 
-#define FIXED_POINT 32
+#define FIXED_POINT 24
 #define FX_POINT_INT 6
 
 #define TAM_TILED 8
@@ -100,13 +100,13 @@ data_t A[TAM][TAM];
 float out_gold[TAM][TAM];
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
+    if (argc < 2) {
         std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
         return EXIT_FAILURE;
     }
 
     // XCLBIN file to program the FPGA
-    std::string binaryFile = argv[1];
+    std::string binaryFile = argv[3];
     cl_int err;
     cl::Context context;
     cl::CommandQueue q;
@@ -159,12 +159,14 @@ int main(int argc, char **argv) {
     auto diff1 = end1 - start1;
     std::cout << "FPGA programming time: " << std::chrono::duration<double, std::milli>(diff1).count() << std::endl;
 
-    // TODO: pasar path ficheros .dat como argumento entrada
-    std::fstream data_in("/home/kgecov/workspace_vitis/qrd_system/data_in.dat", std::ios::in);
+//    std::fstream data_in("/home/kgecov/workspace_vitis/qrd_system/data_in.dat", std::ios::in);
+    std::fstream data_in(argv[1], std::ios::in);
+
     if (!init_matrix(A, &data_in))
         return -1;
 
-    std::fstream data_out_gold("/home/kgecov/workspace_vitis/qrd_system/data_out_gold.dat", std::ios::in);
+//    std::fstream data_out_gold("/home/kgecov/workspace_vitis/qrd_system/data_out_gold.dat", std::ios::in);
+    std::fstream data_out_gold(argv[2], std::ios::in);
     if (!init_matrix(out_gold, &data_out_gold))
         return -1;
 
@@ -211,10 +213,22 @@ void tiled_qr_decomposition(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], cl::Kerne
     cl_int error = 0;
 
     // Create two kernel input buffers and two output buffer
+//    OCL_CHECK(error, cl::Buffer input_matrix_1_ptr(context, CL_MEM_USE_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+//    OCL_CHECK(error, cl::Buffer input_matrix_2_ptr(context, CL_MEM_USE_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+//    OCL_CHECK(error, cl::Buffer output_matrix_1_ptr(context, CL_MEM_USE_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+//    OCL_CHECK(error, cl::Buffer output_matrix_2_ptr(context, CL_MEM_USE_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+
     OCL_CHECK(error, cl::Buffer input_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
     OCL_CHECK(error, cl::Buffer input_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_WRITE_ONLY | CL_MEM_READ_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
     OCL_CHECK(error, cl::Buffer output_matrix_1_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
     OCL_CHECK(error, cl::Buffer output_matrix_2_ptr(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_HOST_READ_ONLY | CL_MEM_WRITE_ONLY, FLATTEN_SIZE * sizeof(data_t), NULL, &error));
+
+    // Set kernel arguments
+	OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &input_matrix_1_ptr));
+	OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &input_matrix_2_ptr));
+	OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &output_matrix_1_ptr));
+	OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &output_matrix_2_ptr));
+
 
     for (uint16_t i = 0; i < NUM_OPERATIONS; i++) {
         // GEQRT operation
@@ -1065,30 +1079,30 @@ void tiled_qr_decomposition(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], cl::Kerne
 void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint8_t col_offset, uint8_t idx_mat_1, uint8_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context,
                     cl::Buffer input_matrix_1_ptr, cl::Buffer input_matrix_2_ptr, cl::Buffer output_matrix_1_ptr, cl::Buffer output_matrix_2_ptr) {
     cl_int error;
-    data_t flattened_matrix_1[FLATTEN_SIZE];
-    data_t flattened_matrix_2[FLATTEN_SIZE];
+//    data_t flattened_matrix_1[FLATTEN_SIZE];
+//    data_t flattened_matrix_2[FLATTEN_SIZE];
+    data_t* flattened_matrix_write_1 = (data_t*)q.enqueueMapBuffer(input_matrix_1_ptr, CL_TRUE, CL_MAP_WRITE, 0, FLATTEN_SIZE * sizeof(data_t), nullptr, nullptr, &error);
+    data_t* flattened_matrix_write_2 = (data_t*)q.enqueueMapBuffer(input_matrix_2_ptr, CL_TRUE, CL_MAP_WRITE, 0, FLATTEN_SIZE * sizeof(data_t), nullptr, nullptr, &error);
+    data_t* flattened_matrix_read_1 = (data_t*)q.enqueueMapBuffer(output_matrix_1_ptr, CL_TRUE, CL_MAP_READ, 0, FLATTEN_SIZE * sizeof(data_t), nullptr, nullptr, &error);
+	data_t* flattened_matrix_read_2 = (data_t*)q.enqueueMapBuffer(output_matrix_2_ptr, CL_TRUE, CL_MAP_READ, 0, FLATTEN_SIZE * sizeof(data_t), nullptr, nullptr, &error);
+
+
+    OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
+	OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
 
     if (type_op == GEQRT) {
         // Flatten input matrix
-        flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
-
-        // Set kernel arguments
-        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &input_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &input_matrix_2_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &output_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &output_matrix_2_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
-        OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
+        flatten_matrix(A_tiled, flattened_matrix_write_1, idx_mat_1);
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_1_ptr},
-                                                      CL_FALSE,
-                                                      0,
-                                                      FLATTEN_SIZE * sizeof(data_t),
-                                                      flattened_matrix_1,
-                                                      nullptr, nullptr));
+//        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_1_ptr},
+//                                                      CL_FALSE,
+//                                                      0,
+//                                                      FLATTEN_SIZE * sizeof(data_t),
+//                                                      flattened_matrix_1,
+//                                                      nullptr, nullptr));
 
-        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
+         OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
 
         // Execute kernel
         OCL_CHECK(error, error = q.enqueueTask(qrd_kernel));
@@ -1097,49 +1111,41 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         OCL_CHECK(error, error = q.finish());
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_1_ptr},
-                                                     CL_TRUE,
-                                                     0,
-                                                     FLATTEN_SIZE * sizeof(data_t),
-                                                     flattened_matrix_1,
-                                                     nullptr, nullptr));
+//        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_1_ptr},
+//                                                     CL_TRUE,
+//                                                     0,
+//                                                     FLATTEN_SIZE * sizeof(data_t),
+//                                                     flattened_matrix_1,
+//                                                     nullptr, nullptr));
 
-        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+         OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
 
         // Wait for kernel to finish
-        // OCL_CHECK(error, error = q.finish());
+         OCL_CHECK(error, error = q.finish());
 
-        unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
+        unflatten_matrix(A_tiled, flattened_matrix_read_1, idx_mat_1);
 
     } else if (type_op == TTQRT) {
         // Flatten input matrices
-        flatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
-        flatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
-
-        // Set kernel arguments
-        OCL_CHECK(error, error = qrd_kernel.setArg(0, sizeof(cl_mem), &input_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(1, sizeof(cl_mem), &input_matrix_2_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(2, sizeof(cl_mem), &output_matrix_1_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(3, sizeof(cl_mem), &output_matrix_2_ptr));
-        OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
-        OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
+        flatten_matrix(A_tiled, flattened_matrix_write_1, idx_mat_1);
+        flatten_matrix(A_tiled, flattened_matrix_write_2, idx_mat_2);
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_1_ptr},
-                                                      CL_FALSE,
-                                                      0,
-                                                      FLATTEN_SIZE * sizeof(data_t),
-                                                      flattened_matrix_1,
-                                                      nullptr, nullptr));
+//        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_1_ptr},
+//                                                      CL_FALSE,
+//                                                      0,
+//                                                      FLATTEN_SIZE * sizeof(data_t),
+//                                                      flattened_matrix_1,
+//                                                      nullptr, nullptr));
+////
+//        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_2_ptr},
+//                                                      CL_FALSE,
+//                                                      0,
+//                                                      FLATTEN_SIZE * sizeof(data_t),
+//                                                      flattened_matrix_2,
+//                                                      nullptr, nullptr));
 
-        OCL_CHECK(error, error = q.enqueueWriteBuffer({input_matrix_2_ptr},
-                                                      CL_FALSE,
-                                                      0,
-                                                      FLATTEN_SIZE * sizeof(data_t),
-                                                      flattened_matrix_2,
-                                                      nullptr, nullptr));
-
-        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
+         OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr, input_matrix_2_ptr}, 0));
         // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_2_ptr}, 0));
 
         // Execute kernel
@@ -1149,27 +1155,27 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         OCL_CHECK(error, error = q.finish());
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_1_ptr},
-                                                     CL_TRUE,
-                                                     0,
-                                                     FLATTEN_SIZE * sizeof(data_t),
-                                                     flattened_matrix_1,
-                                                     nullptr, nullptr));
-        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_2_ptr},
-                                                     CL_TRUE,
-                                                     0,
-                                                     FLATTEN_SIZE * sizeof(data_t),
-                                                     flattened_matrix_2,
-                                                     nullptr, nullptr));
+//        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_1_ptr},
+//                                                     CL_TRUE,
+//                                                     0,
+//                                                     FLATTEN_SIZE * sizeof(data_t),
+//                                                     flattened_matrix_1,
+//                                                     nullptr, nullptr));
+//        OCL_CHECK(error, error = q.enqueueReadBuffer({output_matrix_2_ptr},
+//                                                     CL_TRUE,
+//                                                     0,
+//                                                     FLATTEN_SIZE * sizeof(data_t),
+//                                                     flattened_matrix_2,
+//                                                     nullptr, nullptr));
 
-        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+         OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr, output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
         // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
 
         // Wait for kernel to finish
-        // OCL_CHECK(error, error = q.finish());
+         OCL_CHECK(error, error = q.finish());
 
-        unflatten_matrix(A_tiled, flattened_matrix_1, idx_mat_1);
-        unflatten_matrix(A_tiled, flattened_matrix_2, idx_mat_2);
+        unflatten_matrix(A_tiled, flattened_matrix_read_1, idx_mat_1);
+        unflatten_matrix(A_tiled, flattened_matrix_read_2, idx_mat_2);
     }
 }
 
@@ -1242,3 +1248,4 @@ void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix
         }
     }
 }
+

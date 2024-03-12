@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-#define FIXED_POINT 32
+#define FIXED_POINT 24
 #define FX_POINT_INT 6
 
 #define TAM_TILED 8
@@ -104,7 +104,7 @@ void read_input_rows(data_t* input,
                      hls::stream<data_t, TAM>& row_in_7,
                      hls::stream<data_t, TAM>& row_in_8);
 
-void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint16_t n_iter);
+void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, unsigned int col);
 
 void write_output_rows(data_t* output,
                        hls::stream<data_t, TAM>& row_out_1,
@@ -169,24 +169,26 @@ read_input_rows_for:
     }
 }
 
-void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint16_t n_iter) {
+void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, unsigned int col) {
 #pragma HLS INLINE off
-    // #pragma HLS ARRAY_PARTITION dim = 1 variable = x complete
-    // #pragma HLS ARRAY_PARTITION dim = 1 variable = y complete
-    // #pragma HLS ARRAY_PARTITION dim = 1 variable = x_aux complete
+aux_var_for:
+	for (uint16_t i = col; i < TAM; i++) {
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
+		x_aux[i] = x[i];
+	}
 
     // If Y is negative, we need to add to it so that it gets closer to zero
     // and to the contrary with X coordinate
     if (sign) {
     column_rotation_pos_for:
-        for (uint16_t j = 0; j < TAM; j++) {
+        for (uint16_t j = col; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
             x[j] = x[j] - (y[j] >> n_iter);
             y[j] = y[j] + (x_aux[j] >> n_iter);
         }
     } else {
     column_rotation_neg_for:
-        for (uint16_t j = 0; j < TAM; j++) {
+        for (uint16_t j = col; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
             x[j] = x[j] + (y[j] >> n_iter);
             y[j] = y[j] - (x_aux[j] >> n_iter);
@@ -201,17 +203,11 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               unsigned int col_rotator) {
 #pragma HLS INLINE off
     bool sign = false;
-    uint16_t iter = 0;
-    uint16_t index = 0;
-    //    uint16_t i = 0, j = 0, k = 0, s = 0;
+    uint16_t i = 0, j = 0, k = 0, s = 0;
     data_t x[TAM] = {0}, y[TAM] = {0}, x_aux[TAM] = {0};
 
-    // #pragma HLS ARRAY_PARTITION dim = 1 variable = x complete
-    // #pragma HLS ARRAY_PARTITION dim = 1 variable = y complete
-    // #pragma HLS ARRAY_PARTITION dim = 1 variable = x_aux complete
-
 read_input_data:
-    for (uint16_t j = 0; j < TAM; j++) {
+    for (j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
         row_x_in.read(x[j]);
         row_y_in.read(y[j]);
@@ -221,7 +217,7 @@ read_input_data:
     // taking into account the coordinates' quadrants
     if (x[col_rotator] < 0) {
     sign_for:
-        for (uint16_t s = col_rotator; s < TAM; s++) {
+        for (s = col_rotator; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
             x[s] = -x[s];
             y[s] = -y[s];
@@ -229,36 +225,26 @@ read_input_data:
     }
 
 iterations_for:
-    for (unsigned char k = 0; k < N_ITER; k++) {
+    for (k = 0; k < N_ITER; k++) {
 #pragma HLS LOOP_TRIPCOUNT max = ITER min = ITER
-
-    aux_var_for:
-        for (uint16_t i = 0; i < TAM; i++) {
-#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
-            x_aux[index] = x[index];
-            index++;
-        }
-        index = 0;
         sign = (y[col_rotator] < 0);
 
-        cordic(x, y, x_aux, sign, iter);
-        iter++;
+        cordic(x, y, x_aux, sign, k, col_rotator);
     }
-    iter = 0;
 
     if ((y[col_rotator] < 0.001) && (y[col_rotator] > -0.001)) {
         y[col_rotator] = 0;
     }
 
 scale_factor_for:
-    for (uint16_t j = col_rotator; j < TAM; j++) {
+    for (j = col_rotator; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
     }
 
 write_output_data:
-    for (uint16_t j = 0; j < TAM; j++) {
+    for (j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
         row_x_out.write(x[j]);
         row_y_out.write(y[j]);
@@ -292,7 +278,7 @@ write_output_rows_for:
 
 void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint8_t col_offset) {
     // Rotators for GEQRT operation
-    Rotator Rot1_GE(0, 1, 0);
+    Rotator Rot1_GE(0, 1, 0 /* + col_offset */);
     Rotator Rot2_GE(2, 3, 0);
     Rotator Rot3_GE(4, 5, 0);
     Rotator Rot4_GE(6, 7, 0);
@@ -709,7 +695,6 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
 #pragma HLS INTERFACE mode = m_axi bundle = amem1 port = input_tile_2 offset = slave
 #pragma HLS INTERFACE mode = m_axi bundle = amem2 port = output_tile_1 offset = slave
 #pragma HLS INTERFACE mode = m_axi bundle = amem3 port = output_tile_2 offset = slave
-#pragma HLS INTERFACE ap_ctrl_chain port = return bundle = control
 
     if (type_op == GEQRT) {
         kernel_givens_rotation_GE(input_tile_1, output_tile_1, col_offset);
@@ -718,3 +703,4 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
     }
 }
 }
+
