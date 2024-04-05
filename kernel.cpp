@@ -15,11 +15,11 @@
 
 #include <iostream>
 
-#define FIXED_POINT 24
-#define FX_POINT_INT 6
+#define FIXED_POINT 32
+#define FX_POINT_INT 12
 
 #define TAM_TILED 8
-#define TAM 256
+#define TAM 1024
 
 #define N_ITER (FIXED_POINT - 1)  // word_lenght - 1
 
@@ -46,6 +46,7 @@ class Rotator {
    public:
     // after data is read from an hls::stream<>, it cannot be read again
     // Stream is FIFO type
+
     hls::stream<data_t, TAM> row_x_in;
     hls::stream<data_t, TAM> row_y_in;
     hls::stream<data_t, TAM> row_x_out;
@@ -77,7 +78,7 @@ class Rotator {
                          hls::stream<data_t, TAM>& row_y_in,
                          hls::stream<data_t, TAM>& row_x_out,
                          hls::stream<data_t, TAM>& row_y_out,
-                         unsigned int col_rotator);
+						 uint16_t col_rotator);
 };
 
 /**
@@ -104,6 +105,12 @@ void read_input_rows(data_t* input,
                      hls::stream<data_t, TAM>& row_in_7,
                      hls::stream<data_t, TAM>& row_in_8);
 
+void update_quadrant(data_t x[TAM], data_t y[TAM], uint16_t col);
+
+void read_input_data(hls::stream<data_t, TAM>& row_in_1,
+                     hls::stream<data_t, TAM>& row_in_2,
+					 data_t x[TAM], data_t y[TAM]);
+
 /**
  * @brief Performs cordic rotation of two rows
  *
@@ -114,7 +121,13 @@ void read_input_rows(data_t* input,
  * @param n_iter
  * @param col
  */
-void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, unsigned int col);
+void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, uint16_t col);
+
+void compensate_scale_factor(data_t x[TAM], data_t y[TAM], uint16_t col);
+
+void write_output_data(hls::stream<data_t, TAM>& row_out_1,
+					   hls::stream<data_t, TAM>& row_out_2,
+					   data_t x[TAM], data_t y[TAM]);
 
 void write_output_rows(data_t* output,
                        hls::stream<data_t, TAM>& row_out_1,
@@ -133,7 +146,7 @@ void write_output_rows(data_t* output,
  * @param output_tile_1
  * @param col_offset
  */
-void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint8_t col_offset);
+void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint16_t col_offset);
 
 /**
  * @brief TT operation for givens rotation kernel
@@ -144,7 +157,7 @@ void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint
  * @param output_tile_2
  * @param col_offset
  */
-void kernel_givens_rotation_TT(data_t* input_tile_1, data_t* input_tile_2, data_t* output_tile_1, data_t* output_tile_2, uint8_t col_offset);
+void kernel_givens_rotation_TT(data_t* input_tile_1, data_t* input_tile_2, data_t* output_tile_1, data_t* output_tile_2, uint16_t col_offset);
 
 extern "C" {
 /**
@@ -158,7 +171,7 @@ extern "C" {
  */
 void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
                             data_t* output_tile_1, data_t* output_tile_2,
-                            uint8_t type_op, uint8_t col_offset);
+                            uint8_t type_op, uint16_t col_offset);
 }
 
 /**
@@ -177,6 +190,15 @@ Rotator::Rotator(unsigned int x, unsigned int y, unsigned int c) {
     Rotator::col = c;
 }
 
+void read_row(data_t* input, hls::stream<data_t, TAM>& row, uint16_t offset) {
+#pragma HLS INLINE off
+	read_row_for:
+	for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
+	        row.write(input[j + TAM * offset]);
+	}
+}
+
 void read_input_rows(data_t* input,
                      hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
@@ -187,23 +209,41 @@ void read_input_rows(data_t* input,
                      hls::stream<data_t, TAM>& row_in_7,
                      hls::stream<data_t, TAM>& row_in_8) {
 #pragma HLS INLINE off
-
-read_input_rows_for:
-    for (uint16_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-        row_in_1.write(input[j]);
-        row_in_2.write(input[j + 256]);
-        row_in_3.write(input[j + 256 * 2]);
-        row_in_4.write(input[j + 256 * 3]);
-        row_in_5.write(input[j + 256 * 4]);
-        row_in_6.write(input[j + 256 * 5]);
-        row_in_7.write(input[j + 256 * 6]);
-        row_in_8.write(input[j + 256 * 7]);
-    }
+	read_row(input, row_in_1, 0);
+	read_row(input, row_in_2, 1);
+	read_row(input, row_in_3, 2);
+	read_row(input, row_in_4, 3);
+	read_row(input, row_in_5, 4);
+	read_row(input, row_in_6, 5);
+	read_row(input, row_in_7, 6);
+	read_row(input, row_in_8, 7);
 }
 
-void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, unsigned int col) {
+void read_input_data(hls::stream<data_t, TAM>& row_in_1,
+                     hls::stream<data_t, TAM>& row_in_2,
+					 data_t x[TAM], data_t y[TAM]) {
 #pragma HLS INLINE off
+read_input_data:
+	for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
+		row_in_1.read(x[j]);
+		row_in_2.read(y[j]);
+	}
+}
+
+void update_quadrant(data_t x[TAM], data_t y[TAM], uint16_t col) {
+#pragma HLS INLINE off
+sign_for:
+	for (uint16_t s = col; s < TAM; s++) {
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
+		x[s] = -x[s];
+		y[s] = -y[s];
+	}
+}
+
+void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, uint16_t col) {
+#pragma HLS INLINE off
+
 aux_var_for:
     for (uint16_t i = col; i < TAM; i++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
@@ -229,32 +269,44 @@ aux_var_for:
     }
 }
 
+void compensate_scale_factor(data_t x[TAM], data_t y[TAM], uint16_t col) {
+#pragma HLS INLINE off
+scale_factor_for:
+	for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
+		x[j] = x[j] * SCALE_FACTOR;
+		y[j] = y[j] * SCALE_FACTOR;
+	}
+}
+
+void write_output_data(hls::stream<data_t, TAM>& row_out_1,
+					   hls::stream<data_t, TAM>& row_out_2,
+					   data_t x[TAM], data_t y[TAM]) {
+#pragma HLS INLINE off
+write_output_data:
+	for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
+		row_out_1.write(x[j]);
+		row_out_2.write(y[j]);
+	}
+}
+
 void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& row_y_in,
                               hls::stream<data_t, TAM>& row_x_out,
                               hls::stream<data_t, TAM>& row_y_out,
-                              unsigned int col_rotator) {
+							  uint16_t col_rotator) {
 #pragma HLS INLINE off
     bool sign = false;
     uint16_t i = 0, j = 0, k = 0, s = 0;
     data_t x[TAM] = {0}, y[TAM] = {0}, x_aux[TAM] = {0};
 
-read_input_data:
-    for (j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-        row_x_in.read(x[j]);
-        row_y_in.read(y[j]);
-    }
+    read_input_data(row_x_in, row_y_in, x, y);
 
     // Choose the right sign for the rotation,
     // taking into account the coordinates' quadrants
     if (x[col_rotator] < 0) {
-    sign_for:
-        for (s = col_rotator; s < TAM; s++) {
-#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-            x[s] = -x[s];
-            y[s] = -y[s];
-        }
+    	update_quadrant(x, y, col_rotator);
     }
 
 iterations_for:
@@ -269,19 +321,18 @@ iterations_for:
         y[col_rotator] = 0;
     }
 
-scale_factor_for:
-    for (j = col_rotator; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-        x[j] = x[j] * SCALE_FACTOR;
-        y[j] = y[j] * SCALE_FACTOR;
-    }
+    compensate_scale_factor(x, y, col_rotator);
 
-write_output_data:
-    for (j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
-        row_x_out.write(x[j]);
-        row_y_out.write(y[j]);
-    }
+    write_output_data(row_x_out, row_y_out, x, y);
+}
+
+void write_row(data_t* output, hls::stream<data_t, TAM>& row, uint16_t offset) {
+#pragma HLS INLINE off
+	write_row_for:
+	for (uint16_t j = 0; j < TAM; j++) {
+#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
+	        row.read(output[j + TAM * offset]);
+	}
 }
 
 void write_output_rows(data_t* output,
@@ -295,21 +346,17 @@ void write_output_rows(data_t* output,
                        hls::stream<data_t, TAM>& row_out_8) {
 #pragma HLS INLINE off
 
-write_output_rows_for:
-    for (uint16_t j = 0; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-        row_out_1.read(output[j]);
-        row_out_2.read(output[j + 256]);
-        row_out_3.read(output[j + 256 * 2]);
-        row_out_4.read(output[j + 256 * 3]);
-        row_out_5.read(output[j + 256 * 4]);
-        row_out_6.read(output[j + 256 * 5]);
-        row_out_7.read(output[j + 256 * 6]);
-        row_out_8.read(output[j + 256 * 7]);
-    }
+	write_row(output, row_out_1, 0);
+	write_row(output, row_out_2, 1);
+	write_row(output, row_out_3, 2);
+	write_row(output, row_out_4, 3);
+	write_row(output, row_out_5, 4);
+	write_row(output, row_out_6, 5);
+	write_row(output, row_out_7, 6);
+	write_row(output, row_out_8, 7);
 }
 
-void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint8_t col_offset) {
+void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint16_t col_offset) {
     // Rotators for GEQRT operation
     Rotator Rot1_GE(0, 1, 0);
     Rotator Rot2_GE(2, 3, 0);
@@ -350,34 +397,34 @@ void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint
     Rotator Rot28_GE(6, 7, 6);
 
     // Variables needed to avoid DATAFLOW warning
-    uint8_t column1 = Rot1_GE.col + col_offset;
-    uint8_t column2 = Rot2_GE.col + col_offset;
-    uint8_t column3 = Rot3_GE.col + col_offset;
-    uint8_t column4 = Rot4_GE.col + col_offset;
-    uint8_t column5 = Rot5_GE.col + col_offset;
-    uint8_t column6 = Rot6_GE.col + col_offset;
-    uint8_t column7 = Rot7_GE.col + col_offset;
-    uint8_t column8 = Rot8_GE.col + col_offset;
-    uint8_t column9 = Rot9_GE.col + col_offset;
-    uint8_t column10 = Rot10_GE.col + col_offset;
-    uint8_t column11 = Rot11_GE.col + col_offset;
-    uint8_t column12 = Rot12_GE.col + col_offset;
-    uint8_t column13 = Rot13_GE.col + col_offset;
-    uint8_t column14 = Rot14_GE.col + col_offset;
-    uint8_t column15 = Rot15_GE.col + col_offset;
-    uint8_t column16 = Rot16_GE.col + col_offset;
-    uint8_t column17 = Rot17_GE.col + col_offset;
-    uint8_t column18 = Rot18_GE.col + col_offset;
-    uint8_t column19 = Rot19_GE.col + col_offset;
-    uint8_t column20 = Rot20_GE.col + col_offset;
-    uint8_t column21 = Rot21_GE.col + col_offset;
-    uint8_t column22 = Rot22_GE.col + col_offset;
-    uint8_t column23 = Rot23_GE.col + col_offset;
-    uint8_t column24 = Rot24_GE.col + col_offset;
-    uint8_t column25 = Rot25_GE.col + col_offset;
-    uint8_t column26 = Rot26_GE.col + col_offset;
-    uint8_t column27 = Rot27_GE.col + col_offset;
-    uint8_t column28 = Rot28_GE.col + col_offset;
+    uint16_t column1 = Rot1_GE.col + col_offset;
+    uint16_t column2 = Rot2_GE.col + col_offset;
+    uint16_t column3 = Rot3_GE.col + col_offset;
+    uint16_t column4 = Rot4_GE.col + col_offset;
+    uint16_t column5 = Rot5_GE.col + col_offset;
+    uint16_t column6 = Rot6_GE.col + col_offset;
+    uint16_t column7 = Rot7_GE.col + col_offset;
+    uint16_t column8 = Rot8_GE.col + col_offset;
+    uint16_t column9 = Rot9_GE.col + col_offset;
+    uint16_t column10 = Rot10_GE.col + col_offset;
+    uint16_t column11 = Rot11_GE.col + col_offset;
+    uint16_t column12 = Rot12_GE.col + col_offset;
+    uint16_t column13 = Rot13_GE.col + col_offset;
+    uint16_t column14 = Rot14_GE.col + col_offset;
+    uint16_t column15 = Rot15_GE.col + col_offset;
+    uint16_t column16 = Rot16_GE.col + col_offset;
+    uint16_t column17 = Rot17_GE.col + col_offset;
+    uint16_t column18 = Rot18_GE.col + col_offset;
+    uint16_t column19 = Rot19_GE.col + col_offset;
+    uint16_t column20 = Rot20_GE.col + col_offset;
+    uint16_t column21 = Rot21_GE.col + col_offset;
+    uint16_t column22 = Rot22_GE.col + col_offset;
+    uint16_t column23 = Rot23_GE.col + col_offset;
+    uint16_t column24 = Rot24_GE.col + col_offset;
+    uint16_t column25 = Rot25_GE.col + col_offset;
+    uint16_t column26 = Rot26_GE.col + col_offset;
+    uint16_t column27 = Rot27_GE.col + col_offset;
+    uint16_t column28 = Rot28_GE.col + col_offset;
 
 #pragma HLS DATAFLOW
 
@@ -474,7 +521,7 @@ void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint
 
 void kernel_givens_rotation_TT(data_t* input_tile_1, data_t* input_tile_2,
                                data_t* output_tile_1, data_t* output_tile_2,
-                               uint8_t col_offset) {
+                               uint16_t col_offset) {
     // Rotators for TTQRT operation
     Rotator Rot1_TT(0, 0, 0);
     Rotator Rot2_TT(1, 1, 1);
@@ -521,42 +568,42 @@ void kernel_givens_rotation_TT(data_t* input_tile_1, data_t* input_tile_2,
     Rotator Rot36_TT(7, 0, 7);
 
     // Variables needed to avoid DATAFLOW warning
-    uint8_t column1 = Rot1_TT.col + col_offset;
-    uint8_t column2 = Rot2_TT.col + col_offset;
-    uint8_t column3 = Rot3_TT.col + col_offset;
-    uint8_t column4 = Rot4_TT.col + col_offset;
-    uint8_t column5 = Rot5_TT.col + col_offset;
-    uint8_t column6 = Rot6_TT.col + col_offset;
-    uint8_t column7 = Rot7_TT.col + col_offset;
-    uint8_t column8 = Rot8_TT.col + col_offset;
-    uint8_t column9 = Rot9_TT.col + col_offset;
-    uint8_t column10 = Rot10_TT.col + col_offset;
-    uint8_t column11 = Rot11_TT.col + col_offset;
-    uint8_t column12 = Rot12_TT.col + col_offset;
-    uint8_t column13 = Rot13_TT.col + col_offset;
-    uint8_t column14 = Rot14_TT.col + col_offset;
-    uint8_t column15 = Rot15_TT.col + col_offset;
-    uint8_t column16 = Rot16_TT.col + col_offset;
-    uint8_t column17 = Rot17_TT.col + col_offset;
-    uint8_t column18 = Rot18_TT.col + col_offset;
-    uint8_t column19 = Rot19_TT.col + col_offset;
-    uint8_t column20 = Rot20_TT.col + col_offset;
-    uint8_t column21 = Rot21_TT.col + col_offset;
-    uint8_t column22 = Rot22_TT.col + col_offset;
-    uint8_t column23 = Rot23_TT.col + col_offset;
-    uint8_t column24 = Rot24_TT.col + col_offset;
-    uint8_t column25 = Rot25_TT.col + col_offset;
-    uint8_t column26 = Rot26_TT.col + col_offset;
-    uint8_t column27 = Rot27_TT.col + col_offset;
-    uint8_t column28 = Rot28_TT.col + col_offset;
-    uint8_t column29 = Rot29_TT.col + col_offset;
-    uint8_t column30 = Rot30_TT.col + col_offset;
-    uint8_t column31 = Rot31_TT.col + col_offset;
-    uint8_t column32 = Rot32_TT.col + col_offset;
-    uint8_t column33 = Rot33_TT.col + col_offset;
-    uint8_t column34 = Rot34_TT.col + col_offset;
-    uint8_t column35 = Rot35_TT.col + col_offset;
-    uint8_t column36 = Rot36_TT.col + col_offset;
+    uint16_t column1 = Rot1_TT.col + col_offset;
+    uint16_t column2 = Rot2_TT.col + col_offset;
+    uint16_t column3 = Rot3_TT.col + col_offset;
+    uint16_t column4 = Rot4_TT.col + col_offset;
+    uint16_t column5 = Rot5_TT.col + col_offset;
+    uint16_t column6 = Rot6_TT.col + col_offset;
+    uint16_t column7 = Rot7_TT.col + col_offset;
+    uint16_t column8 = Rot8_TT.col + col_offset;
+    uint16_t column9 = Rot9_TT.col + col_offset;
+    uint16_t column10 = Rot10_TT.col + col_offset;
+    uint16_t column11 = Rot11_TT.col + col_offset;
+    uint16_t column12 = Rot12_TT.col + col_offset;
+    uint16_t column13 = Rot13_TT.col + col_offset;
+    uint16_t column14 = Rot14_TT.col + col_offset;
+    uint16_t column15 = Rot15_TT.col + col_offset;
+    uint16_t column16 = Rot16_TT.col + col_offset;
+    uint16_t column17 = Rot17_TT.col + col_offset;
+    uint16_t column18 = Rot18_TT.col + col_offset;
+    uint16_t column19 = Rot19_TT.col + col_offset;
+    uint16_t column20 = Rot20_TT.col + col_offset;
+    uint16_t column21 = Rot21_TT.col + col_offset;
+    uint16_t column22 = Rot22_TT.col + col_offset;
+    uint16_t column23 = Rot23_TT.col + col_offset;
+    uint16_t column24 = Rot24_TT.col + col_offset;
+    uint16_t column25 = Rot25_TT.col + col_offset;
+    uint16_t column26 = Rot26_TT.col + col_offset;
+    uint16_t column27 = Rot27_TT.col + col_offset;
+    uint16_t column28 = Rot28_TT.col + col_offset;
+    uint16_t column29 = Rot29_TT.col + col_offset;
+    uint16_t column30 = Rot30_TT.col + col_offset;
+    uint16_t column31 = Rot31_TT.col + col_offset;
+    uint16_t column32 = Rot32_TT.col + col_offset;
+    uint16_t column33 = Rot33_TT.col + col_offset;
+    uint16_t column34 = Rot34_TT.col + col_offset;
+    uint16_t column35 = Rot35_TT.col + col_offset;
+    uint16_t column36 = Rot36_TT.col + col_offset;
 
 #pragma HLS DATAFLOW
     // Read X coordinates rows from first matrix
@@ -723,11 +770,14 @@ void kernel_givens_rotation_TT(data_t* input_tile_1, data_t* input_tile_2,
 extern "C" {
 void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
                             data_t* output_tile_1, data_t* output_tile_2,
-                            uint8_t type_op, uint8_t col_offset) {
+                            uint8_t type_op, uint16_t col_offset) {
+#pragma HLS INTERFACE mode = ap_ctrl_chain port = return
 #pragma HLS INTERFACE mode = m_axi bundle = amem0 port = input_tile_1 offset = slave
 #pragma HLS INTERFACE mode = m_axi bundle = amem1 port = input_tile_2 offset = slave
 #pragma HLS INTERFACE mode = m_axi bundle = amem2 port = output_tile_1 offset = slave
 #pragma HLS INTERFACE mode = m_axi bundle = amem3 port = output_tile_2 offset = slave
+#pragma HLS INTERFACE mode = s_axilite port = type_op
+#pragma HLS INTERFACE mode = s_axilite port = col_offset
 
     if (type_op == GEQRT) {
         kernel_givens_rotation_GE(input_tile_1, output_tile_1, col_offset);

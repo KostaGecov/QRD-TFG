@@ -1,4 +1,4 @@
-//#define TAM 256
+#define TAM 1024
 
 #include <cmath>
 #include <iostream>
@@ -7,7 +7,8 @@
 #include <fstream>
 
 const float EPSILON = 1e-10;
-const int TAM = 512;
+
+float A[TAM][TAM] = {0.0};
 
 void init_matrix(float matrix[TAM][TAM], std::fstream* file) {
     if (!file->is_open()) {
@@ -24,17 +25,28 @@ void init_matrix(float matrix[TAM][TAM], std::fstream* file) {
     file->close();
 }
 
-float mse(float A[TAM][TAM], float out_gold[TAM][TAM]) {
+float mse(float A[TAM][TAM]) {
     float err = 0.0;
     float resA = 0.0;
     float resOut = 0.0;
 
+//    std::fstream data_out_gold("data_out_gold.dat", std::ios::in);    
+    std::fstream data_out_gold("random_matrix_1024_gold.dat", std::ios::in);
+    if (!data_out_gold.is_open()) {
+        std::cerr << "Error opening data_out_gold" << std::endl;
+    } else {
+        std::cout << "Opened file" << std::endl;
+    }
+
     // to access just to the non zero elements (upper triangular matrix)
     for (uint16_t r = 0; r < TAM; r++) {
-        for (uint16_t c = r; c < TAM; c++) {
+        //for (uint16_t c = r; c < TAM; c++) {
+        for (uint16_t c = 0; c < TAM; c++) {
             resA = A[r][c];
-            resOut = out_gold[r][c];
+            data_out_gold >> resOut;
+            // resOut = out_gold[r][c];
             err += pow((abs(resA) - abs(resOut)), 2);
+            resOut = 0;
         }
     }
 
@@ -61,12 +73,12 @@ void givens_rotation(float a, float b, float& c, float& s) {
 }
 
 void qr_decomposition_givens(float matrix[TAM][TAM], int n) {
-    float Q[TAM][TAM];
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            Q[i][j] = (i == j) ? 1 : 0;  // Inicializar matriz Q como la matriz identidad
-        }
-    }
+    //float Q[TAM][TAM];
+    //for (int i = 0; i < n; ++i) {
+    //    for (int j = 0; j < n; ++j) {
+    //        Q[i][j] = (i == j) ? 1 : 0;  // Inicializar matriz Q como la matriz identidad
+    //   }
+    //}
 
     for (int j = 0; j < n; ++j) {
         for (int i = n - 1; i > j; --i) {
@@ -83,12 +95,12 @@ void qr_decomposition_givens(float matrix[TAM][TAM], int n) {
             }
 
             // Actualizar Q
-            for (int k = 0; k < n; ++k) {
-                temp1 = Q[j][k];
-                temp2 = Q[i][k];
-                Q[j][k] = c * temp1 - s * temp2;
-                Q[i][k] = s * temp1 + c * temp2;
-            }
+            //for (int k = 0; k < n; ++k) {
+            //    temp1 = Q[j][k];
+            //    temp2 = Q[i][k];
+            //    Q[j][k] = c * temp1 - s * temp2;
+            //    Q[i][k] = s * temp1 + c * temp2;
+            //}
         }
     }
 
@@ -111,21 +123,26 @@ void qr_decomposition_givens(float matrix[TAM][TAM], int n) {
 
 int main() {
     std::cout << "Start of program" << std::endl;
-    float A[TAM][TAM];
+    
+    float err = 0.0f;
+    
+    auto start = std::chrono::high_resolution_clock::now();
 
-    float out_gold[TAM][TAM];
-
-//    std::fstream data_in("random_matrix_512.dat", std::ios::in);
-    std::fstream data_in("data_in.dat", std::ios::in);
+    std::fstream data_in("random_matrix_1024.dat", std::ios::in);
+//    std::fstream data_in("data_in.dat", std::ios::in);
     init_matrix(A, &data_in);
 
-//    std::fstream data_out_gold("random_matrix_gold_512.dat", std::ios::in);
-    std::fstream data_out_gold("data_out_gold.dat", std::ios::in);
-    init_matrix(out_gold, &data_out_gold);
+//    std::fstream data_out_gold("random_matrix_1024_1_gold.dat", std::ios::in);
+//    std::fstream data_out_gold("data_out_gold.dat", std::ios::in);
+//    init_matrix(out_gold, &data_out_gold);
 
     qr_decomposition_givens(A, TAM);
-
-    std::cout << "ECM = " << mse(A, out_gold) << std::endl;
+    
+    auto end = std::chrono::high_resolution_clock::now();
+    auto diff = end - start;
+    err = mse(A);
+    std::cout << "Mean Squared Error = " << err << std::endl;
+    std::cout << "SW Execution time: " << std::chrono::duration<double, std::milli>(diff).count()<< std::endl;
 
     return 0;
 }
