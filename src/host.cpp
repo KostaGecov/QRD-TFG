@@ -33,7 +33,7 @@
 typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;
 
 /**
- * @brief initialize data_t type matrix with values from input file
+ * @brief Initialize data_t type matrix with values from input file
  *
  * @param matrix data_t type values
  * @param file input file
@@ -41,24 +41,16 @@ typedef ap_fixed<FIXED_POINT, FX_POINT_INT, AP_RND> data_t;
 bool init_matrix(data_t matrix[TAM][TAM], std::fstream *file);
 
 /**
- * @brief initialize float type matrix with values from input file
+ * @brief Calculate mean squared error of the result
  *
- * @param matrix float type values
- * @param file input file
- */
-bool init_matrix(float matrix[TAM][TAM], std::fstream *file);
-
-/**
- * @brief calculate mean squared error of the result
- *
- * @param A
- * @param file
+ * @param A result matrix
+ * @param file data gold file
  * @return float error
  */
 float mse(data_t A[TAM][TAM], std::fstream *file);
 
 /**
- * @brief prior to kernel execution
+ * @brief Prior to kernel execution
  *
  * @param qrd_kernel kernel to execute
  * @param q command queue for the device
@@ -67,15 +59,29 @@ float mse(data_t A[TAM][TAM], std::fstream *file);
 void tiled_qr_decomposition(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context);
 
 /**
- * @brief executes kernel
+ * @brief Launches the kernel execution
  *
- * @param A_matrix_ptr
+ * @param A_tiled
+ * @param type_op
+ * @param col_offset
+ * @param idx_mat_1
+ * @param idx_mat_2
  * @param qrd_kernel
  * @param q
+ * @param context
+ * @param input_matrix_1_ptr
+ * @param input_matrix_2_ptr
+ * @param output_matrix_1_ptr
+ * @param output_matrix_2_ptr
+ * @param flattened_matrix_write_1
+ * @param flattened_matrix_write_2
+ * @param flattened_matrix_read_1
+ * @param flattened_matrix_read_2
  */
 void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint16_t col_offset, uint16_t idx_mat_1, uint16_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context,
                     cl::Buffer input_matrix_1_ptr, cl::Buffer input_matrix_2_ptr, cl::Buffer output_matrix_1_ptr, cl::Buffer output_matrix_2_ptr,
-					data_t *flattened_matrix_write_1, data_t *flattened_matrix_write_2, data_t *flattened_matrix_read_1, data_t *flattened_matrix_read_2);
+                    data_t *flattened_matrix_write_1, data_t *flattened_matrix_write_2, data_t *flattened_matrix_read_1, data_t *flattened_matrix_read_2);
+
 /**
  * @brief Writes elements of multidimensional matrix in order into an array
  *
@@ -119,8 +125,7 @@ int main(int argc, char **argv) {
     }
 
     std::fstream data_in(argv[1], std::ios::in);
-	std::fstream data_out_gold(argv[2], std::ios::in);
-
+    std::fstream data_out_gold(argv[2], std::ios::in);
     // XCLBIN file to program the FPGA
     std::string binaryFile = argv[3];
     cl_int err;
@@ -233,38 +238,37 @@ void tiled_qr_decomposition(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], cl::Kerne
 
     for (uint16_t i = 0; i < NUM_OPERATIONS; i++) {
         // GEQRT operation
-    	if (i % 2 == 0) {
-			uint16_t start_idx = (NUM_OP_GEQRT - n_iter_GEQRT);
+        if (i % 2 == 0) {
+            uint16_t start_idx = (NUM_OP_GEQRT - n_iter_GEQRT);
 
-			for (uint16_t idx_mat_1 = start_idx; idx_mat_1 < NUM_OP_GEQRT; idx_mat_1++) {
-				kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
-							   input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr,
-							   flattened_matrix_write_1, flattened_matrix_write_2, flattened_matrix_read_1, flattened_matrix_read_2);
-			}
-			n_iter_GEQRT--;
-			col_offset_geqrt += TAM_TILED;
-		} else if (i % 2 == 1){
-			uint16_t start_idx_1 = (NUM_OP_TTQRT - n_iter_TTQRT);
-			uint16_t start_idx_2 = ((NUM_OP_TTQRT - n_iter_TTQRT) + 1);
+            for (uint16_t idx_mat_1 = start_idx; idx_mat_1 < NUM_OP_GEQRT; idx_mat_1++) {
+                kernel_execute(A_tiled, GEQRT, col_offset_geqrt, idx_mat_1, 0, qrd_kernel, q, context,
+                               input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr,
+                               flattened_matrix_write_1, flattened_matrix_write_2, flattened_matrix_read_1, flattened_matrix_read_2);
+            }
+            n_iter_GEQRT--;
+            col_offset_geqrt += TAM_TILED;
+        } else if (i % 2 == 1) {
+            uint16_t start_idx_1 = (NUM_OP_TTQRT - n_iter_TTQRT);
+            uint16_t start_idx_2 = ((NUM_OP_TTQRT - n_iter_TTQRT) + 1);
 
             for (uint16_t idx_mat_1 = start_idx_1, idx_mat_2 = start_idx_2; idx_mat_2 < NUM_TILED; idx_mat_2++) {
                 kernel_execute(A_tiled, TTQRT, col_offset_ttqrt, idx_mat_1, idx_mat_2, qrd_kernel, q, context,
                                input_matrix_1_ptr, input_matrix_2_ptr, output_matrix_1_ptr, output_matrix_2_ptr,
-							   flattened_matrix_write_1, flattened_matrix_write_2, flattened_matrix_read_1, flattened_matrix_read_2);
+                               flattened_matrix_write_1, flattened_matrix_write_2, flattened_matrix_read_1, flattened_matrix_read_2);
             }
-			n_iter_TTQRT--;
-			col_offset_ttqrt += TAM_TILED;
+            n_iter_TTQRT--;
+            col_offset_ttqrt += TAM_TILED;
         }
     }
 }
 
 void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, uint16_t col_offset, uint16_t idx_mat_1, uint16_t idx_mat_2, cl::Kernel qrd_kernel, cl::CommandQueue q, cl::Context context,
                     cl::Buffer input_matrix_1_ptr, cl::Buffer input_matrix_2_ptr, cl::Buffer output_matrix_1_ptr, cl::Buffer output_matrix_2_ptr,
-					data_t *flattened_matrix_write_1, data_t *flattened_matrix_write_2, data_t *flattened_matrix_read_1, data_t *flattened_matrix_read_2) {
-	cl_int error;
-	// Create events for data transfers and kernel execution
-//	cl::Event input_event, output_event, kernel_event;
-
+                    data_t *flattened_matrix_write_1, data_t *flattened_matrix_write_2, data_t *flattened_matrix_read_1, data_t *flattened_matrix_read_2) {
+    cl_int error;
+    // Create events for data transfers and kernel execution
+    //	cl::Event input_event, output_event, kernel_event;
 
     OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
     OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
@@ -274,23 +278,19 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         flatten_matrix(A_tiled, flattened_matrix_write_1, idx_mat_1);
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0/*, nullptr, &kernel_event*/));
+        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr}, 0));
 
         // Execute kernel
-        OCL_CHECK(error, error = q.enqueueTask(qrd_kernel/*, nullptr, &kernel_event*/));
+        OCL_CHECK(error, error = q.enqueueTask(qrd_kernel));
 
         // Wait for kernel to finish
         OCL_CHECK(error, error = q.finish());
-
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST/*, nullptr, &output_event*/));
+        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
 
         // Wait for kernel to finish
         OCL_CHECK(error, error = q.finish());
-
-        // Wait for all events to complete
-//        OCL_CHECK(error, error = cl::Event::waitForEvents({input_event, kernel_event, output_event}));
 
         unflatten_matrix(A_tiled, flattened_matrix_read_1, idx_mat_1);
     } else if (type_op == TTQRT) {
@@ -299,23 +299,19 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         flatten_matrix(A_tiled, flattened_matrix_write_2, idx_mat_2);
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr, input_matrix_2_ptr}, 0/*, nullptr, &kernel_event*/));
+        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr, input_matrix_2_ptr}, 0 /*, nullptr, &kernel_event*/));
 
         // Execute kernel
-        OCL_CHECK(error, error = q.enqueueTask(qrd_kernel/*, nullptr, &kernel_event*/));
+        OCL_CHECK(error, error = q.enqueueTask(qrd_kernel /*, nullptr, &kernel_event*/));
 
         // Wait for kernel to finish
         OCL_CHECK(error, error = q.finish());
 
         // Write output buffer data back to A_tiled
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr, output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST/*, nullptr, &output_event*/));
-        // OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
+        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({output_matrix_1_ptr, output_matrix_2_ptr}, CL_MIGRATE_MEM_OBJECT_HOST));
 
         // Wait for kernel to finish
         OCL_CHECK(error, error = q.finish());
-
-        // Wait for all events to complete
-//		OCL_CHECK(error, error = cl::Event::waitForEvents({input_event, kernel_event, output_event}));
 
         unflatten_matrix(A_tiled, flattened_matrix_read_1, idx_mat_1);
         unflatten_matrix(A_tiled, flattened_matrix_read_2, idx_mat_2);
@@ -339,33 +335,16 @@ bool init_matrix(data_t matrix[TAM][TAM], std::fstream *file) {
     return true;
 }
 
-bool init_matrix(float matrix[TAM][TAM], std::fstream *file) {
-    if (!file->is_open()) {
-        std::cerr << "Error opening file" << std::endl;
-        return false;
-    } else {
-        std::cout << "Opened file" << std::endl;
-    }
-
-    for (uint16_t r = 0; r < TAM; r++) {
-        for (uint16_t c = 0; c < TAM; c++) {
-            *file >> matrix[r][c];
-        }
-    }
-    file->close();
-    return true;
-}
-
 float mse(data_t A[TAM][TAM], std::fstream *file) {
     float err = 0.0;
     data_t resA = 0.0;
     float res_out = 0.0;
 
     if (!file->is_open()) {
-		std::cerr << "Error opening data_out_gold" << std::endl;
-	} else {
-		std::cout << "Opened file" << std::endl;
-	}
+        std::cerr << "Error opening data_out_gold" << std::endl;
+    } else {
+        std::cout << "Opened file" << std::endl;
+    }
 
     // to access just to the non zero elements (upper triangular matrix)
     for (uint16_t r = 0; r < TAM; r++) {

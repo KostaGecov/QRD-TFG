@@ -78,7 +78,7 @@ class Rotator {
                          hls::stream<data_t, TAM>& row_y_in,
                          hls::stream<data_t, TAM>& row_x_out,
                          hls::stream<data_t, TAM>& row_y_out,
-						 uint16_t col_rotator);
+                         uint16_t col_rotator);
 };
 
 /**
@@ -105,30 +105,74 @@ void read_input_rows(data_t* input,
                      hls::stream<data_t, TAM>& row_in_7,
                      hls::stream<data_t, TAM>& row_in_8);
 
+/**
+ * @brief Choose the right sign for the rotation,
+ * taking into account the coordinates' quadrants
+ *
+ * @param x row x
+ * @param y row y
+ * @param col column offset
+ */
 void update_quadrant(data_t x[TAM], data_t y[TAM], uint16_t col);
 
+/**
+ * @brief Store stream data into arrays
+ *
+ * @param row_in_1 stream input
+ * @param row_in_2 stream input
+ * @param x array output
+ * @param y array output
+ */
 void read_input_data(hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
-					 data_t x[TAM], data_t y[TAM]);
+                     data_t x[TAM], data_t y[TAM]);
 
 /**
  * @brief Performs cordic rotation of two rows
  *
- * @param x
- * @param y
- * @param x_aux
- * @param sign
- * @param n_iter
- * @param col
+ * @param x row x
+ * @param y row y
+ * @param x_aux auxiliar array to store previous value of row x
+ * @param sign to choose the sign of the operation
+ * @param n_iter number of iterations
+ * @param col column offset
  */
 void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, uint16_t col);
 
+/**
+ * @brief Multiply row values with a constant scale factor
+ *
+ * @param x row x
+ * @param y  row y
+ * @param col column offset
+ */
 void compensate_scale_factor(data_t x[TAM], data_t y[TAM], uint16_t col);
 
+/**
+ * @brief Store array data into streams
+ *
+ * @param row_out_1 stream row output
+ * @param row_out_2 stream row output
+ * @param x row input
+ * @param y row input
+ */
 void write_output_data(hls::stream<data_t, TAM>& row_out_1,
-					   hls::stream<data_t, TAM>& row_out_2,
-					   data_t x[TAM], data_t y[TAM]);
+                       hls::stream<data_t, TAM>& row_out_2,
+                       data_t x[TAM], data_t y[TAM]);
 
+/**
+ * @brief Write output rows using blocking read to streams
+ *
+ * @param output
+ * @param row_out_1
+ * @param row_out_2
+ * @param row_out_3
+ * @param row_out_4
+ * @param row_out_5
+ * @param row_out_6
+ * @param row_out_7
+ * @param row_out_8
+ */
 void write_output_rows(data_t* output,
                        hls::stream<data_t, TAM>& row_out_1,
                        hls::stream<data_t, TAM>& row_out_2,
@@ -174,13 +218,6 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
                             uint8_t type_op, uint16_t col_offset);
 }
 
-/**
- * @brief Construct a new Rotator:: Rotator object
- *
- * @param x
- * @param y
- * @param c
- */
 Rotator::Rotator(unsigned int x, unsigned int y, unsigned int c) {
 #pragma HLS INLINE off
     // actually, row_x and row_y are not used, they have an indicative role
@@ -192,11 +229,11 @@ Rotator::Rotator(unsigned int x, unsigned int y, unsigned int c) {
 
 void read_row(data_t* input, hls::stream<data_t, TAM>& row, uint16_t offset) {
 #pragma HLS INLINE off
-	read_row_for:
-	for (uint16_t j = 0; j < TAM; j++) {
+read_row_for:
+    for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-	        row.write(input[j + TAM * offset]);
-	}
+        row.write(input[j + TAM * offset]);
+    }
 }
 
 void read_input_rows(data_t* input,
@@ -209,109 +246,111 @@ void read_input_rows(data_t* input,
                      hls::stream<data_t, TAM>& row_in_7,
                      hls::stream<data_t, TAM>& row_in_8) {
 #pragma HLS INLINE off
-	read_row(input, row_in_1, 0);
-	read_row(input, row_in_2, 1);
-	read_row(input, row_in_3, 2);
-	read_row(input, row_in_4, 3);
-	read_row(input, row_in_5, 4);
-	read_row(input, row_in_6, 5);
-	read_row(input, row_in_7, 6);
-	read_row(input, row_in_8, 7);
+    read_row(input, row_in_1, 0);
+    read_row(input, row_in_2, 1);
+    read_row(input, row_in_3, 2);
+    read_row(input, row_in_4, 3);
+    read_row(input, row_in_5, 4);
+    read_row(input, row_in_6, 5);
+    read_row(input, row_in_7, 6);
+    read_row(input, row_in_8, 7);
 }
 
 void read_input_data(hls::stream<data_t, TAM>& row_in_1,
                      hls::stream<data_t, TAM>& row_in_2,
-					 data_t x[TAM], data_t y[TAM]) {
+                     data_t x[TAM], data_t y[TAM]) {
 #pragma HLS INLINE off
 read_input_data:
-	for (uint16_t j = 0; j < TAM; j++) {
+    for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-		row_in_1.read(x[j]);
-		row_in_2.read(y[j]);
-	}
+#pragma HLS PIPELINE II = 1
+        row_in_1.read(x[j]);
+        row_in_2.read(y[j]);
+    }
 }
 
 void update_quadrant(data_t x[TAM], data_t y[TAM], uint16_t col) {
 #pragma HLS INLINE off
 sign_for:
-	for (uint16_t s = col; s < TAM; s++) {
+    for (uint16_t s = col; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-		x[s] = -x[s];
-		y[s] = -y[s];
-	}
+#pragma HLS PIPELINE II = 1
+        x[s] = -x[s];
+        y[s] = -y[s];
+    }
 }
 
 void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, uint16_t col) {
-#pragma HLS INLINE off
+    char sign_factor_x = sign ? -1 : 1;
+    char sign_factor_y = 0;
+
+    if (sign_factor_x == 1) {
+        sign_factor_y = -1;
+    } else if (sign_factor_x == -1) {
+        sign_factor_y = 1;
+    }
 
 aux_var_for:
     for (uint16_t i = col; i < TAM; i++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
+#pragma HLS PIPELINE II = 1
         x_aux[i] = x[i];
     }
 
-    // If Y is negative, we need to add to it so that it gets closer to zero
-    // and to the contrary with X coordinate
-    if (sign) {
-    column_rotation_pos_for:
-        for (uint16_t j = col; j < TAM; j++) {
+// If Y is negative, we need to add to it so that it gets closer to zero
+// and to the contrary with X coordinate
+column_rotation_for:
+    for (uint16_t j = col; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-            x[j] = x[j] - (y[j] >> n_iter);
-            y[j] = y[j] + (x_aux[j] >> n_iter);
-        }
-    } else {
-    column_rotation_neg_for:
-        for (uint16_t j = col; j < TAM; j++) {
-#pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-            x[j] = x[j] + (y[j] >> n_iter);
-            y[j] = y[j] - (x_aux[j] >> n_iter);
-        }
+#pragma HLS PIPELINE II = 1
+        x[j] = x[j] + (sign_factor_x * (y[j] >> n_iter));
+        y[j] = y[j] + (sign_factor_y * (x_aux[j] >> n_iter));
     }
 }
 
 void compensate_scale_factor(data_t x[TAM], data_t y[TAM], uint16_t col) {
 #pragma HLS INLINE off
 scale_factor_for:
-	for (uint16_t j = 0; j < TAM; j++) {
+    for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-		x[j] = x[j] * SCALE_FACTOR;
-		y[j] = y[j] * SCALE_FACTOR;
-	}
+#pragma HLS PIPELINE II = 1
+        x[j] = x[j] * SCALE_FACTOR;
+        y[j] = y[j] * SCALE_FACTOR;
+    }
 }
 
 void write_output_data(hls::stream<data_t, TAM>& row_out_1,
-					   hls::stream<data_t, TAM>& row_out_2,
-					   data_t x[TAM], data_t y[TAM]) {
+                       hls::stream<data_t, TAM>& row_out_2,
+                       data_t x[TAM], data_t y[TAM]) {
 #pragma HLS INLINE off
 write_output_data:
-	for (uint16_t j = 0; j < TAM; j++) {
+    for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = N_ELEM_ROW
-		row_out_1.write(x[j]);
-		row_out_2.write(y[j]);
-	}
+#pragma HLS PIPELINE II = 1
+        row_out_1.write(x[j]);
+        row_out_2.write(y[j]);
+    }
 }
 
 void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
                               hls::stream<data_t, TAM>& row_y_in,
                               hls::stream<data_t, TAM>& row_x_out,
                               hls::stream<data_t, TAM>& row_y_out,
-							  uint16_t col_rotator) {
+                              uint16_t col_rotator) {
 #pragma HLS INLINE off
     bool sign = false;
     uint16_t i = 0, j = 0, k = 0, s = 0;
     data_t x[TAM] = {0}, y[TAM] = {0}, x_aux[TAM] = {0};
 
     read_input_data(row_x_in, row_y_in, x, y);
-
-    // Choose the right sign for the rotation,
-    // taking into account the coordinates' quadrants
     if (x[col_rotator] < 0) {
-    	update_quadrant(x, y, col_rotator);
+        update_quadrant(x, y, col_rotator);
     }
 
 iterations_for:
     for (k = 0; k < N_ITER; k++) {
 #pragma HLS LOOP_TRIPCOUNT max = ITER min = ITER
+#pragma HLS PIPELINE off
         sign = (y[col_rotator] < 0);
 
         cordic(x, y, x_aux, sign, k, col_rotator);
@@ -328,11 +367,11 @@ iterations_for:
 
 void write_row(data_t* output, hls::stream<data_t, TAM>& row, uint16_t offset) {
 #pragma HLS INLINE off
-	write_row_for:
-	for (uint16_t j = 0; j < TAM; j++) {
+write_row_for:
+    for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT avg = N_ELEM_ROW max = N_ELEM_ROW min = N_ELEM_ROW
-	        row.read(output[j + TAM * offset]);
-	}
+        row.read(output[j + TAM * offset]);
+    }
 }
 
 void write_output_rows(data_t* output,
@@ -345,15 +384,14 @@ void write_output_rows(data_t* output,
                        hls::stream<data_t, TAM>& row_out_7,
                        hls::stream<data_t, TAM>& row_out_8) {
 #pragma HLS INLINE off
-
-	write_row(output, row_out_1, 0);
-	write_row(output, row_out_2, 1);
-	write_row(output, row_out_3, 2);
-	write_row(output, row_out_4, 3);
-	write_row(output, row_out_5, 4);
-	write_row(output, row_out_6, 5);
-	write_row(output, row_out_7, 6);
-	write_row(output, row_out_8, 7);
+    write_row(output, row_out_1, 0);
+    write_row(output, row_out_2, 1);
+    write_row(output, row_out_3, 2);
+    write_row(output, row_out_4, 3);
+    write_row(output, row_out_5, 4);
+    write_row(output, row_out_6, 5);
+    write_row(output, row_out_7, 6);
+    write_row(output, row_out_8, 7);
 }
 
 void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint16_t col_offset) {
@@ -427,7 +465,6 @@ void kernel_givens_rotation_GE(data_t* input_tile_1, data_t* output_tile_1, uint
     uint16_t column28 = Rot28_GE.col + col_offset;
 
 #pragma HLS DATAFLOW
-
     read_input_rows(input_tile_1, Rot1_GE.row_x_in, Rot1_GE.row_y_in, Rot2_GE.row_x_in,
                     Rot2_GE.row_y_in, Rot3_GE.row_x_in, Rot3_GE.row_y_in, Rot4_GE.row_x_in, Rot4_GE.row_y_in);
 
