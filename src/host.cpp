@@ -267,8 +267,6 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
                     cl::Buffer input_matrix_1_ptr, cl::Buffer input_matrix_2_ptr, cl::Buffer output_matrix_1_ptr, cl::Buffer output_matrix_2_ptr,
                     data_t *flattened_matrix_write_1, data_t *flattened_matrix_write_2, data_t *flattened_matrix_read_1, data_t *flattened_matrix_read_2) {
     cl_int error;
-    // Create events for data transfers and kernel execution
-    //	cl::Event input_event, output_event, kernel_event;
 
     OCL_CHECK(error, error = qrd_kernel.setArg(4, type_op));
     OCL_CHECK(error, error = qrd_kernel.setArg(5, col_offset));
@@ -299,10 +297,10 @@ void kernel_execute(data_t A_tiled[NUM_TILED][TAM_TILED][TAM], uint8_t type_op, 
         flatten_matrix(A_tiled, flattened_matrix_write_2, idx_mat_2);
 
         // Send input buffer to kernel
-        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr, input_matrix_2_ptr}, 0 /*, nullptr, &kernel_event*/));
+        OCL_CHECK(error, error = q.enqueueMigrateMemObjects({input_matrix_1_ptr, input_matrix_2_ptr}, 0));
 
         // Execute kernel
-        OCL_CHECK(error, error = q.enqueueTask(qrd_kernel /*, nullptr, &kernel_event*/));
+        OCL_CHECK(error, error = q.enqueueTask(qrd_kernel));
 
         // Wait for kernel to finish
         OCL_CHECK(error, error = q.finish());
@@ -377,3 +375,4 @@ void unflatten_matrix(data_t matrix[NUM_TILED][TAM_TILED][TAM], data_t fl_matrix
         }
     }
 }
+

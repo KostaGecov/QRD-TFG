@@ -274,21 +274,32 @@ void update_quadrant(data_t x[TAM], data_t y[TAM], uint16_t col) {
 sign_for:
     for (uint16_t s = col; s < TAM; s++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         x[s] = -x[s];
         y[s] = -y[s];
     }
 }
 
 void cordic(data_t x[TAM], data_t y[TAM], data_t x_aux[TAM], bool sign, uint8_t n_iter, uint16_t col) {
-    char sign_factor_x = sign ? -1 : 1;
-    char sign_factor_y = 0;
+    #pragma HLS INLINE off
+    signed char sign_factor_x = 0;
+    signed char sign_factor_y = 0;
 
-    if (sign_factor_x == 1) {
-        sign_factor_y = -1;
-    } else if (sign_factor_x == -1) {
-        sign_factor_y = 1;
-    }
+//    sign_factor_x = sign ? -1 : 1;
+//    sign_factor_y = sign_factor_x == 1 ? -1 : 1;
+//
+//    if (sign_factor_x == 1) {
+//        sign_factor_y = -1;
+//    } else if (sign_factor_x == -1) {
+//        sign_factor_y = 1;
+//    }
+    if (sign) {
+    	sign_factor_x = -1;
+    	sign_factor_y = 1;
+	} else {
+		sign_factor_x = 1;
+		sign_factor_y = -1;
+	}
 
 aux_var_for:
     for (uint16_t i = col; i < TAM; i++) {
@@ -302,7 +313,7 @@ aux_var_for:
 column_rotation_for:
     for (uint16_t j = col; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         x[j] = x[j] + (sign_factor_x * (y[j] >> n_iter));
         y[j] = y[j] + (sign_factor_y * (x_aux[j] >> n_iter));
     }
@@ -313,7 +324,7 @@ void compensate_scale_factor(data_t x[TAM], data_t y[TAM], uint16_t col) {
 scale_factor_for:
     for (uint16_t j = 0; j < TAM; j++) {
 #pragma HLS LOOP_TRIPCOUNT max = N_ELEM_ROW min = TILED_SIZE
-#pragma HLS PIPELINE II = 1
+#pragma HLS PIPELINE
         x[j] = x[j] * SCALE_FACTOR;
         y[j] = y[j] * SCALE_FACTOR;
     }
@@ -342,7 +353,12 @@ void Rotator::givens_rotation(hls::stream<data_t, TAM>& row_x_in,
     uint16_t i = 0, j = 0, k = 0, s = 0;
     data_t x[TAM] = {0}, y[TAM] = {0}, x_aux[TAM] = {0};
 
+#pragma HLS BIND_STORAGE variable=x type=RAM_S2P impl=BRAM
+#pragma HLS BIND_STORAGE variable=y type=RAM_S2P impl=BRAM
+#pragma HLS BIND_STORAGE variable=x_aux type=RAM_1P impl=BRAM
+
     read_input_data(row_x_in, row_y_in, x, y);
+
     if (x[col_rotator] < 0) {
         update_quadrant(x, y, col_rotator);
     }
@@ -823,3 +839,4 @@ void kernel_givens_rotation(data_t* input_tile_1, data_t* input_tile_2,
     }
 }
 }
+
