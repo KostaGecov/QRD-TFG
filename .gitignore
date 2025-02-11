@@ -8,3 +8,8 @@ no_unroll_krnl_givens_rotation_v1_csynth.html
 /qr_matlab_cpp.cpp
 /data_files/*
 /scripts/*
+/.vscode
+/*.code-workspace
+/src/host_hls.cpp
+/src/kernel_hls.cpp
+/includes/kernel_hls.h

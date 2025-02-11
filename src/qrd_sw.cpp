@@ -73,13 +73,6 @@ void givens_rotation(float a, float b, float& c, float& s) {
 }
 
 void qr_decomposition_givens(float matrix[TAM][TAM], int n) {
-    //float Q[TAM][TAM];
-    //for (int i = 0; i < n; ++i) {
-    //    for (int j = 0; j < n; ++j) {
-    //        Q[i][j] = (i == j) ? 1 : 0;  // Inicializar matriz Q como la matriz identidad
-    //   }
-    //}
-
     for (int j = 0; j < n; ++j) {
         for (int i = n - 1; i > j; --i) {
             float c, s;
@@ -93,49 +86,19 @@ void qr_decomposition_givens(float matrix[TAM][TAM], int n) {
                 matrix[j][k] = c * temp1 - s * temp2;
                 matrix[i][k] = s * temp1 + c * temp2;
             }
-
-            // Actualizar Q
-            //for (int k = 0; k < n; ++k) {
-            //    temp1 = Q[j][k];
-            //    temp2 = Q[i][k];
-            //    Q[j][k] = c * temp1 - s * temp2;
-            //    Q[i][k] = s * temp1 + c * temp2;
-            //}
         }
     }
-
-//    std::cout << "Q:\n";
-//    for (int i = 0; i < n; ++i) {
-//        for (int j = 0; j < n; ++j) {
-//            std::cout << Q[i][j] << " ";
-//        }
-//        std::cout << "\n";
-//    }
-//
-//    std::cout << "R:\n";
-//    for (int i = 0; i < n; ++i) {
-//        for (int j = 0; j < n; ++j) {
-//            std::cout << matrix[i][j] << " ";
-//        }
-//        std::cout << "\n";
-//    }
 }
 
 int main() {
     std::cout << "Start of program" << std::endl;
-    
+
     float err = 0.0f;
-    
+
     auto start = std::chrono::high_resolution_clock::now();
 
     std::fstream data_in("random_matrix_1024.dat", std::ios::in);
-//    std::fstream data_in("data_in.dat", std::ios::in);
     init_matrix(A, &data_in);
-
-//    std::fstream data_out_gold("random_matrix_1024_1_gold.dat", std::ios::in);
-//    std::fstream data_out_gold("data_out_gold.dat", std::ios::in);
-//    init_matrix(out_gold, &data_out_gold);
-
     qr_decomposition_givens(A, TAM);
     
     auto end = std::chrono::high_resolution_clock::now();
