@@ -1,0 +1,10 @@
+export.zip
+log_sintesis.txt
+no_unroll_krnl_givens_rotation_v1_csynth.html
+/test_tile_12x12.cpp
+/test_cordic3x3.cpp
+/res_qr_matlab_cpp.yml
+/res_qr_matlab_cpp.png
+/qr_matlab_cpp.cpp
+/data_files/*
+/scripts/*
